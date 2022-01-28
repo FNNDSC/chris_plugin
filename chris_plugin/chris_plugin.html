@@ -37,7 +37,7 @@
     </ul>
 
 
-                    <footer>Version v0.0.1.dev3</footer>
+                    <footer>Version v0.0.1.dev4</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -59,6 +59,7 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">chris_plugin.main_function</span> <span class="kn">import</span> <span class="n">MainFunction</span><span class="p">,</span> <span class="n">is_plugin_main</span><span class="p">,</span> <span class="n">is_fs</span>
 <span class="kn">from</span> <span class="nn">chris_plugin._registration</span> <span class="kn">import</span> <span class="n">register</span><span class="p">,</span> <span class="n">PluginDetails</span>
 <span class="kn">from</span> <span class="nn">chris_plugin.types</span> <span class="kn">import</span> <span class="n">ChrisPluginType</span>
@@ -158,6 +159,46 @@
 <span class="sd">        (outputdir / &#39;out.txt&#39;).write_text(f&#39;hello, {options.name}&#39;)</span>
 <span class="sd">    ```</span>
 
+<span class="sd">    At runtime, the function decorated by `@chris_plugin` accepts 0, 2, or 3</span>
+<span class="sd">    arguments. As a 0-argument function it can be invoked as a typical &quot;main&quot;</span>
+<span class="sd">    function:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    @chris_plugin</span>
+<span class="sd">    def main(options, outputdir):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    if __name__ == &#39;__main__&#39;:</span>
+<span class="sd">        main()</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Importantly, for the program to be a valid *ChRIS* plugin, it must specify</span>
+<span class="sd">    the decorated function in `console_scripts` of `setup.py`:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    from setuptools import setup</span>
+<span class="sd">    setup(</span>
+<span class="sd">        ...,</span>
+<span class="sd">        entry_points={</span>
+<span class="sd">            &#39;console_scripts&#39;: [</span>
+<span class="sd">                &#39;commandname = app:main&#39;</span>
+<span class="sd">            ]</span>
+<span class="sd">        }</span>
+<span class="sd">    )</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    The decorated function can be invoked from Python with 2 or 3 arguments,</span>
+<span class="sd">    which makes it possible to test programmatically:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    parser = ArgumentParser()</span>
+<span class="sd">    parser.add_argument(&#39;--something&#39;, type=float, default=1.5)</span>
+<span class="sd">    options = parser.parse_args([&#39;--something&#39;, &#39;2.2&#39;])</span>
+
+<span class="sd">    with tempfile.TemporaryDirectory() as tmpdirname:</span>
+<span class="sd">        main(options, Path(tmpdirname))  # fs plugin main</span>
+<span class="sd">    ```</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    parser : argparse.ArgumentParser</span>
@@ -217,17 +258,27 @@
         <span class="p">))</span>
 
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">():</span>
-            <span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-            <span class="n">outputdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">outputdir</span><span class="p">)</span>
-            <span class="n">_mkdir</span><span class="p">(</span><span class="n">outputdir</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span> <span class="o">=</span> <span class="n">_call_from_python</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span> <span class="o">=</span> <span class="n">_call_from_cli</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verified_type</span> <span class="o">==</span> <span class="s1">&#39;fs&#39;</span> <span class="ow">and</span> <span class="n">inputdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;inputdir=</span><span class="si">{</span><span class="n">inputdir</span><span class="si">}</span><span class="s1"> given to fs-type plugin&#39;</span><span class="p">)</span>
+
+            <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outputdir</span><span class="p">)</span>
+            <span class="n">_mkdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">verified_type</span> <span class="o">==</span> <span class="s1">&#39;fs&#39;</span><span class="p">:</span>
-                <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inputdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">inputdir</span><span class="p">)</span>
-                <span class="n">_check_is_dir</span><span class="p">(</span><span class="n">inputdir</span><span class="p">)</span>
-                <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">outputdir</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">inputdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;inputdir is None&#39;</span><span class="p">)</span>
+
+            <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inputdir</span><span class="p">)</span>
+            <span class="n">_check_is_dir</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+            <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">wrapper</span>
 
@@ -238,6 +289,26 @@
 
     <span class="c1"># We&#39;re called as @chris_plugin without parens.</span>
     <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
+
+
+<span class="n">_MainArgs</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;_MainArgs&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;options&#39;</span><span class="p">,</span> <span class="s1">&#39;inputdir&#39;</span><span class="p">,</span> <span class="s1">&#39;outputdir&#39;</span><span class="p">])</span>
+
+
+<span class="k">def</span> <span class="nf">_call_from_python</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_MainArgs</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_MainArgs</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">inputdir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_MainArgs</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">inputdir</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">outputdir</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;decorated main was given: </span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_call_from_cli</span><span class="p">(</span><span class="n">parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_MainArgs</span><span class="p">:</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">_MainArgs</span><span class="p">(</span>
+        <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
+        <span class="n">inputdir</span><span class="o">=</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">inputdir</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="s1">&#39;inputdir&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">outputdir</span><span class="o">=</span><span class="n">options</span><span class="o">.</span><span class="n">outputdir</span>
+    <span class="p">)</span>
 </pre></div>
 
         </details>
@@ -332,6 +403,46 @@
 <span class="sd">        (outputdir / &#39;out.txt&#39;).write_text(f&#39;hello, {options.name}&#39;)</span>
 <span class="sd">    ```</span>
 
+<span class="sd">    At runtime, the function decorated by `@chris_plugin` accepts 0, 2, or 3</span>
+<span class="sd">    arguments. As a 0-argument function it can be invoked as a typical &quot;main&quot;</span>
+<span class="sd">    function:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    @chris_plugin</span>
+<span class="sd">    def main(options, outputdir):</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    if __name__ == &#39;__main__&#39;:</span>
+<span class="sd">        main()</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Importantly, for the program to be a valid *ChRIS* plugin, it must specify</span>
+<span class="sd">    the decorated function in `console_scripts` of `setup.py`:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    from setuptools import setup</span>
+<span class="sd">    setup(</span>
+<span class="sd">        ...,</span>
+<span class="sd">        entry_points={</span>
+<span class="sd">            &#39;console_scripts&#39;: [</span>
+<span class="sd">                &#39;commandname = app:main&#39;</span>
+<span class="sd">            ]</span>
+<span class="sd">        }</span>
+<span class="sd">    )</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    The decorated function can be invoked from Python with 2 or 3 arguments,</span>
+<span class="sd">    which makes it possible to test programmatically:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    parser = ArgumentParser()</span>
+<span class="sd">    parser.add_argument(&#39;--something&#39;, type=float, default=1.5)</span>
+<span class="sd">    options = parser.parse_args([&#39;--something&#39;, &#39;2.2&#39;])</span>
+
+<span class="sd">    with tempfile.TemporaryDirectory() as tmpdirname:</span>
+<span class="sd">        main(options, Path(tmpdirname))  # fs plugin main</span>
+<span class="sd">    ```</span>
+
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    parser : argparse.ArgumentParser</span>
@@ -391,17 +502,27 @@
         <span class="p">))</span>
 
         <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">main</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">():</span>
-            <span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
-            <span class="n">outputdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">outputdir</span><span class="p">)</span>
-            <span class="n">_mkdir</span><span class="p">(</span><span class="n">outputdir</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+                <span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span> <span class="o">=</span> <span class="n">_call_from_python</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span> <span class="o">=</span> <span class="n">_call_from_cli</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">verified_type</span> <span class="o">==</span> <span class="s1">&#39;fs&#39;</span> <span class="ow">and</span> <span class="n">inputdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;inputdir=</span><span class="si">{</span><span class="n">inputdir</span><span class="si">}</span><span class="s1"> given to fs-type plugin&#39;</span><span class="p">)</span>
+
+            <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outputdir</span><span class="p">)</span>
+            <span class="n">_mkdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">verified_type</span> <span class="o">==</span> <span class="s1">&#39;fs&#39;</span><span class="p">:</span>
-                <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inputdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">inputdir</span><span class="p">)</span>
-                <span class="n">_check_is_dir</span><span class="p">(</span><span class="n">inputdir</span><span class="p">)</span>
-                <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">options</span><span class="o">.</span><span class="n">outputdir</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">inputdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;inputdir is None&#39;</span><span class="p">)</span>
+
+            <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inputdir</span><span class="p">)</span>
+            <span class="n">_check_is_dir</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+            <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">wrapper</span>
 
@@ -457,6 +578,43 @@ created if needed.</p>
 <span class="nd">@chris_plugin</span><span class="p">(</span><span class="n">parser</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">):</span>
     <span class="p">(</span><span class="n">outputdir</span> <span class="o">/</span> <span class="s1">&#39;out.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hello, </span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>At runtime, the function decorated by <code>@chris_plugin</code> accepts 0, 2, or 3
+arguments. As a 0-argument function it can be invoked as a typical "main"
+function:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="nd">@chris_plugin</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Importantly, for the program to be a valid <em>ChRIS</em> plugin, it must specify
+the decorated function in <code>console_scripts</code> of <code>setup.py</code>:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span>
+<span class="n">setup</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;console_scripts&#39;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="s1">&#39;commandname = app:main&#39;</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>The decorated function can be invoked from Python with 2 or 3 arguments,
+which makes it possible to test programmatically:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--something&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">options</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">([</span><span class="s1">&#39;--something&#39;</span><span class="p">,</span> <span class="s1">&#39;2.2&#39;</span><span class="p">])</span>
+
+<span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmpdirname</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdirname</span><span class="p">))</span>  <span class="c1"># fs plugin main</span>
 </code></pre></div>
 
 <h2 id="parameters">Parameters</h2>
