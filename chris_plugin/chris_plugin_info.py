@@ -39,27 +39,39 @@ def get_all_distribution_names() -> Iterable[str]:
     )
 
 
-def get_dependents(dependency=__package__) -> Iterable[Distribution]:
-    return filter(lambda d: is_dependent(dependency, d), get_all_distributions())
+def get_dependents() -> Iterable[Distribution]:
+    return filter(is_dependent, get_all_distributions())
 
 
-def is_dependent(package_name: str, _d: Distribution) -> bool:
-    if _d.requires is None:
+def is_dependent(d: Distribution) -> bool:
+    if d.requires is None:
         return False
-    return package_name in _d.requires
+    # Python packaging is very inconsistent. Even though this package's
+    # name is "chris_plugin", its _distribution's_ name might appear as
+    # "chris-plugin" in some situations but not all.
+    # e.g. when the plugin is installed via:
+    # `pip install -e `                           => d.requires = ['chris_plugin']
+    # `pip install --use-feature=in-tree-build .` => d.requires = ['chris_plugin']
+    return 'chris_plugin' in d.requires or 'chris-plugin' in d.requires
 
 
 def guess_plugin_distribution() -> Distribution:
     dependents = set(get_dependents())
     if len(dependents) < 1:
-        raise GuessException(
+        print(
             'Could not find ChRIS plugin. Make sure you have "pip installed" '
-            'your ChRIS plugin as a python package.'
+            'your ChRIS plugin as a python package.',
+            file=sys.stderr
         )
+        sys.exit(1)
     if len(dependents) > 1:
-        raise GuessException('Found multiple ChRIS plugin distributions, '
-                             'please specify one: ' +
-                             str([d.name for d in dependents]))
+        print(
+            'Found multiple ChRIS plugin distributions, '
+            'please specify one: ' +
+            str([d.name for d in dependents]),
+            file=sys.stderr
+        )
+        sys.exit(1)
     dist, = dependents
     return dist
 
@@ -97,11 +109,7 @@ def entrypoint_of(d: Distribution) -> str:
 def get_or_guess(module_name: Optional[str]) -> tuple[list[str], Distribution]:
     if module_name:
         return [module_name], get_distribution_of(module_name)
-    try:
-        dist = guess_plugin_distribution()
-    except GuessException as e:
-        print('\n'.join(e.args), file=sys.stderr)
-        sys.exit(1)
+    dist = guess_plugin_distribution()
     mods = entrypoint_modules(dist)
     if not mods:
         print(f'No entrypoint modules found for {dist.name}. '
