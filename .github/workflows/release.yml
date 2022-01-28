@@ -1,25 +1,45 @@
-name: Publish to PyPI
+name: Publish
 
 on:
   release:
     types: [ created ]
 
+env:
+  logo: https://github.com/FNNDSC/cube-design/blob/master/_common-assets/ChRISlogo-color.svg.png?raw=true
+
 jobs:
-  deploy:
+  pypi:
+    name: Upload to PyPI
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v2
-      with:
-        python-version: '3.10'
-    - name: Install
-      run: |
-        pip install wheel
-        pip install --use-feature=in-tree-build .
-    - name: Build
-      run: python setup.py sdist bdist_wheel
-    - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@master
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - name: Install
+        run: |
+          pip install wheel
+          pip install --use-feature=in-tree-build .
+      - name: Build
+        run: python setup.py sdist bdist_wheel
+      - name: Upload
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+  docs:
+    name: Build docs for Github Pages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.10'
+      - run: pip install -e .
+      - name: pdoc
+        run:  pdoc --logo '${{ env.logo }}' --footer-text='Version ${{ github.ref_name }}' chris_plugin -o pdoc
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.2
+        with:
+          branch: gh-pages
+          folder: pdoc
