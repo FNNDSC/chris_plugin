@@ -1,6 +1,8 @@
 # Python _ChRIS_ Plugin Support
 
 [![.github/workflows/test.yml](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml/badge.svg)](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml)
+[![PyPI](https://img.shields.io/pypi/v/chris_plugin)](https://pypi.org/project/chris_plugin/)
+[![License - MIT](https://img.shields.io/pypi/l/chris_plugin)](https://github.com/FNNDSC/chris_plugin/blob/master/LICENSE)
 
 _ChRIS_ is a platform for scientific and medical applications.
 https://chrisproject.org/
