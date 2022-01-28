@@ -64,6 +64,20 @@ def vectorize(
     copy(source_dir, output_dir)
     ```
 
+    Avoid clobbering (overwriting an existing file):
+
+    ```python
+    @vectorize
+    def copy(input_file, output_file):
+        if output_file.exists():
+            print('error')
+            sys.exit(1)
+        ...
+    ```
+
+    At the main function level, an even more strict solution would be to
+    check `len(list(outputdir.glob('*'))) == 0`
+
 
     Set a filter to only process `*.nii` files, and rename files
     so a file "brain.nii" gets written to "brain_segmentation.nii":
@@ -146,7 +160,7 @@ def vectorize(
         def wrapper(inputdir: Path, outputdir: Path):
             nonlocal name_mapper
             if name_mapper is None:
-                name_mapper = ''
+                name_mapper = _verbatim(inputdir, outputdir)
             if isinstance(name_mapper, str):
                 name_mapper = _curry_suffix(inputdir, outputdir, name_mapper)
 
@@ -166,6 +180,13 @@ def vectorize(
 
     # We're called as @vectorize without parens.
     return wrap(func)
+
+
+def _verbatim(inputdir: Path, outputdir: Path) -> Callable[[Path], Path]:
+    def verbatim(input_file: Path) -> Path:
+        rel = input_file.relative_to(inputdir)
+        return outputdir / rel
+    return verbatim
 
 
 def _curry_suffix(inputdir: Path, outputdir: Path, suffix: str) -> Callable[[Path], Path]:
