@@ -52,7 +52,7 @@
     </ul>
 
 
-                    <footer>Version v0.0.1.dev2</footer>
+                    <footer>Version v0.0.1.dev3</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -240,19 +240,31 @@ such as <code><a href="#vectorize">chris_plugin.vectorize</a></code>.</p>
 <span class="sd">    created if needed.</span>
 
 
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    *ds* plugin example:</span>
 
 <span class="sd">    ```python</span>
 <span class="sd">    from chris_plugin import chris_plugin</span>
-<span class="sd">    from argparse import ArgumentParser</span>
 
-<span class="sd">    parser = ArgumentParser()</span>
+<span class="sd">    @chris_plugin(title=&#39;Example&#39;, min_memory_limit=&#39;300Mi&#39;)</span>
+<span class="sd">    def main(options, inputdir, outputdir):</span>
+<span class="sd">        print(&#39;do something&#39;)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    *fs* plugin example with a required argument:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    from argparse import ArgumentParser</span>
+<span class="sd">    from chris_plugin import chris_plugin</span>
+
+<span class="sd">    parser = ArgumentParser(description=&#39;Creates a file out.txt&#39;)</span>
 <span class="sd">    parser.add_argument(&#39;--name&#39;, required=True)</span>
 
-<span class="sd">    @chris_plugin(parser=parser, title=&#39;Example&#39;, min_memory_limit=&#39;300Mi&#39;)</span>
-<span class="sd">    def main(options, inputdir, outpudri):</span>
-<span class="sd">        print(f&#39;hello, {parser.name}&#39;)</span>
+<span class="sd">    @chris_plugin(parser=parser)</span>
+<span class="sd">    def main(options, outputdir):</span>
+<span class="sd">        (outputdir / &#39;out.txt&#39;).write_text(f&#39;hello, {options.name}&#39;)</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Parameters</span>
@@ -358,17 +370,28 @@ plugins are given two data directories</li>
 <p>All data directories are made sure to exist, and the output directory is first
 created if needed.</p>
 
-<h6 id="example">Example</h6>
+<h6 id="examples">Examples</h6>
+
+<p><em>ds</em> plugin example:</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">chris_plugin</span> <span class="kn">import</span> <span class="n">chris_plugin</span>
-<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
 
-<span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">()</span>
+<span class="nd">@chris_plugin</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;Example&#39;</span><span class="p">,</span> <span class="n">min_memory_limit</span><span class="o">=</span><span class="s1">&#39;300Mi&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;do something&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p><em>fs</em> plugin example with a required argument:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span>
+<span class="kn">from</span> <span class="nn">chris_plugin</span> <span class="kn">import</span> <span class="n">chris_plugin</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s1">&#39;Creates a file out.txt&#39;</span><span class="p">)</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--name&#39;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="nd">@chris_plugin</span><span class="p">(</span><span class="n">parser</span><span class="o">=</span><span class="n">parser</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Example&#39;</span><span class="p">,</span> <span class="n">min_memory_limit</span><span class="o">=</span><span class="s1">&#39;300Mi&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">inputdir</span><span class="p">,</span> <span class="n">outpudri</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hello, </span><span class="si">{</span><span class="n">parser</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nd">@chris_plugin</span><span class="p">(</span><span class="n">parser</span><span class="o">=</span><span class="n">parser</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">):</span>
+    <span class="p">(</span><span class="n">outputdir</span> <span class="o">/</span> <span class="s1">&#39;out.txt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;hello, </span><span class="si">{</span><span class="n">options</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </code></pre></div>
 
 <h6 id="parameters">Parameters</h6>
