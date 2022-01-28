@@ -144,16 +144,16 @@ def vectorize(
     def wrap(fn: Callable[[Path], Path]):
         @functools.wraps(fn)
         def wrapper(inputdir: Path, outputdir: Path):
-            get_output_name = name_mapper
-            if get_output_name is None:
-                get_output_name = ''
-            if isinstance(get_output_name, str):
-                get_output_name = _curry_suffix(inputdir, outputdir, get_output_name)
+            nonlocal name_mapper
+            if name_mapper is None:
+                name_mapper = ''
+            if isinstance(name_mapper, str):
+                name_mapper = _curry_suffix(inputdir, outputdir, name_mapper)
 
             for input_file in inputdir.glob(glob):
                 if not input_file.is_file():
                     continue
-                output_file = get_output_name(input_file)
+                output_file = name_mapper(input_file)
                 if parents:
                     output_file.parent.mkdir(parents=True, exist_ok=True)
                 executor(fn, input_file, output_file)
