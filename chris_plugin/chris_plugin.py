@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 import functools
 from typing import Callable, Optional
-from chris_plugin._main_function import MainFunction, is_plugin_main, is_fs
+from chris_plugin.main_function import MainFunction, is_plugin_main, is_fs
 from chris_plugin._registration import register, PluginDetails
 from chris_plugin.types import ChrisPluginType
 
@@ -57,36 +57,70 @@ def chris_plugin(
         max_gpu_limit: int = 0
 ):
     """
-    Creates a decorator which identifies a ChRIS plugin main function
-    and associates the ChRIS plugin with metadata.
+    Creates a decorator which identifies a *ChRIS* plugin main function
+    and associates the *ChRIS* plugin with metadata.
 
     When called, CLI arguments are parsed and passed to the decorated function
-    as its first argument. It is also given the data directories as :class:`Path`,
+    as its first argument. It is also given the data directories as
+    [`pathlib.Path`](https://docs.python.org/3/library/pathlib.html#pathlib.Path),
     depending on the type of plugin:
 
-    - "fs" plugins are given one data directory
-    - "ds" and "ts" plugins are given two data directories
+    - ["fs"](https://github.com/FNNDSC/chris_plugin/wiki/About-Plugins#fs)
+      plugins are given one data directory
+    - ["ds"](https://github.com/FNNDSC/chris_plugin/wiki/About-Plugins#ds)
+      and ["ts"](https://github.com/FNNDSC/chris_plugin/wiki/About-Plugins#ts)
+      plugins are given two data directories
 
     All data directories are made sure to exist, and the output directory is first
     created if needed.
 
-    :param main: if used directly without parens, first argument should be the
-                 ChRIS plugin main function
-    :param parser: argument parser
-    :param plugin_type: one of: 'fs', 'ds', 'ts'
-    :param category: category name
-    :param icon: URL of icon
-    :param title: title
-    :param min_number_of_workers: number of workers for multi-node parallelism
-    :param max_number_of_workers: worker request ceiling
-    :param min_memory_limit: minimum memory requirement. Supported units: 'Mi', 'Gi'
-    :param max_memory_limit: memory usage ceiling
-    :param min_cpu_limit: minimum CPU requirement, in millicores.
-                          e.g. "1000m" is a request for 1 CPU core
-    :param max_cpu_limit: CPU usage ceiling
-    :param min_gpu_limit: minimum number of GPUs the plugin must use.
-                          0: GPU is disabled. If min_gpu_limit > 1, GPU is enabled.
-    :param max_gpu_limit: maximum number of GPUs the plugin may use
+
+    Example
+    -------
+
+    ```python
+    from chris_plugin import chris_plugin
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('--name', required=True)
+
+    @chris_plugin(parser=parser, title='Example', min_memory_limit='300Mi')
+    def main(options, inputdir, outpudri):
+        print(f'hello, {parser.name}')
+    ```
+
+    Parameters
+    ----------
+    parser : argparse.ArgumentParser
+        argument parser
+    plugin_type: str
+        one of: 'fs', 'ds', 'ts'
+    category: str
+        category name
+    icon: str
+        URL of icon
+    title: str
+        plugin title
+    min_number_of_workers: int
+        number of workers for multi-node parallelism
+    max_number_of_workers: int
+        worker request ceiling
+    min_memory_limit: str
+        minimum memory requirement. Supported units: 'Mi', 'Gi'
+    max_memory_limit: str
+        memory usage ceiling
+    min_cpu_limit: str
+        minimum CPU requirement, in millicores.
+        e.g. "1000m" is a request for 1 CPU core
+    max_cpu_limit: str
+        CPU usage ceiling
+    min_gpu_limit: int
+        minimum number of GPUs the plugin must use.
+        0: GPU is disabled. If min_gpu_limit > 1, GPU is enabled.
+    max_gpu_limit: int
+        maximum number of GPUs the plugin may use
+
     """
     def wrap(main: MainFunction) -> Callable[[], None]:
         nonlocal parser

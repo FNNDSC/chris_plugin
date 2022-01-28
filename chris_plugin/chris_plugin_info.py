@@ -6,7 +6,7 @@ from typing import Iterable, Optional
 import json
 
 from chris_plugin._registration import get_registered
-from chris_plugin._parameters import serialize
+from chris_plugin.parameters import serialize
 import chris_plugin.links as links
 
 import logging
@@ -22,6 +22,9 @@ parser.add_argument('module_name', nargs='?',
 
 
 class GuessException(Exception):
+    """
+    `chris_module_info` was unable to automatically detect any installed *ChRIS* plugins.
+    """
     pass
 
 

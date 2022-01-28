@@ -2,7 +2,7 @@ import pytest
 
 from argparse import Namespace
 from pathlib import Path
-from chris_plugin._main_function import is_plugin_main, is_ds, is_fs
+from chris_plugin.main_function import is_plugin_main, is_ds, is_fs
 import chris_plugin.tests.examples.main_functions as examples
 
 

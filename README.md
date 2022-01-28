@@ -25,3 +25,15 @@ A more comprehensive starting point can be created using
 ```shell
 cookiecutter https://github.com/FNNDSC/cookiecutter-chrisapp
 ```
+
+## Usage
+
+After developing a plugin, use the command `chris_plugin_info`
+to produce a JSON description of your *ChRIS* plugin.
+
+```shell
+chris_plugin_info [module_name]
+```
+
+If `module_name` is not given, then `chris_plugin_info`
+will automatically discover your *ChRIS* plugin.

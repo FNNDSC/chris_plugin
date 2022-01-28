@@ -2,7 +2,7 @@ import pytest
 from argparse import ArgumentParser
 from chris_plugin.types import Special, ParameterSpec
 from chris_plugin.constants import Placeholders
-from chris_plugin._parameters import serialize_store_action, get_param_type
+from chris_plugin.parameters import serialize_store_action, get_param_type
 
 
 @pytest.fixture
