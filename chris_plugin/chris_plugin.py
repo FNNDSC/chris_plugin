@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 import functools
 from typing import Callable, Optional
+from collections import namedtuple
 from chris_plugin.main_function import MainFunction, is_plugin_main, is_fs
 from chris_plugin._registration import register, PluginDetails
 from chris_plugin.types import ChrisPluginType
@@ -102,6 +103,46 @@ def chris_plugin(
         (outputdir / 'out.txt').write_text(f'hello, {options.name}')
     ```
 
+    At runtime, the function decorated by `@chris_plugin` accepts 0, 2, or 3
+    arguments. As a 0-argument function it can be invoked as a typical "main"
+    function:
+
+    ```python
+    @chris_plugin
+    def main(options, outputdir):
+        ...
+
+    if __name__ == '__main__':
+        main()
+    ```
+
+    Importantly, for the program to be a valid *ChRIS* plugin, it must specify
+    the decorated function in `console_scripts` of `setup.py`:
+
+    ```python
+    from setuptools import setup
+    setup(
+        ...,
+        entry_points={
+            'console_scripts': [
+                'commandname = app:main'
+            ]
+        }
+    )
+    ```
+
+    The decorated function can be invoked from Python with 2 or 3 arguments,
+    which makes it possible to test programmatically:
+
+    ```python
+    parser = ArgumentParser()
+    parser.add_argument('--something', type=float, default=1.5)
+    options = parser.parse_args(['--something', '2.2'])
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        main(options, Path(tmpdirname))  # fs plugin main
+    ```
+
     Parameters
     ----------
     parser : argparse.ArgumentParser
@@ -161,17 +202,27 @@ def chris_plugin(
         ))
 
         @functools.wraps(main)
-        def wrapper():
-            options = parser.parse_args()
-            outputdir = Path(options.outputdir)
-            _mkdir(outputdir)
+        def wrapper(*args):
+            if args:
+                options, inputdir, outputdir = _call_from_python(args)
+            else:
+                options, inputdir, outputdir = _call_from_cli(parser)
+
+            if verified_type == 'fs' and inputdir is not None:
+                raise ValueError(f'inputdir={inputdir} given to fs-type plugin')
+
+            output_path = Path(outputdir)
+            _mkdir(output_path)
 
             if verified_type == 'fs':
-                main(options, outputdir)
-            else:
-                inputdir = Path(options.inputdir)
-                _check_is_dir(inputdir)
-                main(options, inputdir, Path(options.outputdir))
+                return main(options, outputdir)
+
+            if inputdir is None:
+                raise ValueError('inputdir is None')
+
+            input_path = Path(inputdir)
+            _check_is_dir(input_path)
+            main(options, input_path, output_path)
 
         return wrapper
 
@@ -182,3 +233,23 @@ def chris_plugin(
 
     # We're called as @chris_plugin without parens.
     return wrap(main)
+
+
+_MainArgs = namedtuple('_MainArgs', ['options', 'inputdir', 'outputdir'])
+
+
+def _call_from_python(args: tuple) -> _MainArgs:
+    if len(args) == 2:
+        return _MainArgs(options=args[0], inputdir=None, outputdir=args[1])
+    if len(args) == 3:
+        return _MainArgs(options=args[0], inputdir=args[1], outputdir=args[2])
+    raise ValueError(f'decorated main was given: {args}')
+
+
+def _call_from_cli(parser: argparse.ArgumentParser) -> _MainArgs:
+    options = parser.parse_args()
+    return _MainArgs(
+        options=options,
+        inputdir=(options.inputdir if hasattr(options, 'inputdir') else None),
+        outputdir=options.outputdir
+    )
