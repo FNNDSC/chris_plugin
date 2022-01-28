@@ -17,7 +17,7 @@ into a _ChRIS_ _ds_ plugin.
 If you're creating a **new** program,
 you can start from a template.
 
-Github template repository: https://github.com/FNNDSC/python_chris_plugin_template
+Github template repository: https://github.com/FNNDSC/python-chrisapp-template
 
 A more comprehensive starting point can be created using
 [cookiecutter](https://cookiecutter.readthedocs.io):
