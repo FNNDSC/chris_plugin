@@ -1,5 +1,7 @@
 # Python _ChRIS_ Plugin Support
 
+[![.github/workflows/test.yml](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml/badge.svg)](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml)
+
 _ChRIS_ is a platform for scientific and medical applications.
 https://chrisproject.org/
 
@@ -9,7 +11,7 @@ programs in Python which can run on _ChRIS_.
 ## Getting Started
 
 Have an existing Python program? See
-[HOW TO: Convert an existing Python app](HOW TO: Convert an existing Python app)
+[HOW TO: Convert an existing Python app](https://github.com/FNNDSC/chris_plugin/wiki/HOW-TO:-Convert-an-existing-Python-app)
 into a _ChRIS_ _ds_ plugin.
 
 If you're creating a **new** program,
