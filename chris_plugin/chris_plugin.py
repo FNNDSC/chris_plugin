@@ -173,7 +173,6 @@ def chris_plugin(
         0: GPU is disabled. If min_gpu_limit > 1, GPU is enabled.
     max_gpu_limit: int
         maximum number of GPUs the plugin may use
-
     """
     def wrap(main: MainFunction) -> Callable[[], None]:
         nonlocal parser

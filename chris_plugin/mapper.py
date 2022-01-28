@@ -28,32 +28,62 @@ def vectorize(
         executor: FunctionCaller = _call
 ):
     """
-    Creates a decorator which changes a function that operates on
+    Creates a decorator which transforms a function that operates on
     single files to one that processes every file in a directory.
+
+        [File -> File ] -> [Directory -> Directory]
+
+
+    Notes
+    -----
+
+    The purpose of `@vectorize` is to simplify the code of a *ChRIS*
+    *ds* plugin that operates on individual files.
+
+    Loosely inspired by
+    [numpy.vectorize](https://numpy.org/doc/stable/reference/generated/numpy.vectorize.html).
+    When configured with `executor`, it becomes analogous
+    to GNU [parallel](https://www.gnu.org/software/parallel/).
+
 
     Examples
     --------
 
-    Transform a function which processes input files, to a function
-    that processes every input file in a directory:
+    The following wrapper for
+    [`shutil.copy`](https://docs.python.org/3/library/shutil.html#shutil.copy)
+    creates a function that works like
+    [`shutil.copytree`](https://docs.python.org/3/library/shutil.html#shutil.copytree)
 
     ```python
     @vectorize
-    def process(input_file: Path, output_file: Path):
-        ...
+    def copy(input_file, output_file):
+        # copies a single file
+        shutil.copyfile(input_file, output_file)
+
+    # copies all files in a directory
+    copy(source_dir, output_dir)
     ```
+
 
     Set a filter to only process `*.nii` files, and rename files
     so a file "brain.nii" gets written to "brain_segmentation.nii":
 
     ```python
     @vectorize(
-        name_mapper='_segmentation',
+        name_mapper='_segmentation.nii',
         glob='**/*.nii'
     )
     def process(input_file: Path, output_file: Path):
         ...
     ```
+
+    In this example:
+
+    - a file `/share/incoming/report.txt` will be ignored
+    - a file `/share/incoming/scan1/recon.nii` will be called upon as
+      `process(/share/incoming/scan1/recon.nii, /share/outgoing/scan1/recon_segmentation.nii)`
+      - the parent directory `/share/outgoing/scan1` will be created if needed
+
 
     Use [ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor)
     to parallelize subprocesses:
@@ -70,6 +100,7 @@ def vectorize(
 
         process(Path('incoming/'), Path('outgoing/'))
     ```
+
 
     Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):
 
@@ -97,9 +128,9 @@ def vectorize(
     Parameters
     ----------
     name_mapper: str or Callable
-        Either a string which is appended to the file name
-        before the file extension of the input file to get
-        the output file name, or a function which, given
+        Either a [suffix](https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.with_suffix)
+        which replaces the input file extension
+        to get the output file name, or a function which, given
         the input file name, produces the output file name.
     parents: bool
         If True, create parent directories for output files as needed.
@@ -140,5 +171,5 @@ def vectorize(
 def _curry_suffix(inputdir: Path, outputdir: Path, suffix: str) -> Callable[[Path], Path]:
     def append_suffix(input_file: Path) -> Path:
         rel = input_file.relative_to(inputdir)
-        return (outputdir / rel).with_stem(input_file.stem + suffix)
+        return (outputdir / rel).with_suffix(suffix)
     return append_suffix

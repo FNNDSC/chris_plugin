@@ -8,4 +8,4 @@ def test_suffix():
 
     name_mapper = _curry_suffix(inputdir, outputdir, '.fruity')
     input_file = Path('/share/incoming/a/b/c.txt')
-    assert name_mapper(input_file) == (outputdir / 'a/b/c.fruity.txt')
+    assert name_mapper(input_file) == (outputdir / 'a/b/c.fruity')
