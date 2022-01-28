@@ -75,19 +75,31 @@ def chris_plugin(
     created if needed.
 
 
-    Example
-    -------
+    Examples
+    --------
+
+    *ds* plugin example:
 
     ```python
     from chris_plugin import chris_plugin
-    from argparse import ArgumentParser
 
-    parser = ArgumentParser()
+    @chris_plugin(title='Example', min_memory_limit='300Mi')
+    def main(options, inputdir, outputdir):
+        print('do something')
+    ```
+
+    *fs* plugin example with a required argument:
+
+    ```python
+    from argparse import ArgumentParser
+    from chris_plugin import chris_plugin
+
+    parser = ArgumentParser(description='Creates a file out.txt')
     parser.add_argument('--name', required=True)
 
-    @chris_plugin(parser=parser, title='Example', min_memory_limit='300Mi')
-    def main(options, inputdir, outpudri):
-        print(f'hello, {parser.name}')
+    @chris_plugin(parser=parser)
+    def main(options, outputdir):
+        (outputdir / 'out.txt').write_text(f'hello, {options.name}')
     ```
 
     Parameters
