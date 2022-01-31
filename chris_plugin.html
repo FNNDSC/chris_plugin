@@ -44,7 +44,40 @@
                     <a class="function" href="#chris_plugin">chris_plugin</a>
             </li>
             <li>
-                    <a class="function" href="#vectorize">vectorize</a>
+                    <a class="class" href="#PathMapper">PathMapper</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#PathMapper.__init__">PathMapper</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PathMapper.input_dir">input_dir</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PathMapper.output_dir">output_dir</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PathMapper.suffix">suffix</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PathMapper.name_mapper">name_mapper</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PathMapper.glob">glob</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PathMapper.only_files">only_files</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#PathMapper.parents">parents</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PathMapper.iter_input">iter_input</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PathMapper.count">count</a>
+                        </li>
+                </ul>
+
             </li>
             <li>
                     <a class="module" href="#types">types</a>
@@ -52,7 +85,7 @@
     </ul>
 
 
-                    <footer>Version v0.0.1.dev4</footer>
+                    <footer>Version v0.0.2.dev1</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -98,16 +131,16 @@ python function into a <em>ChRIS</em> plugin.</p>
 <h2 id="helper-functions">Helper Functions</h2>
 
 <p>This library also provides helper functions for common use cases,
-such as <code><a href="#vectorize">chris_plugin.vectorize</a></code>.</p>
+such as <code><a href="#PathMapper">chris_plugin.PathMapper</a></code>.</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">chris_plugin</span> <span class="kn">import</span> <span class="n">vectorize</span>
+<span class="kn">from</span> <span class="nn">chris_plugin</span> <span class="kn">import</span> <span class="n">chris_plugin</span><span class="p">,</span> <span class="n">PathMapper</span>
 
-<span class="nd">@vectorize</span><span class="p">(</span><span class="n">name_mapper</span><span class="o">=</span><span class="s1">&#39;.out&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Copying </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+<span class="nd">@chris_plugin</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span> <span class="ow">in</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Copying </span><span class="si">{</span><span class="n">input_file</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
 </code></pre></div>
 </div>
 
@@ -147,30 +180,30 @@ such as <code><a href="#vectorize">chris_plugin.vectorize</a></code>.</p>
 <span class="sd">## Helper Functions</span>
 
 <span class="sd">This library also provides helper functions for common use cases,</span>
-<span class="sd">such as `chris_plugin.vectorize`.</span>
+<span class="sd">such as `chris_plugin.PathMapper`.</span>
 
 <span class="sd">```python</span>
 <span class="sd">import shutil</span>
-<span class="sd">from pathlib import Path</span>
-<span class="sd">from chris_plugin import vectorize</span>
+<span class="sd">from chris_plugin import chris_plugin, PathMapper</span>
 
-<span class="sd">@vectorize(name_mapper=&#39;.out&#39;)</span>
-<span class="sd">def copy(input_file: Path, output_file: Path):</span>
-<span class="sd">    print(f&#39;Copying {input_file} to {output_file}&#39;)</span>
-<span class="sd">    shutil.copyfile(input_file, output_file)</span>
+<span class="sd">@chris_plugin</span>
+<span class="sd">def main(_, input_dir, output_dir):</span>
+<span class="sd">    for input_file, output_file in PathMapper(input_dir, output_dir):</span>
+<span class="sd">        print(f&#39;Copying {input_file} to {output_file}&#39;)</span>
+<span class="sd">        shutil.copy(input_file, output_file)</span>
 <span class="sd">```</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">chris_plugin.chris_plugin</span> <span class="kn">import</span> <span class="n">chris_plugin</span>
-<span class="kn">from</span> <span class="nn">chris_plugin.mapper</span> <span class="kn">import</span> <span class="n">vectorize</span>
+<span class="kn">from</span> <span class="nn">chris_plugin.mapper</span> <span class="kn">import</span> <span class="n">PathMapper</span>
 <span class="kn">import</span> <span class="nn">chris_plugin.types</span> <span class="k">as</span> <span class="nn">types</span>
 
 <span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;numpy&#39;</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;chris_plugin&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;vectorize&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;PathMapper&#39;</span><span class="p">,</span>
     <span class="s1">&#39;types&#39;</span>
 <span class="p">]</span>
 </pre></div>
@@ -337,7 +370,6 @@ such as <code><a href="#vectorize">chris_plugin.vectorize</a></code>.</p>
 <span class="sd">        0: GPU is disabled. If min_gpu_limit &gt; 1, GPU is enabled.</span>
 <span class="sd">    max_gpu_limit: int</span>
 <span class="sd">        maximum number of GPUs the plugin may use</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">main</span><span class="p">:</span> <span class="n">MainFunction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">nonlocal</span> <span class="n">parser</span>
@@ -517,73 +549,71 @@ maximum number of GPUs the plugin may use</li>
 
 
                 </section>
-                <section id="vectorize">
-                            <div class="attr function"><a class="headerlink" href="#vectorize">#&nbsp;&nbsp</a>
+                <section id="PathMapper">
+                                <div class="attr class">
+        <a class="headerlink" href="#PathMapper">#&nbsp;&nbsp</a>
 
-        
-            <span class="def">def</span>
-            <span class="name">vectorize</span><span class="signature">(
-    func: Callable[[pathlib.Path], pathlib.Path] = None,
-    /,
-    *,
-    name_mapper: Union[str, Callable[[pathlib.Path], pathlib.Path]] = None,
-    parents: bool = True,
-    glob: str = &#39;**/*&#39;,
-    executor: <a href="#mapper.FunctionCaller">chris_plugin.mapper.FunctionCaller</a> = &lt;function _call&gt;
-)</span>:
+                <div class="decorator">@dataclass(frozen=True)</div>
+
+        <span class="def">class</span>
+        <span class="name">PathMapper</span><wbr>(<span class="base">typing.Iterable[typing.Tuple[pathlib.Path, pathlib.Path]]</span>):
     </div>
 
                 <details>
             <summary>View Source</summary>
-            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">vectorize</span><span class="p">(</span>
-        <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-        <span class="n">name_mapper</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">parents</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">glob</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;**/*&#39;</span><span class="p">,</span>
-        <span class="n">executor</span><span class="p">:</span> <span class="n">FunctionCaller</span> <span class="o">=</span> <span class="n">_call</span>
-<span class="p">):</span>
+            <div class="codehilite"><pre><span></span><span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PathMapper</span><span class="p">(</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a decorator which changes a function that operates on</span>
-<span class="sd">    single files to one that processes every file in a directory.</span>
+<span class="sd">    An iterator which discovers input files in a directory and maps</span>
+<span class="sd">    them to output path names.</span>
+
+<span class="sd">    For example, an input file `/share/incoming/a/b/c.txt` will be</span>
+<span class="sd">    mapped to `/share/outgoing/a/b/c.txt`.</span>
+
+<span class="sd">    A common use case would be *ChRIS* *ds* plugins which operate</span>
+<span class="sd">    on individual input files.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
 
-<span class="sd">    Transform a function which processes input files, to a function</span>
-<span class="sd">    that processes every input file in a directory:</span>
+<span class="sd">    Copy all files from `input_dir` to `output_dir`:</span>
 
 <span class="sd">    ```python</span>
-<span class="sd">    @vectorize</span>
-<span class="sd">    def process(input_file: Path, output_file: Path):</span>
-<span class="sd">        ...</span>
+<span class="sd">    for input_file, output_file in PathMapper(input_dir, output_dir):</span>
+<span class="sd">        shutil.copy(input_file, output_file)</span>
 <span class="sd">    ```</span>
 
-<span class="sd">    Set a filter to only process `*.nii` files, and rename files</span>
-<span class="sd">    so a file &quot;brain.nii&quot; gets written to &quot;brain_segmentation.nii&quot;:</span>
+
+<span class="sd">    Avoid clobbering (overwriting existing files):</span>
 
 <span class="sd">    ```python</span>
-<span class="sd">    @vectorize(</span>
-<span class="sd">        name_mapper=&#39;_segmentation&#39;,</span>
-<span class="sd">        glob=&#39;**/*.nii&#39;</span>
-<span class="sd">    )</span>
-<span class="sd">    def process(input_file: Path, output_file: Path):</span>
-<span class="sd">        ...</span>
+<span class="sd">    for input_file, output_file in PathMapper(input_dir, output_dir):</span>
+<span class="sd">        if output_file.exists():</span>
+<span class="sd">            print(f&#39;error, file exists: {output_file}&#39;, sys.stderr)</span>
+<span class="sd">            sys.exit(1)</span>
+<span class="sd">        shutil.copy(input_file, output_file)</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Call the function `segmentation` on only NIFTI files, and rename output</span>
+<span class="sd">    file names to end with `.seg.nii`:</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    mapper = PathMapper(input_dir, output_dir, glob=&#39;**/*.nii&#39;, suffix=&#39;.seg.nii&#39;)</span>
+<span class="sd">    for input_file, output_file in mapper:</span>
+<span class="sd">        segmentation(input_file, output_file)</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Use [ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor)</span>
 <span class="sd">    to parallelize subprocesses:</span>
 
+
 <span class="sd">    ```python</span>
-<span class="sd">    from pathlib import Path</span>
 <span class="sd">    import subprocess as sp</span>
 <span class="sd">    from concurrent.futures import ThreatPoolExecutor</span>
 
 <span class="sd">    with ThreadPoolExecutor(max_workers=4) as pool:</span>
-<span class="sd">        @vectorize(executor=pool.submit)</span>
-<span class="sd">        def process(input_file: Path, output_file: Path):</span>
-<span class="sd">            sp.run([&#39;external_command&#39;, str(input_file), str(output_file)])</span>
-
-<span class="sd">        process(Path(&#39;incoming/&#39;), Path(&#39;outgoing/&#39;))</span>
+<span class="sd">        for input_file, output_path in PathMapper(input_dir, output_dir):</span>
+<span class="sd">            pool.submit(sp.run, [&#39;external_command&#39;, str(input_file), str(output_path)])</span>
 <span class="sd">    ```</span>
 
 <span class="sd">    Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):</span>
@@ -591,150 +621,309 @@ maximum number of GPUs the plugin may use</li>
 <span class="sd">    ```python</span>
 <span class="sd">    from tqdm import tqdm</span>
 
-<span class="sd">    num_files = 0</span>
-<span class="sd">    @vectorize(glob=&#39;*.fasta&#39;)</span>
-<span class="sd">    def count_files(_i, _o):</span>
-<span class="sd">        nonlocal num_files</span>
-<span class="sd">        num_files += 1</span>
-
-<span class="sd">    count_files(inputdir, outputdir)</span>
-
-<span class="sd">    with tqdm(total=num_files) as bar:</span>
-<span class="sd">        @vectorize(glob=&#39;*.fasta&#39;)</span>
-<span class="sd">        def process(input_file, output_file):</span>
-<span class="sd">            nonlocal bar</span>
-<span class="sd">            ...</span>
+<span class="sd">    mapper = PathMapper(input_dir, output_dir)</span>
+<span class="sd">    with tqdm(total=mapper.count()) as bar:</span>
+<span class="sd">        for input_file, output_path in PathMapper(input_dir, output_dir):</span>
+<span class="sd">            do_something(input_file, output_path)</span>
 <span class="sd">            bar.update()</span>
-
-<span class="sd">        process(inputdir, outputdir)</span>
 <span class="sd">    ```</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    name_mapper: str or Callable</span>
-<span class="sd">        Either a string which is appended to the file name</span>
-<span class="sd">        before the file extension of the input file to get</span>
-<span class="sd">        the output file name, or a function which, given</span>
-<span class="sd">        the input file name, produces the output file name.</span>
-<span class="sd">    parents: bool</span>
-<span class="sd">        If True, create parent directories for output files as needed.</span>
-<span class="sd">    glob: str</span>
-<span class="sd">        file name pattern</span>
-<span class="sd">    executor: Callable</span>
-<span class="sd">        Used to make calls to the decorated function.</span>
-<span class="sd">        Concurrency can be achieved by using a</span>
-<span class="sd">        [`concurrent.futures.Executor.submit`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Executor.submit)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="n">Path</span><span class="p">]):</span>
-        <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">inputdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-            <span class="n">get_output_name</span> <span class="o">=</span> <span class="n">name_mapper</span>
-            <span class="k">if</span> <span class="n">get_output_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">get_output_name</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">get_output_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">get_output_name</span> <span class="o">=</span> <span class="n">_curry_suffix</span><span class="p">(</span><span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">,</span> <span class="n">get_output_name</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">input_file</span> <span class="ow">in</span> <span class="n">inputdir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob</span><span class="p">):</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">input_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-                    <span class="k">continue</span>
-                <span class="n">output_file</span> <span class="o">=</span> <span class="n">get_output_name</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">parents</span><span class="p">:</span>
-                    <span class="n">output_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">executor</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">wrapper</span>
+    <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span>
+    <span class="sd">&quot;&quot;&quot;Directory containing input files&quot;&quot;&quot;</span>
+    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span>
+    <span class="sd">&quot;&quot;&quot;Directory for output files to be written to&quot;&quot;&quot;</span>
 
-    <span class="c1"># See if we&#39;re being called as @vectorize or @vectorize().</span>
-    <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># We&#39;re called with parens.</span>
-        <span class="k">return</span> <span class="n">wrap</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If specified, replace output path file extension with given value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name_mapper</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">NameMapper</span><span class="p">]</span> <span class="o">=</span> <span class="n">_verbatim</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specify a custom function which produces an output file name given the</span>
+<span class="sd">    input path relative to `input_dir`, and `output_dir`.</span>
+<span class="sd">    </span>
+<span class="sd">    Only one of [`suffix`, `name_mapper`] can be given.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_name_mapper</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">NameMapper</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1"># We&#39;re called as @vectorize without parens.</span>
-    <span class="k">return</span> <span class="n">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">glob</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;**/*&#39;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    File name pattern matching input files in `input_dir`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">only_files</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If `True`, yield only files.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parents</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    If `True`, create parent directories of output paths as needed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="n">Path</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name_mapper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_verbatim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot specify both suffix and non-default name_mapper&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_name_mapper&#39;</span><span class="p">,</span> <span class="n">_curry_suffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">name_mapper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;name_mapper cannot be None&#39;</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_name_mapper&#39;</span><span class="p">,</span> <span class="n">name_mapper</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__should_include</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">only_files</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">input_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">iter_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: an iterator over input files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">input_file</span> <span class="k">for</span> <span class="n">input_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">glob</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__should_include</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: number of input files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">():</span>
+            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">c</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
+        <span class="k">for</span> <span class="n">input_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">():</span>
+            <span class="n">rel</span> <span class="o">=</span> <span class="n">input_file</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="p">)</span>
+            <span class="n">output_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_mapper</span><span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
+                <span class="n">output_file</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span>
 </pre></div>
 
         </details>
 
-            <div class="docstring"><p>Creates a decorator which changes a function that operates on
-single files to one that processes every file in a directory.</p>
+            <div class="docstring"><p>An iterator which discovers input files in a directory and maps
+them to output path names.</p>
+
+<p>For example, an input file <code>/share/incoming/a/b/c.txt</code> will be
+mapped to <code>/share/outgoing/a/b/c.txt</code>.</p>
+
+<p>A common use case would be <em>ChRIS</em> <em>ds</em> plugins which operate
+on individual input files.</p>
 
 <h6 id="examples">Examples</h6>
 
-<p>Transform a function which processes input files, to a function
-that processes every input file in a directory:</p>
+<p>Copy all files from <code><a href="#PathMapper.input_dir">input_dir</a></code> to <code><a href="#PathMapper.output_dir">output_dir</a></code>:</p>
 
-<div class="codehilite"><pre><span></span><code><span class="nd">@vectorize</span>
-<span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-    <span class="o">...</span>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span> <span class="ow">in</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
 </code></pre></div>
 
-<p>Set a filter to only process <code>*.nii</code> files, and rename files
-so a file "brain.nii" gets written to "brain_segmentation.nii":</p>
+<p>Avoid clobbering (overwriting existing files):</p>
 
-<div class="codehilite"><pre><span></span><code><span class="nd">@vectorize</span><span class="p">(</span>
-    <span class="n">name_mapper</span><span class="o">=</span><span class="s1">&#39;_segmentation&#39;</span><span class="p">,</span>
-    <span class="n">glob</span><span class="o">=</span><span class="s1">&#39;**/*.nii&#39;</span>
-<span class="p">)</span>
-<span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-    <span class="o">...</span>
+<div class="codehilite"><pre><span></span><code><span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span> <span class="ow">in</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">output_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;error, file exists: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Call the function <code>segmentation</code> on only NIFTI files, and rename output
+file names to end with <code>.seg.nii</code>:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="n">mapper</span> <span class="o">=</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span> <span class="n">glob</span><span class="o">=</span><span class="s1">&#39;**/*.nii&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;.seg.nii&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span> <span class="ow">in</span> <span class="n">mapper</span><span class="p">:</span>
+    <span class="n">segmentation</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
 </code></pre></div>
 
 <p>Use <a href="https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor">ThreadPoolExecutor</a>
 to parallelize subprocesses:</p>
 
-<div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
 <span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreatPoolExecutor</span>
 
 <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-    <span class="nd">@vectorize</span><span class="p">(</span><span class="n">executor</span><span class="o">=</span><span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-        <span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s1">&#39;external_command&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_file</span><span class="p">)])</span>
-
-    <span class="n">process</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s1">&#39;incoming/&#39;</span><span class="p">),</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;outgoing/&#39;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_path</span> <span class="ow">in</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+        <span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;external_command&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)])</span>
 </code></pre></div>
 
 <p>Add a progress bar with <a href="https://github.com/tqdm/tqdm">tqdm</a>:</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="n">num_files</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="nd">@vectorize</span><span class="p">(</span><span class="n">glob</span><span class="o">=</span><span class="s1">&#39;*.fasta&#39;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">count_files</span><span class="p">(</span><span class="n">_i</span><span class="p">,</span> <span class="n">_o</span><span class="p">):</span>
-    <span class="k">nonlocal</span> <span class="n">num_files</span>
-    <span class="n">num_files</span> <span class="o">+=</span> <span class="mi">1</span>
-
-<span class="n">count_files</span><span class="p">(</span><span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">num_files</span><span class="p">)</span> <span class="k">as</span> <span class="n">bar</span><span class="p">:</span>
-    <span class="nd">@vectorize</span><span class="p">(</span><span class="n">glob</span><span class="o">=</span><span class="s1">&#39;*.fasta&#39;</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
-        <span class="k">nonlocal</span> <span class="n">bar</span>
-        <span class="o">...</span>
+<span class="n">mapper</span> <span class="o">=</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">mapper</span><span class="o">.</span><span class="n">count</span><span class="p">())</span> <span class="k">as</span> <span class="n">bar</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_path</span> <span class="ow">in</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
+        <span class="n">do_something</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
         <span class="n">bar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-
-    <span class="n">process</span><span class="p">(</span><span class="n">inputdir</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">)</span>
 </code></pre></div>
-
-<h6 id="parameters">Parameters</h6>
-
-<ul>
-<li><strong>name_mapper</strong> (str or Callable):
-Either a string which is appended to the file name
-before the file extension of the input file to get
-the output file name, or a function which, given
-the input file name, produces the output file name.</li>
-<li><strong>parents</strong> (bool):
-If True, create parent directories for output files as needed.</li>
-<li><strong>glob</strong> (str):
-file name pattern</li>
-<li><strong>executor</strong> (Callable):
-Used to make calls to the decorated function.
-Concurrency can be achieved by using a
-<a href="https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Executor.submit"><code>concurrent.futures.Executor.submit</code></a></li>
-</ul>
 </div>
 
 
+                            <div id="PathMapper.__init__" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PathMapper.__init__">#&nbsp;&nbsp</a>
+
+        
+            <span class="name">PathMapper</span><span class="signature">(
+    input_dir: pathlib.Path,
+    output_dir: pathlib.Path,
+    suffix: dataclasses.InitVar[str] = None,
+    name_mapper: dataclasses.InitVar[typing.Callable[[pathlib.Path, pathlib.Path], pathlib.Path]] = &lt;function _verbatim&gt;,
+    glob: str = &#39;**/*&#39;,
+    only_files: bool = True,
+    parents: bool = True
+)</span>
+    </div>
+
+        
+    
+
+                            </div>
+                            <div id="PathMapper.input_dir" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PathMapper.input_dir">#&nbsp;&nbsp</a>
+
+        <span class="name">input_dir</span><span class="annotation">: pathlib.Path</span>
+    </div>
+
+            <div class="docstring"><p>Directory containing input files</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.output_dir" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PathMapper.output_dir">#&nbsp;&nbsp</a>
+
+        <span class="name">output_dir</span><span class="annotation">: pathlib.Path</span>
+    </div>
+
+            <div class="docstring"><p>Directory for output files to be written to</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.suffix" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PathMapper.suffix">#&nbsp;&nbsp</a>
+
+        <span class="name">suffix</span><span class="annotation">: dataclasses.InitVar[str]</span><span class="default_value"> = None</span>
+    </div>
+
+            <div class="docstring"><p>If specified, replace output path file extension with given value.</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.name_mapper" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PathMapper.name_mapper">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">name_mapper</span><span class="signature">(input_file: pathlib.Path, output_dir: pathlib.Path) -&gt; pathlib.Path</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">_verbatim</span><span class="p">(</span><span class="n">input_file</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="n">input_file</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>Specify a custom function which produces an output file name given the
+input path relative to <code><a href="#PathMapper.input_dir">input_dir</a></code>, and <code><a href="#PathMapper.output_dir">output_dir</a></code>.</p>
+
+<p>Only one of [<code><a href="#PathMapper.suffix">suffix</a></code>, <code><a href="#PathMapper.name_mapper">name_mapper</a></code>] can be given.</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.glob" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PathMapper.glob">#&nbsp;&nbsp</a>
+
+        <span class="name">glob</span><span class="annotation">: str</span><span class="default_value"> = &#39;**/*&#39;</span>
+    </div>
+
+            <div class="docstring"><p>File name pattern matching input files in <code><a href="#PathMapper.input_dir">input_dir</a></code>.</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.only_files" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PathMapper.only_files">#&nbsp;&nbsp</a>
+
+        <span class="name">only_files</span><span class="annotation">: bool</span><span class="default_value"> = True</span>
+    </div>
+
+            <div class="docstring"><p>If <code>True</code>, yield only files.</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.parents" class="classattr">
+                                            <div class="attr variable"><a class="headerlink" href="#PathMapper.parents">#&nbsp;&nbsp</a>
+
+        <span class="name">parents</span><span class="annotation">: bool</span><span class="default_value"> = True</span>
+    </div>
+
+            <div class="docstring"><p>If <code>True</code>, create parent directories of output paths as needed.</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.iter_input" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PathMapper.iter_input">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">iter_input</span><span class="signature">(self) -&gt; Iterator[pathlib.Path]</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">iter_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: an iterator over input files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">input_file</span> <span class="k">for</span> <span class="n">input_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">glob</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__should_include</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+        <span class="p">)</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>:return: an iterator over input files</p>
+</div>
+
+
+                            </div>
+                            <div id="PathMapper.count" class="classattr">
+                                        <div class="attr function"><a class="headerlink" href="#PathMapper.count">#&nbsp;&nbsp</a>
+
+        
+            <span class="def">def</span>
+            <span class="name">count</span><span class="signature">(self) -&gt; int</span>:
+    </div>
+
+                <details>
+            <summary>View Source</summary>
+            <div class="codehilite"><pre><span></span>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :return: number of input files</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">():</span>
+            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">c</span>
+</pre></div>
+
+        </details>
+
+            <div class="docstring"><p>:return: number of input files</p>
+</div>
+
+
+                            </div>
                 </section>
                 <section id="types">
                                 <div class="attr module"><a class="headerlink" href="#types">#&nbsp;&nbsp</a>
@@ -749,7 +938,7 @@ Concurrency can be achieved by using a
 <span class="n">ChrisPluginType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;fs&#39;</span><span class="p">,</span> <span class="s1">&#39;ds&#39;</span><span class="p">,</span> <span class="s1">&#39;ts&#39;</span><span class="p">]</span>
 <span class="n">ParameterType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;str&#39;</span><span class="p">,</span> <span class="s1">&#39;float&#39;</span><span class="p">,</span> <span class="s1">&#39;int&#39;</span><span class="p">,</span> <span class="s1">&#39;bool&#39;</span><span class="p">,</span> <span class="s1">&#39;path&#39;</span><span class="p">,</span> <span class="s1">&#39;unextpath&#39;</span><span class="p">]</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">https://github.com/FNNDSC/ChRIS_store/blob/8f4fc98b3d87dc9aa3f7fbb314684021680a5945/store_backend/plugins/models.py#L12-L18</span>
+<span class="sd">Valid, serialized ChRIS plugin parameter types.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
