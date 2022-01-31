@@ -1,0 +1,11 @@
+# pl-replace ChRIS ds plugin example
+
+# build
+docker build -t localhost/fnndsc/pl-replace .
+
+# run
+mkdir examples/out
+docker run --rm -t --userns=host -u $(id -u):$(id -g) \
+    -v $PWD/examples/in:/in:ro -v $PWD/examples/out:/out:rw \
+    localhost/fnndsc/pl-replace replace --slow -f MICROSOFT /in /out
+
