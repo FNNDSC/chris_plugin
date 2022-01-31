@@ -32,29 +32,29 @@ def main(options, inputdir, outpudri):
 ## Helper Functions
 
 This library also provides helper functions for common use cases,
-such as `chris_plugin.vectorize`.
+such as `chris_plugin.PathMapper`.
 
 ```python
 import shutil
-from pathlib import Path
-from chris_plugin import vectorize
+from chris_plugin import chris_plugin, PathMapper
 
-@vectorize(name_mapper='.out')
-def copy(input_file: Path, output_file: Path):
-    print(f'Copying {input_file} to {output_file}')
-    shutil.copyfile(input_file, output_file)
+@chris_plugin
+def main(_, input_dir, output_dir):
+    for input_file, output_file in PathMapper(input_dir, output_dir):
+        print(f'Copying {input_file} to {output_file}')
+        shutil.copy(input_file, output_file)
 ```
 
 """
 
 from chris_plugin.chris_plugin import chris_plugin
-from chris_plugin.mapper import vectorize
+from chris_plugin.mapper import PathMapper
 import chris_plugin.types as types
 
 __docformat__ = 'numpy'
 
 __all__ = [
     'chris_plugin',
-    'vectorize',
+    'PathMapper',
     'types'
 ]

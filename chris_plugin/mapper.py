@@ -1,196 +1,156 @@
 from pathlib import Path
-import functools
-from typing import Callable, TypeVar, Any, Protocol
-
-_T = TypeVar('_T')
+from typing import Callable, ClassVar, Iterable, Iterator, Tuple
+from dataclasses import dataclass, InitVar
 
 
-class FunctionCaller(Protocol):
+NameMapper = Callable[[Path, Path], Path]
+
+
+def _verbatim(input_file: Path, output_dir: Path) -> Path:
+    return output_dir / input_file
+
+
+def _curry_suffix(suffix: str) -> NameMapper:
+    def append_suffix(input_file: Path, output_dir: Path) -> Path:
+        return (output_dir / input_file).with_suffix(suffix)
+    return append_suffix
+
+
+@dataclass(frozen=True)
+class PathMapper(Iterable[Tuple[Path, Path]]):
     """
-    A type which describes functions which call a given function.
-    """
-    def __call__(self, __fn: Callable[..., _T], *args: Any, **kwargs: Any) -> Any:
-        ...
+    An iterator which discovers input files in a directory and maps
+    them to output path names.
 
+    For example, an input file `/share/incoming/a/b/c.txt` will be
+    mapped to `/share/outgoing/a/b/c.txt`.
 
-def _call(__fn: Callable[..., _T], *args: Any, **kwargs: Any) -> _T:
-    """
-    Literally just call it.
-    """
-    return __fn(*args, **kwargs)
-
-
-def vectorize(
-        func: Callable[[Path], Path] = None, /, *,
-        name_mapper: str | Callable[[Path], Path] = None,
-        parents: bool = True,
-        glob: str = '**/*',
-        executor: FunctionCaller = _call
-):
-    """
-    Creates a decorator which transforms a function that operates on
-    single files to one that processes every file in a directory.
-
-        [File -> File ] -> [Directory -> Directory]
-
-
-    Notes
-    -----
-
-    The purpose of `@vectorize` is to simplify the code of a *ChRIS*
-    *ds* plugin that operates on individual files.
-
-    Loosely inspired by
-    [numpy.vectorize](https://numpy.org/doc/stable/reference/generated/numpy.vectorize.html).
-    When configured with `executor`, it becomes analogous
-    to GNU [parallel](https://www.gnu.org/software/parallel/).
-
+    A common use case would be *ChRIS* *ds* plugins which operate
+    on individual input files.
 
     Examples
     --------
 
-    The following wrapper for
-    [`shutil.copy`](https://docs.python.org/3/library/shutil.html#shutil.copy)
-    creates a function that works like
-    [`shutil.copytree`](https://docs.python.org/3/library/shutil.html#shutil.copytree)
+    Copy all files from `input_dir` to `output_dir`:
 
     ```python
-    @vectorize
-    def copy(input_file, output_file):
-        # copies a single file
-        shutil.copyfile(input_file, output_file)
-
-    # copies all files in a directory
-    copy(source_dir, output_dir)
+    for input_file, output_file in PathMapper(input_dir, output_dir):
+        shutil.copy(input_file, output_file)
     ```
 
-    Avoid clobbering (overwriting an existing file):
+
+    Avoid clobbering (overwriting existing files):
 
     ```python
-    @vectorize
-    def copy(input_file, output_file):
+    for input_file, output_file in PathMapper(input_dir, output_dir):
         if output_file.exists():
-            print('error')
+            print(f'error, file exists: {output_file}', sys.stderr)
             sys.exit(1)
-        ...
+        shutil.copy(input_file, output_file)
     ```
 
-    At the main function level, an even more strict solution would be to
-    check `len(list(outputdir.glob('*'))) == 0`
-
-
-    Set a filter to only process `*.nii` files, and rename files
-    so a file "brain.nii" gets written to "brain_segmentation.nii":
+    Call the function `segmentation` on only NIFTI files, and rename output
+    file names to end with `.seg.nii`:
 
     ```python
-    @vectorize(
-        name_mapper='_segmentation.nii',
-        glob='**/*.nii'
-    )
-    def process(input_file: Path, output_file: Path):
-        ...
+    mapper = PathMapper(input_dir, output_dir, glob='**/*.nii', suffix='.seg.nii')
+    for input_file, output_file in mapper:
+        segmentation(input_file, output_file)
     ```
-
-    In this example:
-
-    - a file `/share/incoming/report.txt` will be ignored
-    - a file `/share/incoming/scan1/recon.nii` will be called upon as
-      `process(/share/incoming/scan1/recon.nii, /share/outgoing/scan1/recon_segmentation.nii)`
-      - the parent directory `/share/outgoing/scan1` will be created if needed
-
 
     Use [ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor)
     to parallelize subprocesses:
 
+
     ```python
-    from pathlib import Path
     import subprocess as sp
     from concurrent.futures import ThreatPoolExecutor
 
     with ThreadPoolExecutor(max_workers=4) as pool:
-        @vectorize(executor=pool.submit)
-        def process(input_file: Path, output_file: Path):
-            sp.run(['external_command', str(input_file), str(output_file)])
-
-        process(Path('incoming/'), Path('outgoing/'))
+        for input_file, output_path in PathMapper(input_dir, output_dir):
+            pool.submit(sp.run, ['external_command', str(input_file), str(output_path)])
     ```
-
 
     Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):
 
     ```python
     from tqdm import tqdm
 
-    num_files = 0
-    @vectorize(glob='*.fasta')
-    def count_files(_i, _o):
-        nonlocal num_files
-        num_files += 1
-
-    count_files(inputdir, outputdir)
-
-    with tqdm(total=num_files) as bar:
-        @vectorize(glob='*.fasta')
-        def process(input_file, output_file):
-            nonlocal bar
-            ...
+    mapper = PathMapper(input_dir, output_dir)
+    with tqdm(total=mapper.count()) as bar:
+        for input_file, output_path in PathMapper(input_dir, output_dir):
+            do_something(input_file, output_path)
             bar.update()
-
-        process(inputdir, outputdir)
     ```
-
-    Parameters
-    ----------
-    name_mapper: str or Callable
-        Either a [suffix](https://docs.python.org/3/library/pathlib.html#pathlib.PurePath.with_suffix)
-        which replaces the input file extension
-        to get the output file name, or a function which, given
-        the input file name, produces the output file name.
-    parents: bool
-        If True, create parent directories for output files as needed.
-    glob: str
-        file name pattern
-    executor: Callable
-        Used to make calls to the decorated function.
-        Concurrency can be achieved by using a
-        [`concurrent.futures.Executor.submit`](https://docs.python.org/3/library/concurrent.futures.html#concurrent.futures.Executor.submit)
     """
-    def wrap(fn: Callable[[Path], Path]):
-        @functools.wraps(fn)
-        def wrapper(inputdir: Path, outputdir: Path):
-            nonlocal name_mapper
-            if name_mapper is None:
-                name_mapper = _verbatim(inputdir, outputdir)
-            if isinstance(name_mapper, str):
-                name_mapper = _curry_suffix(inputdir, outputdir, name_mapper)
 
-            for input_file in inputdir.glob(glob):
-                if not input_file.is_file():
-                    continue
-                output_file = name_mapper(input_file)
-                if parents:
-                    output_file.parent.mkdir(parents=True, exist_ok=True)
-                executor(fn, input_file, output_file)
-        return wrapper
+    input_dir: Path
+    """Directory containing input files"""
+    output_dir: Path
+    """Directory for output files to be written to"""
 
-    # See if we're being called as @vectorize or @vectorize().
-    if func is None:
-        # We're called with parens.
-        return wrap
+    suffix: InitVar[str] = None
+    """
+    If specified, replace output path file extension with given value.
+    """
+    name_mapper: InitVar[NameMapper] = _verbatim
+    """
+    Specify a custom function which produces an output file name given the
+    input path relative to `input_dir`, and `output_dir`.
+    
+    Only one of [`suffix`, `name_mapper`] can be given.
+    """
+    _name_mapper: ClassVar[NameMapper] = None
 
-    # We're called as @vectorize without parens.
-    return wrap(func)
+    glob: str = '**/*'
+    """
+    File name pattern matching input files in `input_dir`.
+    """
+    only_files: bool = True
+    """
+    If `True`, yield only files.
+    """
+    parents: bool = True
+    """
+    If `True`, create parent directories of output paths as needed.
+    """
 
+    def __post_init__(self, suffix: str, name_mapper: Callable[[Path], Path]):
+        if suffix is not None:
+            if name_mapper is not _verbatim:
+                raise ValueError('Cannot specify both suffix and non-default name_mapper')
+            return object.__setattr__(self, '_name_mapper', _curry_suffix(suffix))
+        if name_mapper is None:
+            raise ValueError('name_mapper cannot be None')
+        object.__setattr__(self, '_name_mapper', name_mapper)
 
-def _verbatim(inputdir: Path, outputdir: Path) -> Callable[[Path], Path]:
-    def verbatim(input_file: Path) -> Path:
-        rel = input_file.relative_to(inputdir)
-        return outputdir / rel
-    return verbatim
+    def __should_include(self, input_file: Path) -> bool:
+        if self.only_files:
+            return input_file.is_file()
+        return True
 
+    def iter_input(self) -> Iterator[Path]:
+        """
+        :return: an iterator over input files
+        """
+        return (
+            input_file for input_file in self.input_dir.glob(self.glob)
+            if self.__should_include(input_file)
+        )
 
-def _curry_suffix(inputdir: Path, outputdir: Path, suffix: str) -> Callable[[Path], Path]:
-    def append_suffix(input_file: Path) -> Path:
-        rel = input_file.relative_to(inputdir)
-        return (outputdir / rel).with_suffix(suffix)
-    return append_suffix
+    def count(self) -> int:
+        """
+        :return: number of input files
+        """
+        c = 0
+        for _ in self.iter_input():
+            c += 1
+        return c
+
+    def __iter__(self) -> Iterator[Tuple[Path, Path]]:
+        for input_file in self.iter_input():
+            rel = input_file.relative_to(self.input_dir)
+            output_file = self._name_mapper(rel, self.output_dir)
+            if self.parents:
+                output_file.parent.mkdir(parents=True, exist_ok=True)
+            yield input_file, output_file

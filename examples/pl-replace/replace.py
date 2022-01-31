@@ -1,8 +1,13 @@
 #!/usr/bin/env python
+"""
+A short yet complicated *ChRIS* plugin example which uses
+`chris_plugin.PathMapper`, `concurrent.futures.ThreadPoolExecutor`,
+and `tqdm.tqdm`.
+"""
 
 from pathlib import Path
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from chris_plugin import chris_plugin, vectorize
+from chris_plugin import chris_plugin, PathMapper
 from dataclasses import dataclass
 from concurrent.futures import ThreadPoolExecutor
 import time
@@ -51,36 +56,22 @@ class Replacer:
     min_cpu_limit='2000m'
 )
 def main(options, inputdir: Path, outputdir: Path):
-    with tqdm(desc='Discovering files') as bar:
-        num_files = 0
 
-        @vectorize(glob=options.inputPathFilter)
-        def count_files(_i, _o):
-            nonlocal num_files
-            num_files += 1
-            bar.update()
-            if options.slow:
-                time.sleep(0.5)
-
-        count_files(inputdir, outputdir)
-
+    mapper = PathMapper(inputdir, outputdir, glob=options.inputPathFilter)
     r = Replacer(find=options.find, replace=options.replace, slow=options.slow)
 
-    with tqdm(desc='Processing', total=num_files) as bar:
+    with tqdm(desc='Processing', total=mapper.count()) as bar:
+
+        def process_and_progress(i, o):
+            r.process_file(i, o)
+            bar.update()
+
         with ThreadPoolExecutor(max_workers=options.threads) as pool:
             print(f'Using {options.threads} threads')
+            for input_file, output_file in mapper:
+                pool.submit(process_and_progress, input_file, output_file)
 
-
-            @vectorize(
-                name_mapper='.replaced',
-                glob=options.inputPathFilter,
-                executor=pool.submit
-            )
-            def operation_replace(input_file: Path, output_file: Path):
-                r.process_file(input_file, output_file)
-                bar.update()
-
-            operation_replace(inputdir, outputdir)
+        print('done')
 
 
 if __name__ == '__main__':

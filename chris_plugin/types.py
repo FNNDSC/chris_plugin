@@ -5,7 +5,7 @@ from typing import Literal, TypedDict, Optional, Any
 ChrisPluginType = Literal['fs', 'ds', 'ts']
 ParameterType = Literal['str', 'float', 'int', 'bool', 'path', 'unextpath']
 """
-https://github.com/FNNDSC/ChRIS_store/blob/8f4fc98b3d87dc9aa3f7fbb314684021680a5945/store_backend/plugins/models.py#L12-L18
+Valid, serialized ChRIS plugin parameter types.
 """
 
 
