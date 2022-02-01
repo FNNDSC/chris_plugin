@@ -7,5 +7,6 @@ docker build -t localhost/fnndsc/pl-replace .
 mkdir examples/out
 docker run --rm -t --userns=host -u $(id -u):$(id -g) \
     -v $PWD/examples/in:/in:ro -v $PWD/examples/out:/out:rw \
-    localhost/fnndsc/pl-replace replace --slow -f MICROSOFT /in /out
+    localhost/fnndsc/pl-replace replace \
+    --slow -f MICROSOFT -i '**/*.txt' /in /out
 

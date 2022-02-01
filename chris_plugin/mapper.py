@@ -71,6 +71,13 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
             pool.submit(sp.run, ['external_command', str(input_file), str(output_path)])
     ```
 
+    The program works similarly to the usage of GNU
+    [parallel](https://www.gnu.org/software/parallel/).
+
+    Hint: `len(os.sched_getaffinity(0))` gets the number of CPUs available
+    to a containerized process (which can be limited by, for instance,
+    `docker run --cpuset-cpus 0-3`)
+
     Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):
 
     ```python

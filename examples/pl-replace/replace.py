@@ -16,9 +16,11 @@ import logging
 from tqdm import tqdm
 from tqdm.contrib.logging import logging_redirect_tqdm
 
+# configure logging output to show time and thread name
 logging.basicConfig(format='[%(asctime)s]%(threadName)s:%(message)s', level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+# add command-line arguments
 parser = ArgumentParser(description='multi-threaded find-and-replace tool',
                         formatter_class=ArgumentDefaultsHelpFormatter)
 parser.add_argument('-i', '--inputPathFilter',
@@ -38,6 +40,14 @@ class Replacer:
     slow: bool
 
     def process_file(self, input_file: Path, output_file: Path):
+        """
+        Iterate over ``input_file`` line-by-line, performing a find-and-replace
+        operation, and write the output to ``output_file``.
+
+        If ``self.slow`` is ``True``, sleep for a random amount of time.
+
+        The program's status is printed before processing and upon completion.
+        """
         with logging_redirect_tqdm():
             logger.debug('Started "%s"', input_file)
             with input_file.open('r') as i:
@@ -60,12 +70,15 @@ def main(options, inputdir: Path, outputdir: Path):
     mapper = PathMapper(inputdir, outputdir, glob=options.inputPathFilter)
     r = Replacer(find=options.find, replace=options.replace, slow=options.slow)
 
+    # create a progress bar with the total being the number of input files to process
     with tqdm(desc='Processing', total=mapper.count()) as bar:
 
+        # a wrapper function which calls the processing function and updates the process bar
         def process_and_progress(i, o):
             r.process_file(i, o)
             bar.update()
 
+        # create a thread pool with the specified number of workers
         with ThreadPoolExecutor(max_workers=options.threads) as pool:
             print(f'Using {options.threads} threads')
             for input_file, output_file in mapper:
