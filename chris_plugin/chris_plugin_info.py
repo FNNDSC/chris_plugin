@@ -1,5 +1,6 @@
 import argparse
 import importlib
+import shutil
 import sys
 from importlib.metadata import Distribution, distribution, packages_distributions
 from typing import Iterable, Optional
@@ -127,6 +128,7 @@ def main():
         importlib.import_module(module_name)
     details = get_registered()
     setup = dist.metadata
+    command = entrypoint_of(dist)
     info = {
         'type': details.type,
         'parameters': serialize(details.parser),
@@ -138,9 +140,13 @@ def main():
         'documentation': setup['Home-page'],
         'license': setup['License'],
         'version': setup['Version'],
-        'selfpath': '',
-        'selfexec': '',
-        'execshell': entrypoint_of(dist),
+
+        # ChRIS_ultron_backEnd version 2.8.1 requires these three to be defined
+        # https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/fd38ae519dd1baf59c27677eb5a8ba774dc5f198/chris_backend/plugins/models.py#L174-L176
+        'selfpath': shutil.which(command),
+        'selfexec': command,
+        'execshell': sys.executable,
+
         'min_number_of_workers': details.min_number_of_workers,
         'max_number_of_workers': details.max_number_of_workers,
         'min_memory_limit': details.min_memory_limit,
