@@ -181,10 +181,8 @@ def chris_plugin(
 
         # currently required by ChRIS
         # https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/1cb155fa32571a5414cc9cd1cd4d4814ba5f1596/chris_backend/plugininstances/services/manager.py#L320
-        parser.add_argument('--saveinputmeta', action='store_true',
-                            help='Deprecated flag required for ChRIS compatibility')
-        parser.add_argument('--saveoutputmeta', action='store_true',
-                            help='Deprecated flag required for ChRIS compatibility')
+        parser.add_argument('--saveinputmeta', action='store_true', help=argparse.SUPPRESS)
+        parser.add_argument('--saveoutputmeta', action='store_true', help=argparse.SUPPRESS)
 
         verified_type = _resolve_type(plugin_type, main)
         if verified_type != 'fs':
