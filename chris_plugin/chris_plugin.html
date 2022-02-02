@@ -37,7 +37,7 @@
     </ul>
 
 
-                    <footer>Version v0.0.2.dev1</footer>
+                    <footer>Version v0.0.3</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -234,6 +234,13 @@
         <span class="k">nonlocal</span> <span class="n">parser</span>
         <span class="k">if</span> <span class="n">parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+
+        <span class="c1"># currently required by ChRIS</span>
+        <span class="c1"># https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/1cb155fa32571a5414cc9cd1cd4d4814ba5f1596/chris_backend/plugininstances/services/manager.py#L320</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--saveinputmeta&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Deprecated flag required for ChRIS compatibility&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--saveoutputmeta&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Deprecated flag required for ChRIS compatibility&#39;</span><span class="p">)</span>
 
         <span class="n">verified_type</span> <span class="o">=</span> <span class="n">_resolve_type</span><span class="p">(</span><span class="n">plugin_type</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verified_type</span> <span class="o">!=</span> <span class="s1">&#39;fs&#39;</span><span class="p">:</span>
@@ -477,6 +484,13 @@
         <span class="k">nonlocal</span> <span class="n">parser</span>
         <span class="k">if</span> <span class="n">parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
+
+        <span class="c1"># currently required by ChRIS</span>
+        <span class="c1"># https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/1cb155fa32571a5414cc9cd1cd4d4814ba5f1596/chris_backend/plugininstances/services/manager.py#L320</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--saveinputmeta&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Deprecated flag required for ChRIS compatibility&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--saveoutputmeta&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Deprecated flag required for ChRIS compatibility&#39;</span><span class="p">)</span>
 
         <span class="n">verified_type</span> <span class="o">=</span> <span class="n">_resolve_type</span><span class="p">(</span><span class="n">plugin_type</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verified_type</span> <span class="o">!=</span> <span class="s1">&#39;fs&#39;</span><span class="p">:</span>

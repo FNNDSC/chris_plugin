@@ -85,7 +85,7 @@
     </ul>
 
 
-                    <footer>Version v0.0.2.dev1</footer>
+                    <footer>Version v0.0.3</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -376,6 +376,13 @@ such as <code><a href="#PathMapper">chris_plugin.PathMapper</a></code>.</p>
         <span class="k">if</span> <span class="n">parser</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
 
+        <span class="c1"># currently required by ChRIS</span>
+        <span class="c1"># https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/1cb155fa32571a5414cc9cd1cd4d4814ba5f1596/chris_backend/plugininstances/services/manager.py#L320</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--saveinputmeta&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Deprecated flag required for ChRIS compatibility&#39;</span><span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;--saveoutputmeta&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
+                            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Deprecated flag required for ChRIS compatibility&#39;</span><span class="p">)</span>
+
         <span class="n">verified_type</span> <span class="o">=</span> <span class="n">_resolve_type</span><span class="p">(</span><span class="n">plugin_type</span><span class="p">,</span> <span class="n">main</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">verified_type</span> <span class="o">!=</span> <span class="s1">&#39;fs&#39;</span><span class="p">:</span>
             <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;inputdir&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;directory containing input files&#39;</span><span class="p">)</span>
@@ -616,6 +623,13 @@ maximum number of GPUs the plugin may use</li>
 <span class="sd">            pool.submit(sp.run, [&#39;external_command&#39;, str(input_file), str(output_path)])</span>
 <span class="sd">    ```</span>
 
+<span class="sd">    The program works similarly to the usage of GNU</span>
+<span class="sd">    [parallel](https://www.gnu.org/software/parallel/).</span>
+
+<span class="sd">    Hint: `len(os.sched_getaffinity(0))` gets the number of CPUs available</span>
+<span class="sd">    to a containerized process (which can be limited by, for instance,</span>
+<span class="sd">    `docker run --cpuset-cpus 0-3`)</span>
+
 <span class="sd">    Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):</span>
 
 <span class="sd">    ```python</span>
@@ -747,6 +761,13 @@ to parallelize subprocesses:</p>
     <span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_path</span> <span class="ow">in</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
         <span class="n">pool</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;external_command&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_file</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)])</span>
 </code></pre></div>
+
+<p>The program works similarly to the usage of GNU
+<a href="https://www.gnu.org/software/parallel/">parallel</a>.</p>
+
+<p>Hint: <code>len(os.sched_getaffinity(0))</code> gets the number of CPUs available
+to a containerized process (which can be limited by, for instance,
+<code>docker run --cpuset-cpus 0-3</code>)</p>
 
 <p>Add a progress bar with <a href="https://github.com/tqdm/tqdm">tqdm</a>:</p>
 
