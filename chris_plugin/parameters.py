@@ -27,6 +27,8 @@ def should_include(a: Action):
         return False
     if len(a.option_strings) == 0:
         return False
+    if '--saveinputmeta' in a.option_strings or '--saveoutputmeta' in a.option_strings:
+        return False
     return True
 
 
