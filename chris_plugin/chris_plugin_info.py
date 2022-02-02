@@ -40,6 +40,23 @@ def get_all_distribution_names() -> Iterable[str]:
     )
 
 
+def underscore(s: str) -> str:
+    """
+    Python packaging is very inconsistent. Even though this package's
+    name is "chris_plugin", its _distribution's_ name might appear as
+
+    "chris-plugin" in some situations but not all.
+    e.g. when the plugin is installed via:
+
+        `pip install -e `                           => d.requires = ['chris_plugin']
+        `pip install --use-feature=in-tree-build .` => d.requires = ['chris_plugin']
+
+    :param s: string
+    :return: given string with '-' replaced by '_'
+    """
+    return s.replace('-', '_')
+
+
 def get_dependents() -> Iterable[Distribution]:
     return filter(is_dependent, get_all_distributions())
 
@@ -47,13 +64,7 @@ def get_dependents() -> Iterable[Distribution]:
 def is_dependent(d: Distribution) -> bool:
     if d.requires is None:
         return False
-    # Python packaging is very inconsistent. Even though this package's
-    # name is "chris_plugin", its _distribution's_ name might appear as
-    # "chris-plugin" in some situations but not all.
-    # e.g. when the plugin is installed via:
-    # `pip install -e `                           => d.requires = ['chris_plugin']
-    # `pip install --use-feature=in-tree-build .` => d.requires = ['chris_plugin']
-    return 'chris_plugin' in d.requires or 'chris-plugin' in d.requires
+    return 'chris_plugin' in map(underscore, d.requires)
 
 
 def guess_plugin_distribution() -> Distribution:
@@ -69,7 +80,7 @@ def guess_plugin_distribution() -> Distribution:
         print(
             'Found multiple ChRIS plugin distributions, '
             'please specify one: ' +
-            str([d.name for d in dependents]),
+            str([underscore(d.name) for d in dependents]),
             file=sys.stderr
         )
         sys.exit(1)
@@ -82,8 +93,14 @@ def get_distribution_of(module_name: str) -> Distribution:
     if dot != -1:
         module_name = module_name[:dot + 1]
     # idk why it's a list, i don't want to deal with it
-    dist_name = packages_distributions().get(module_name)[0]
-    return distribution(dist_name)
+    dist_names = packages_distributions().get(module_name)
+    if not dist_names:
+        print(f'No distribution found for module: {module_name}', file=sys.stderr)
+        if '-' in module_name:
+            fixed_name = module_name.replace('-', '_')
+            print(f'Hint: try "{fixed_name}"', file=sys.stderr)
+        sys.exit(1)
+    return distribution(dist_names[0])
 
 
 def entrypoint_modules(_d: Distribution) -> list[str]:
