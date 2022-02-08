@@ -69,7 +69,7 @@ def strip_version(r: str) -> str:
     :param r: required package name and required version matcher
     :return: just the package name
     """
-    for symbol in ['~', '<', '>', '=']:
+    for symbol in [' ', '~', '<', '>', '=']:
         i = r.find(symbol)
         if i != -1:
             return r[:i].rstrip()
