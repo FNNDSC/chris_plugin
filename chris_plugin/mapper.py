@@ -64,7 +64,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
 
     ```python
     import subprocess as sp
-    from concurrent.futures import ThreatPoolExecutor
+    from concurrent.futures import ThreadPoolExecutor
 
     with ThreadPoolExecutor(max_workers=4) as pool:
         for input_file, output_path in PathMapper(input_dir, output_dir):
