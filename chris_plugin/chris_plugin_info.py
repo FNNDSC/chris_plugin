@@ -3,13 +3,19 @@ import importlib
 import shutil
 import sys
 from pathlib import Path
-from importlib.metadata import Distribution, distribution, packages_distributions
 from typing import Iterable, Optional, Tuple, List
 import json
-
 from chris_plugin._registration import get_registered
 from chris_plugin.parameters import serialize
 import chris_plugin.links as links
+
+from importlib.metadata import Distribution, distribution
+
+try:
+    # new in Python 3.10
+    from importlib.metadata import packages_distributions
+except ImportError:
+    from importlib_metadata import packages_distributions
 
 import logging
 logging.basicConfig()

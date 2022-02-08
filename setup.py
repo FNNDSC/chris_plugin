@@ -8,7 +8,7 @@ with open(path.join(path.dirname(path.abspath(__file__)), 'README.md')) as f:
 
 setup(
     name='chris_plugin',
-    version='0.0.8',
+    version='0.0.9',
     packages=['chris_plugin'],
     url='https://github.com/FNNDSC/chris_plugin',
     license='MIT',
@@ -18,6 +18,9 @@ setup(
     long_description=readme,
     long_description_content_type='text/markdown',
     python_requires='>= 3.8',
+    install_requires=[
+        'importlib-metadata; python_version<"3.10"'
+    ],
     entry_points={
         'console_scripts': [
             'chris_plugin_info = chris_plugin.chris_plugin_info:main'
