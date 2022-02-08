@@ -85,7 +85,7 @@
     </ul>
 
 
-                    <footer>Version v0.0.5</footer>
+                    <footer>Version v0.0.6</footer>
 
                     <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev">
                         built with <span class="visually-hidden">pdoc</span><img
@@ -416,7 +416,7 @@ such as <code><a href="#PathMapper">chris_plugin.PathMapper</a></code>.</p>
             <span class="n">_mkdir</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">verified_type</span> <span class="o">==</span> <span class="s1">&#39;fs&#39;</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">outputdir</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">main</span><span class="p">(</span><span class="n">options</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">inputdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;inputdir is None&#39;</span><span class="p">)</span>
@@ -614,7 +614,7 @@ maximum number of GPUs the plugin may use</li>
 
 <span class="sd">    ```python</span>
 <span class="sd">    import subprocess as sp</span>
-<span class="sd">    from concurrent.futures import ThreatPoolExecutor</span>
+<span class="sd">    from concurrent.futures import ThreadPoolExecutor</span>
 
 <span class="sd">    with ThreadPoolExecutor(max_workers=4) as pool:</span>
 <span class="sd">        for input_file, output_path in PathMapper(input_dir, output_dir):</span>
@@ -753,7 +753,7 @@ file names to end with <code>.seg.nii</code>:</p>
 to parallelize subprocesses:</p>
 
 <div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">subprocess</span> <span class="k">as</span> <span class="nn">sp</span>
-<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreatPoolExecutor</span>
+<span class="kn">from</span> <span class="nn">concurrent.futures</span> <span class="kn">import</span> <span class="n">ThreadPoolExecutor</span>
 
 <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
     <span class="k">for</span> <span class="n">input_file</span><span class="p">,</span> <span class="n">output_path</span> <span class="ow">in</span> <span class="n">PathMapper</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">):</span>
