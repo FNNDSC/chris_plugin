@@ -6,11 +6,11 @@ from argparse import ArgumentParser, Action
 from chris_plugin.constants import Placeholders
 from chris_plugin.types import ParameterType, ParameterSpec, Special
 from chris_plugin._atypes import StoreAction, StoreTrueAction, StoreFalseAction
-from typing import Optional, Any, Sequence
+from typing import Optional, Any, Sequence, List, Tuple, Union
 
 
 # noinspection PyProtectedMember
-def serialize(_p: ArgumentParser) -> list[ParameterSpec]:
+def serialize(_p: ArgumentParser) -> List[ParameterSpec]:
     """
     Serialize the parser to a list of objects
     conformant to the ChRIS plugin parameter spec.
@@ -55,7 +55,7 @@ def serialize_store_action(a: StoreAction) -> ParameterSpec:
     )
 
 
-def serialize_bool_action(a: StoreTrueAction | StoreFalseAction) -> ParameterSpec:
+def serialize_bool_action(a: Union[StoreTrueAction, StoreFalseAction]) -> ParameterSpec:
     """
     Serialize a "store_true" or "store_false" action.
     """
@@ -102,7 +102,7 @@ def expand_help(a: Action) -> str:
     return h
 
 
-def flags(option_strings: Sequence[str]) -> tuple[str, str]:
+def flags(option_strings: Sequence[str]) -> Tuple[str, str]:
     """
     :return: the shortest and longest members of the given Sequence
     """

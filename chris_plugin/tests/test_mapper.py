@@ -1,6 +1,7 @@
 import pytest
 from pathlib import Path
 from chris_plugin.mapper import _curry_suffix, PathMapper
+from typing import Tuple, List
 
 
 def test_suffix():
@@ -11,12 +12,12 @@ def test_suffix():
 
 
 @pytest.fixture
-def dirs(tmp_path: Path) -> tuple[Path, Path]:
+def dirs(tmp_path: Path) -> Tuple[Path, Path]:
     return tmp_path / 'incoming', tmp_path / 'outgoing'
 
 
 @pytest.fixture
-def files_to_create(dirs: tuple[Path, Path]) -> list[str]:
+def files_to_create(dirs: Tuple[Path, Path]) -> List[str]:
     input_dir, output_dir = dirs
     files = [
         'a/b/crane.txt',
@@ -31,7 +32,7 @@ def files_to_create(dirs: tuple[Path, Path]) -> list[str]:
     return files
 
 
-def test_basic(dirs: tuple[Path, Path], files_to_create: list[str]):
+def test_basic(dirs: Tuple[Path, Path], files_to_create: List[str]):
     inputdir, outputdir = dirs
     input_files = [inputdir / f for f in files_to_create]
 
@@ -49,7 +50,7 @@ def test_basic(dirs: tuple[Path, Path], files_to_create: list[str]):
     assert set(output_files) == set(outputdir / f for f in files_to_create)
 
 
-def test_no_parent(dirs: tuple[Path, Path], files_to_create: list[str]):
+def test_no_parent(dirs: Tuple[Path, Path], files_to_create: List[str]):
     inputdir, outputdir = dirs
     for i, o in PathMapper(inputdir, outputdir, parents=False):
         if i.name == 'crane.txt':

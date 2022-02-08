@@ -5,7 +5,7 @@ A mechanism for passing the plugin's arguments to the ``chris_plugin_info`` tool
 import argparse
 from chris_plugin.types import ChrisPluginType
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, List
 
 
 @dataclass
@@ -28,7 +28,7 @@ class PluginDetails:
     max_gpu_limit: int
 
 
-_memory: list[PluginDetails] = []
+_memory: List[PluginDetails] = []
 
 
 class PluginSingletonException(Exception):

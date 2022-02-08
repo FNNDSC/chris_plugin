@@ -4,7 +4,7 @@ import shutil
 import sys
 from pathlib import Path
 from importlib.metadata import Distribution, distribution, packages_distributions
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Tuple, List
 import json
 
 from chris_plugin._registration import get_registered
@@ -104,7 +104,7 @@ def get_distribution_of(module_name: str) -> Distribution:
     return distribution(dist_names[0])
 
 
-def entrypoint_modules(_d: Distribution) -> list[str]:
+def entrypoint_modules(_d: Distribution) -> List[str]:
     return [
         ep.value[:ep.value.index(':')]
         for ep in _d.entry_points
@@ -125,7 +125,7 @@ def entrypoint_of(d: Distribution) -> str:
     return eps[0].name
 
 
-def get_or_guess(module_name: Optional[str]) -> tuple[list[str], Distribution]:
+def get_or_guess(module_name: Optional[str]) -> Tuple[List[str], Distribution]:
     if module_name:
         return [module_name], get_distribution_of(module_name)
     dist = guess_plugin_distribution()

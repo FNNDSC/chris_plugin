@@ -1,5 +1,6 @@
 from chris_plugin.types import ParameterType
 import logging
+from typing import Union
 
 
 class Placeholders:
@@ -19,7 +20,7 @@ class Placeholders:
     _logger = logging.getLogger(__name__)
 
     @classmethod
-    def get_for(cls, t: ParameterType) -> int | float | str | bool:
+    def get_for(cls, t: ParameterType) -> Union[int, float, str, bool]:
         cls.__check_not(t, 'path')
         cls.__check_not(t, 'unextpath')
         cls._logger.warning('optional parameter does not specify a default')
