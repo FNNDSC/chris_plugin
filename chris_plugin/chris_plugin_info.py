@@ -58,6 +58,18 @@ def underscore(s: str) -> str:
     return s.replace('-', '_')
 
 
+def strip_version(r: str) -> str:
+    """
+    :param r: required package name and required version matcher
+    :return: just the package name
+    """
+    for symbol in ['~', '<', '>', '=']:
+        i = r.find(symbol)
+        if i != -1:
+            return r[:i].rstrip()
+    return r
+
+
 def get_dependents() -> Iterable[Distribution]:
     return filter(is_dependent, get_all_distributions())
 
@@ -65,7 +77,7 @@ def get_dependents() -> Iterable[Distribution]:
 def is_dependent(d: Distribution) -> bool:
     if d.requires is None:
         return False
-    return 'chris_plugin' in map(underscore, d.requires)
+    return 'chris_plugin' in map(strip_version, map(underscore, d.requires))
 
 
 def guess_plugin_distribution() -> Distribution:
