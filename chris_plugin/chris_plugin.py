@@ -219,7 +219,7 @@ def chris_plugin(
             _mkdir(output_path)
 
             if verified_type == 'fs':
-                return main(options, outputdir)
+                return main(options, output_path)
 
             if inputdir is None:
                 raise ValueError('inputdir is None')
