@@ -1,0 +1,27 @@
+# defines the versions of Python to test and how to build them
+
+services:
+  py-3.8.2:
+    build:
+      context: ..
+      dockerfile: ./version_testing/Dockerfile
+      args:
+        PYTHON_VERSION: 3.8.2
+  py-3.8:
+    build:
+      context: ..
+      dockerfile: ./version_testing/Dockerfile
+      args:
+        PYTHON_VERSION: 3.8
+  py-3.9:
+    build:
+      context: ..
+      dockerfile: ./version_testing/Dockerfile
+      args:
+        PYTHON_VERSION: 3.9
+  py-3.10:
+    build:
+      context: ..
+      dockerfile: ./version_testing/Dockerfile
+      args:
+        PYTHON_VERSION: 3.10.2
