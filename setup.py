@@ -8,9 +8,14 @@ with open(path.join(path.dirname(path.abspath(__file__)), 'README.md')) as f:
 
 setup(
     name='chris_plugin',
-    version='0.0.10',
+    version='0.0.11',
     packages=['chris_plugin'],
     url='https://github.com/FNNDSC/chris_plugin',
+    project_urls={
+        'Documentation': 'https://fnndsc.github.io/chris_plugin/',
+        'Source': 'https://github.com/FNNDSC/chris_plugin',
+        'Tracker': 'https://github.com/FNNDSC/chris_plugin/issues',
+    },
     license='MIT',
     author='Jennings Zhang',
     author_email='dev@babyMRI.org',
