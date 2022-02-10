@@ -19,7 +19,7 @@ jobs:
       - name: Install
         run: |
           pip install wheel
-          pip install --use-feature=in-tree-build .
+          pip install -e .
       - name: Build
         run: python setup.py sdist bdist_wheel
       - name: Upload
