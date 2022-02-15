@@ -68,7 +68,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
 
     with ThreadPoolExecutor(max_workers=4) as pool:
         for input_file, output_path in PathMapper(input_dir, output_dir):
-            pool.submit(sp.run, ['external_command', str(input_file), str(output_path)])
+            pool.submit(sp.run, ['external_command', input_file, output_path])
     ```
 
     The program works similarly to the usage of GNU
