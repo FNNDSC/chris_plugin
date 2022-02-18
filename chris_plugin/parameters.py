@@ -98,7 +98,7 @@ def expand_help(a: Action) -> str:
     """
     h = a.help if a.help else ''
     if a.choices:
-        h += f' [choices: {", ".join(a.choices)}]'
+        h += f' [choices: {", ".join(map(str, a.choices))}]'
     return h
 
 

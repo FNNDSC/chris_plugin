@@ -90,6 +90,40 @@ def test_get_param_type(parser: ArgumentParser):
     assert get_param_type(p) == 'int'
 
 
+def test_serialize_choices(parser: ArgumentParser):
+    p = parser.add_argument('-a', '--apple', choices=('red', 'green'),
+                            help='Crispy fruit')
+    expected = ParameterSpec(
+        name='apple',
+        type='str',
+        optional=True,
+        flag='--apple',
+        short_flag='-a',
+        action='store',
+        help='Crispy fruit [choices: red, green]',
+        default=Placeholders.STR,
+        ui_exposed=True
+    )
+    assert serialize_store_action(p) == expected
+
+
+def test_serialize_choices_num(parser: ArgumentParser):
+    p = parser.add_argument('-n', '--num', choices=range(1, 9, 3),
+                            default=4, help='Pick a lucky one')
+    expected = ParameterSpec(
+        name='num',
+        type='int',
+        optional=True,
+        flag='--num',
+        short_flag='-n',
+        action='store',
+        help='Pick a lucky one [choices: 1, 4, 7]',
+        default=4,
+        ui_exposed=True
+    )
+    assert serialize_store_action(p) == expected
+
+
 def test_special_serializer(parser: ArgumentParser):
     pass  # TODO
 
