@@ -3,7 +3,7 @@ import importlib
 import shutil
 import sys
 from pathlib import Path
-from typing import Iterable, Optional, Tuple, List
+from typing import Iterable, Optional, Tuple, List, Dict
 import json
 from chris_plugin._registration import get_registered
 from chris_plugin.parameters import serialize
@@ -22,8 +22,9 @@ logging.basicConfig()
 
 
 parser = argparse.ArgumentParser(description='Get ChRIS plugin description')
-parser.add_argument('module_name', nargs='?',
-                    help='module name of Python ChRIS plugin. '
+parser.add_argument('distribution', nargs='?',
+                    help='Distribution name of Python ChRIS plugin, i.e. the '
+                         'name given to your project in setup.py. '
                          'If unspecified, tries to guess the module name by '
                          'querying for which installed pip package depends on '
                          f'"{__package__}"')
@@ -80,7 +81,7 @@ def get_dependents() -> Iterable[Distribution]:
     return filter(is_dependent, get_all_distributions())
 
 
-def dedupe(deps: Iterable[Distribution]) -> dict[str, Distribution]:
+def dedupe(deps: Iterable[Distribution]) -> Dict[str, Distribution]:
     return {d.name: d for d in deps}
 
 
@@ -111,19 +112,12 @@ def guess_plugin_distribution() -> Distribution:
     return single_dependent
 
 
-def get_distribution_of(module_name: str) -> Distribution:
-    dot = module_name.find('.')
-    if dot != -1:
-        module_name = module_name[:dot + 1]
-    # idk why it's a list, i don't want to deal with it
-    dist_names = packages_distributions().get(module_name)
-    if not dist_names:
-        print(f'No distribution found for module: {module_name}', file=sys.stderr)
-        if '-' in module_name:
-            fixed_name = module_name.replace('-', '_')
-            print(f'Hint: try "{fixed_name}"', file=sys.stderr)
-        sys.exit(1)
-    return distribution(dist_names[0])
+def get_distribution(name: str) -> Distribution:
+    dependents = dedupe(get_dependents())
+    if name not in dependents:
+        print(f'Could not find dependent Python distribution by name: {name}.'
+              f'Available options: {list(dependents.keys())}', file=sys.stderr)
+    return dependents[name]
 
 
 def entrypoint_modules(_d: Distribution) -> List[str]:
@@ -147,10 +141,8 @@ def entrypoint_of(d: Distribution) -> str:
     return eps[0].name
 
 
-def get_or_guess(module_name: Optional[str]) -> Tuple[List[str], Distribution]:
-    if module_name:
-        return [module_name], get_distribution_of(module_name)
-    dist = guess_plugin_distribution()
+def get_or_guess(name: Optional[str]) -> Tuple[List[str], Distribution]:
+    dist = get_distribution(name) if name else guess_plugin_distribution()
     mods = entrypoint_modules(dist)
     if not mods:
         print(f'No entrypoint modules found for {dist.name}. '
@@ -163,7 +155,7 @@ def get_or_guess(module_name: Optional[str]) -> Tuple[List[str], Distribution]:
 
 def main():
     args = parser.parse_args()
-    mods, dist = get_or_guess(args.module_name)
+    mods, dist = get_or_guess(args.distribution)
     for module_name in mods:
         importlib.import_module(module_name)
     details = get_registered()
