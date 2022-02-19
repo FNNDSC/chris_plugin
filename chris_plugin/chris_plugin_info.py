@@ -80,6 +80,10 @@ def get_dependents() -> Iterable[Distribution]:
     return filter(is_dependent, get_all_distributions())
 
 
+def dedupe(deps: Iterable[Distribution]) -> dict[str, Distribution]:
+    return {d.name: d for d in deps}
+
+
 def is_dependent(d: Distribution) -> bool:
     if d.requires is None:
         return False
@@ -87,7 +91,7 @@ def is_dependent(d: Distribution) -> bool:
 
 
 def guess_plugin_distribution() -> Distribution:
-    dependents = set(get_dependents())
+    dependents = dedupe(get_dependents())
     if len(dependents) < 1:
         print(
             'Could not find ChRIS plugin. Make sure you have "pip installed" '
@@ -99,12 +103,12 @@ def guess_plugin_distribution() -> Distribution:
         print(
             'Found multiple ChRIS plugin distributions, '
             'please specify one: ' +
-            str([underscore(d.name) for d in dependents]),
+            str(list(dependents.keys())),
             file=sys.stderr
         )
         sys.exit(1)
-    dist, = dependents
-    return dist
+    single_dependent, = dependents.values()
+    return single_dependent
 
 
 def get_distribution_of(module_name: str) -> Distribution:
