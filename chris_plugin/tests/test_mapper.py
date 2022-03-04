@@ -1,7 +1,11 @@
-import pytest
+import sys
 from pathlib import Path
-from chris_plugin.mapper import _curry_suffix, PathMapper
 from typing import Tuple, List
+
+import pytest
+from pytest_mock import MockerFixture
+
+from chris_plugin.mapper import _curry_suffix, PathMapper
 
 
 def test_suffix():
@@ -55,3 +59,15 @@ def test_no_parent(dirs: Tuple[Path, Path], files_to_create: List[str]):
     for i, o in PathMapper(inputdir, outputdir, parents=False):
         if i.name == 'crane.txt':
             assert not o.parent.exists()
+
+
+def test_empty_action(mocker: MockerFixture, tmp_path: Path):
+    input_dir = tmp_path
+    output_dir = tmp_path / 'output'
+    mock_print = mocker.patch('builtins.print')
+    with pytest.raises(SystemExit):
+        for i, o in PathMapper(input_dir, output_dir, glob='**/*.something'):
+            pytest.fail('Test is messed up, input should be empty')
+    mock_print.assert_called_once_with(
+        f'warning: no input found for "{input_dir / "**/*.something"}"', file=sys.stderr
+    )

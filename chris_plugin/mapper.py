@@ -1,5 +1,6 @@
+import sys
 from pathlib import Path
-from typing import Callable, ClassVar, Iterable, Iterator, Tuple
+from typing import Callable, ClassVar, Iterable, Iterator, Tuple, Optional
 from dataclasses import dataclass, InitVar
 
 
@@ -14,6 +15,11 @@ def _curry_suffix(suffix: str) -> NameMapper:
     def append_suffix(input_file: Path, output_dir: Path) -> Path:
         return (output_dir / input_file).with_suffix(suffix)
     return append_suffix
+
+
+def _exit(mapper: 'PathMapper') -> None:
+    print(f'warning: no input found for "{mapper.input_dir / mapper.glob}"', file=sys.stderr)
+    sys.exit(1)
 
 
 @dataclass(frozen=True)
@@ -121,6 +127,11 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
     """
     If `True`, create parent directories of output paths as needed.
     """
+    empty_action: Optional[Callable[['PathMapper'], None]] = _exit
+    """
+    Function to call if input is empty. This function is given self.
+    The default is to print a warning, then call `sys.exit(1)`. 
+    """
 
     def __post_init__(self, suffix: str, name_mapper: Callable[[Path], Path]):
         if suffix is not None:
@@ -155,9 +166,13 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         return c
 
     def __iter__(self) -> Iterator[Tuple[Path, Path]]:
+        is_empty = True
         for input_file in self.iter_input():
             rel = input_file.relative_to(self.input_dir)
             output_file = self._name_mapper(rel, self.output_dir)
             if self.parents:
                 output_file.parent.mkdir(parents=True, exist_ok=True)
             yield input_file, output_file
+            is_empty = False
+        if is_empty and self.empty_action is not None:
+            self.empty_action(self)

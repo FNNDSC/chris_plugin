@@ -8,7 +8,7 @@ with open(path.join(path.dirname(path.abspath(__file__)), 'README.md')) as f:
 
 setup(
     name='chris_plugin',
-    version='0.0.12',
+    version='0.0.13',
     packages=['chris_plugin'],
     url='https://github.com/FNNDSC/chris_plugin',
     project_urls={
