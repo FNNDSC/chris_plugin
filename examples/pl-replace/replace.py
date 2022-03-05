@@ -79,12 +79,18 @@ def main(options, inputdir: Path, outputdir: Path):
             bar.update()
 
         # create a thread pool with the specified number of workers
+        results = []
         with ThreadPoolExecutor(max_workers=options.threads) as pool:
             print(f'Using {options.threads} threads')
             for input_file, output_file in mapper:
-                pool.submit(process_and_progress, input_file, output_file)
+                future = pool.submit(process_and_progress, input_file, output_file)
+                results.append(future)
 
-        print('done')
+    for future in results:
+        e = future.exception()
+        if e is not None:
+            raise e
+    print('done')
 
 
 if __name__ == '__main__':
