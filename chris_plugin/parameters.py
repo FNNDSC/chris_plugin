@@ -5,7 +5,7 @@ Serialize parameters defined by a :class:`argparse.ArgumentParser`.
 from argparse import ArgumentParser, Action
 from chris_plugin.constants import Placeholders
 from chris_plugin.types import ParameterType, ParameterSpec, Special
-from chris_plugin._atypes import StoreAction, StoreTrueAction, StoreFalseAction
+from chris_plugin._atypes import StoreAction, StoreTrueAction, StoreFalseAction, VersionAction
 from typing import Optional, Any, Sequence, List, Tuple, Union
 
 
@@ -24,6 +24,8 @@ def should_include(a: Action):
     or a positional argument (inputdir, outputdir).
     """
     if a.dest == 'help':
+        return False
+    if type(a) is VersionAction:
         return False
     if len(a.option_strings) == 0:
         return False

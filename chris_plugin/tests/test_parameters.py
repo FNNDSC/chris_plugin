@@ -2,7 +2,7 @@ import pytest
 from argparse import ArgumentParser
 from chris_plugin.types import Special, ParameterSpec
 from chris_plugin.constants import Placeholders
-from chris_plugin.parameters import serialize_store_action, get_param_type
+from chris_plugin.parameters import serialize_store_action, get_param_type, serialize, should_include
 
 
 @pytest.fixture
@@ -122,6 +122,13 @@ def test_serialize_choices_num(parser: ArgumentParser):
         ui_exposed=True
     )
     assert serialize_store_action(p) == expected
+
+
+def test_version_option_is_allowed(parser: ArgumentParser):
+    p = parser.add_argument('-V', '--version', action='version',
+                            version='$(prog)s 1.2.3')
+    assert not should_include(p)
+    assert serialize(parser) == []
 
 
 def test_special_serializer(parser: ArgumentParser):
