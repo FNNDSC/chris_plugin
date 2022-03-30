@@ -17,11 +17,6 @@ def _curry_suffix(suffix: str) -> NameMapper:
     return append_suffix
 
 
-def _exit(mapper: 'PathMapper') -> None:
-    print(f'warning: no input found for "{mapper.input_dir / mapper.glob}"', file=sys.stderr)
-    sys.exit(1)
-
-
 @dataclass(frozen=True)
 class PathMapper(Iterable[Tuple[Path, Path]]):
     """
@@ -127,10 +122,10 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
     """
     If `True`, create parent directories of output paths as needed.
     """
-    empty_action: Optional[Callable[['PathMapper'], None]] = _exit
+
+    fail_if_empty: bool = True
     """
-    Function to call if input is empty. This function is given self.
-    The default is to print a warning, then call `sys.exit(1)`. 
+    Exit the program if no input files are found.
     """
 
     def __post_init__(self, suffix: str, name_mapper: Callable[[Path], Path]):
@@ -174,5 +169,6 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
                 output_file.parent.mkdir(parents=True, exist_ok=True)
             yield input_file, output_file
             is_empty = False
-        if is_empty and self.empty_action is not None:
-            self.empty_action(self)
+        if is_empty and self.fail_if_empty:
+            print(f'warning: no input found for "{self.input_dir / self.glob}"', file=sys.stderr)
+            sys.exit(1)
