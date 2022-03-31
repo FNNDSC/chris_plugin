@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
-from typing import Callable, ClassVar, Iterable, Iterator, Tuple, Optional
-from dataclasses import dataclass, InitVar
+from typing import Callable, Iterable, Iterator, Tuple
+from dataclasses import dataclass, InitVar, field
 
 
 NameMapper = Callable[[Path, Path], Path]
@@ -108,7 +108,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
     
     Only one of [`suffix`, `name_mapper`] can be given.
     """
-    _name_mapper: ClassVar[NameMapper] = None
+    _name_mapper: NameMapper = field(init=False)
 
     glob: str = '**/*'
     """
