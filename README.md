@@ -3,12 +3,13 @@
 [![.github/workflows/test.yml](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml/badge.svg)](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml)
 [![PyPI](https://img.shields.io/pypi/v/chris_plugin)](https://pypi.org/project/chris_plugin/)
 [![License - MIT](https://img.shields.io/pypi/l/chris_plugin)](https://github.com/FNNDSC/chris_plugin/blob/master/LICENSE)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 _ChRIS_ is a platform for scientific and medical applications.
 https://chrisproject.org/
 
-This repository provides `chris_plugin`, a Python package for writing
-programs in Python which can run on _ChRIS_.
+This repository provides `chris_plugin`, a Python utility library
+for writing programs in Python which can run on _ChRIS_.
 
 ## Getting Started
 
@@ -31,3 +32,7 @@ chris_plugin_info [module_name]
 
 If `module_name` is not given, then `chris_plugin_info`
 will automatically discover your *ChRIS* plugin.
+
+## Development Goals
+
+`chris_plugin` strives to have zero-dependencies and compatible with Python 3.8 through 3.10.

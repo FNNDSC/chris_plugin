@@ -5,7 +5,12 @@ Serialize parameters defined by a :class:`argparse.ArgumentParser`.
 from argparse import ArgumentParser, Action
 from chris_plugin.constants import Placeholders
 from chris_plugin.types import ParameterType, ParameterSpec, Special
-from chris_plugin._atypes import StoreAction, StoreTrueAction, StoreFalseAction, VersionAction
+from chris_plugin._atypes import (
+    StoreAction,
+    StoreTrueAction,
+    StoreFalseAction,
+    VersionAction,
+)
 from typing import Optional, Any, Sequence, List, Tuple, Union
 
 
@@ -23,13 +28,13 @@ def should_include(a: Action):
     Check if the given action represents the help command
     or a positional argument (inputdir, outputdir).
     """
-    if a.dest == 'help':
+    if a.dest == "help":
         return False
     if type(a) is VersionAction:
         return False
     if len(a.option_strings) == 0:
         return False
-    if '--saveinputmeta' in a.option_strings or '--saveoutputmeta' in a.option_strings:
+    if "--saveinputmeta" in a.option_strings or "--saveoutputmeta" in a.option_strings:
         return False
     return True
 
@@ -42,7 +47,7 @@ def serialize_action(_a: Action) -> ParameterSpec:
         return serialize_store_action(_a)
     if isinstance(_a, StoreTrueAction) or isinstance(_a, StoreFalseAction):
         return serialize_bool_action(_a)
-    raise TypeError(f'Action cannot be used with a ChRIS plugin: {_a}')
+    raise TypeError(f"Action cannot be used with a ChRIS plugin: {_a}")
 
 
 def serialize_store_action(a: StoreAction) -> ParameterSpec:
@@ -52,8 +57,11 @@ def serialize_store_action(a: StoreAction) -> ParameterSpec:
     check_default_type(a)
     p_type = get_param_type(a)
     return serialize_compatible_action(
-        a, type=p_type, action='store', help=expand_help(a),
-        default=pick_default(p_type, a.required, a.default)
+        a,
+        type=p_type,
+        action="store",
+        help=expand_help(a),
+        default=pick_default(p_type, a.required, a.default),
     )
 
 
@@ -62,20 +70,17 @@ def serialize_bool_action(a: Union[StoreTrueAction, StoreFalseAction]) -> Parame
     Serialize a "store_true" or "store_false" action.
     """
     return serialize_compatible_action(
-        a, type='bool',
-        action='store_' + str(a.const).lower(),
+        a,
+        type="bool",
+        action="store_" + str(a.const).lower(),
         help=a.help,
-        default=(not a.const)
+        default=(not a.const),
     )
 
 
 # noinspection PyShadowingBuiltins
 def serialize_compatible_action(
-        a: Action,
-        type: ParameterType,
-        action: str,
-        help: str,
-        default: Optional[Any]
+    a: Action, type: ParameterType, action: str, help: str, default: Optional[Any]
 ) -> ParameterSpec:
     """
     Common functionality across serializable ``Action``.
@@ -90,7 +95,7 @@ def serialize_compatible_action(
         action=action,
         help=help,
         default=default,
-        ui_exposed=True
+        ui_exposed=True,
     )
 
 
@@ -98,7 +103,7 @@ def expand_help(a: Action) -> str:
     """
     Append the choices to the help string, if defined.
     """
-    h = a.help if a.help else ''
+    h = a.help if a.help else ""
     if a.choices:
         h += f' [choices: {", ".join(map(str, a.choices))}]'
     return h
@@ -123,9 +128,9 @@ def pick_default(t: ParameterType, required: bool, default: Optional[Any]) -> An
 
 def get_param_type(a: StoreAction) -> ParameterType:
     if a.type is Special.path:
-        return 'path'
+        return "path"
     if a.type is Special.unextpath:
-        return 'unextpath'
+        return "unextpath"
     if a.type is None:
         if a.default is not None:
             t = type(a.default)
@@ -146,4 +151,4 @@ def check_default_type(a: StoreAction):
     if not a.type:
         return
     if not isinstance(a.default, a.type):
-        raise TypeError(f'default={a.default} violates type={a.type}: {str(a)}')
+        raise TypeError(f"default={a.default} violates type={a.type}: {str(a)}")

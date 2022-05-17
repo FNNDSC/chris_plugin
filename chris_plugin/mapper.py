@@ -22,6 +22,7 @@ def _include_all(_) -> bool:
 def _curry_suffix(suffix: str) -> NameMapper:
     def append_suffix(input_file: Path, output_dir: Path) -> Path:
         return (output_dir / input_file).with_suffix(suffix)
+
     return append_suffix
 
 
@@ -86,7 +87,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
     input path relative to `input_dir`, and `output_dir`.
     """
 
-    glob: str = '**/*'
+    glob: str = "**/*"
     """
     File name pattern matching input files in `input_dir`.
     """
@@ -113,13 +114,16 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
             raise ValueError()
 
     @classmethod
-    def file_mapper(cls,
-                    input_dir: Path, output_dir: Path,
-                    glob: str = '**/*',
-                    name_mapper: NameMapper = _verbatim,
-                    suffix: Optional[str] = None,
-                    fail_if_empty: bool = True,
-                    filter: Callable[[Path], bool] = _include_all) -> 'PathMapper':
+    def file_mapper(
+        cls,
+        input_dir: Path,
+        output_dir: Path,
+        glob: str = "**/*",
+        name_mapper: NameMapper = _verbatim,
+        suffix: Optional[str] = None,
+        fail_if_empty: bool = True,
+        filter: Callable[[Path], bool] = _include_all,
+    ) -> "PathMapper":
         """
         Constructor for `PathMapper` for working with files.
 
@@ -171,16 +175,18 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
             glob=glob,
             name_mapper=name_mapper,
             fail_if_empty=fail_if_empty,
-            filter=lambda p: p.is_file() and filter(p)
+            filter=lambda p: p.is_file() and filter(p),
         )
 
     @classmethod
-    def dir_mapper_shallow(cls,
-                           input_dir: Path, output_dir: Path,
-                           name_mapper: NameMapper = _verbatim,
-                           fail_if_empty: bool = True,
-                           filter: Callable[[Path], bool] = _include_all
-                           ) -> 'PathMapper':
+    def dir_mapper_shallow(
+        cls,
+        input_dir: Path,
+        output_dir: Path,
+        name_mapper: NameMapper = _verbatim,
+        fail_if_empty: bool = True,
+        filter: Callable[[Path], bool] = _include_all,
+    ) -> "PathMapper":
         """
         Constructor for `PathMapper` for working with immediate subdirectories of `input_dir`.
 
@@ -193,21 +199,23 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         See field documentation.
         """
         return cls(
-            glob='*/',  # doesn't seem like trailing slash is helpful here
+            glob="*/",  # doesn't seem like trailing slash is helpful here
             input_dir=input_dir,
             output_dir=output_dir,
             name_mapper=name_mapper,
             fail_if_empty=fail_if_empty,
-            filter=lambda p: p.is_dir() and filter(p)
+            filter=lambda p: p.is_dir() and filter(p),
         )
 
     @classmethod
-    def dir_mapper_deep(cls,
-                        input_dir: Path, output_dir: Path,
-                        name_mapper: NameMapper = _verbatim,
-                        fail_if_empty: bool = True,
-                        filter: Callable[[Path], bool] = _include_all
-                        ) -> 'PathMapper':
+    def dir_mapper_deep(
+        cls,
+        input_dir: Path,
+        output_dir: Path,
+        name_mapper: NameMapper = _verbatim,
+        fail_if_empty: bool = True,
+        filter: Callable[[Path], bool] = _include_all,
+    ) -> "PathMapper":
         """
         Constructor for `PathMapper` for working with subpaths of `input_dir` which are
         directories that do not further contain subdirectories.
@@ -221,12 +229,12 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         See field documentation.
         """
         return cls(
-            glob='**/',
+            glob="**/",
             input_dir=input_dir,
             output_dir=output_dir,
             name_mapper=name_mapper,
             fail_if_empty=fail_if_empty,
-            filter=lambda p: cls._is_deep_dir(p) and filter(p)
+            filter=lambda p: cls._is_deep_dir(p) and filter(p),
         )
 
     @staticmethod
@@ -236,7 +244,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         """
         if not p.is_dir():
             return False
-        return next(p.glob('*/'), None) is None
+        return next(p.glob("*/"), None) is None
 
     def iter_input(self) -> Iterator[Path]:
         """

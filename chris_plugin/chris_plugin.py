@@ -9,21 +9,23 @@ from chris_plugin._registration import register, PluginDetails
 from chris_plugin.types import ChrisPluginType
 
 
-def _resolve_type(plugin_type: Optional[ChrisPluginType], func: Callable) -> ChrisPluginType:
+def _resolve_type(
+    plugin_type: Optional[ChrisPluginType], func: Callable
+) -> ChrisPluginType:
     try:
         is_plugin_main(func)
     except ValueError as e:
         print(e)
         sys.exit(1)
 
-    inspected_type: ChrisPluginType = 'fs' if is_fs(func) else 'ds'  # type: ignore
+    inspected_type: ChrisPluginType = "fs" if is_fs(func) else "ds"  # type: ignore
     if plugin_type is None:
         return inspected_type
-    if plugin_type == 'ts':
+    if plugin_type == "ts":
         return plugin_type
     if plugin_type != inspected_type:
         print(f'Specified plugin_type="{plugin_type}" but detected "{inspected_type}"')
-        print('Please check your main function signature.')
+        print("Please check your main function signature.")
         sys.exit(1)
     return plugin_type
 
@@ -37,25 +39,27 @@ def _mkdir(d: Path):
 
 def _check_is_dir(d: Path):
     if not d.is_dir():
-        print(f'Not a directory: {d}', file=sys.stderr)
+        print(f"Not a directory: {d}", file=sys.stderr)
         sys.exit(1)
 
 
 def chris_plugin(
-        main: MainFunction = None, /, *,
-        parser: Optional[argparse.ArgumentParser] = None,
-        plugin_type: Optional[ChrisPluginType] = None,
-        category: str = '',
-        icon: str = '',
-        title: Optional[str] = None,
-        min_number_of_workers: int = 1,
-        max_number_of_workers: int = 1,
-        min_memory_limit: str = '',
-        max_memory_limit: str = '',
-        min_cpu_limit: str = '',
-        max_cpu_limit: str = '',
-        min_gpu_limit: int = 0,
-        max_gpu_limit: int = 0
+    main: MainFunction = None,
+    /,
+    *,
+    parser: Optional[argparse.ArgumentParser] = None,
+    plugin_type: Optional[ChrisPluginType] = None,
+    category: str = "",
+    icon: str = "",
+    title: Optional[str] = None,
+    min_number_of_workers: int = 1,
+    max_number_of_workers: int = 1,
+    min_memory_limit: str = "",
+    max_memory_limit: str = "",
+    min_cpu_limit: str = "",
+    max_cpu_limit: str = "",
+    min_gpu_limit: int = 0,
+    max_gpu_limit: int = 0,
 ):
     """
     Creates a decorator which identifies a *ChRIS* plugin main function
@@ -174,6 +178,7 @@ def chris_plugin(
     max_gpu_limit: int
         maximum number of GPUs the plugin may use
     """
+
     def wrap(main: MainFunction) -> Callable[[], None]:
         nonlocal parser
         if parser is None:
@@ -181,29 +186,35 @@ def chris_plugin(
 
         # currently required by ChRIS
         # https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/1cb155fa32571a5414cc9cd1cd4d4814ba5f1596/chris_backend/plugininstances/services/manager.py#L320
-        parser.add_argument('--saveinputmeta', action='store_true', help=argparse.SUPPRESS)
-        parser.add_argument('--saveoutputmeta', action='store_true', help=argparse.SUPPRESS)
+        parser.add_argument(
+            "--saveinputmeta", action="store_true", help=argparse.SUPPRESS
+        )
+        parser.add_argument(
+            "--saveoutputmeta", action="store_true", help=argparse.SUPPRESS
+        )
 
         verified_type = _resolve_type(plugin_type, main)
-        if verified_type != 'fs':
-            parser.add_argument('inputdir', help='directory containing input files')
-        parser.add_argument('outputdir', help='directory containing output files')
+        if verified_type != "fs":
+            parser.add_argument("inputdir", help="directory containing input files")
+        parser.add_argument("outputdir", help="directory containing output files")
 
-        register(PluginDetails(
-            parser=parser,
-            type=verified_type,
-            category=category,
-            icon=icon,
-            title=title,
-            min_number_of_workers=min_number_of_workers,
-            max_number_of_workers=max_number_of_workers,
-            min_memory_limit=min_memory_limit,
-            max_memory_limit=max_memory_limit,
-            min_cpu_limit=min_cpu_limit,
-            max_cpu_limit=max_cpu_limit,
-            min_gpu_limit=min_gpu_limit,
-            max_gpu_limit=max_gpu_limit
-        ))
+        register(
+            PluginDetails(
+                parser=parser,
+                type=verified_type,
+                category=category,
+                icon=icon,
+                title=title,
+                min_number_of_workers=min_number_of_workers,
+                max_number_of_workers=max_number_of_workers,
+                min_memory_limit=min_memory_limit,
+                max_memory_limit=max_memory_limit,
+                min_cpu_limit=min_cpu_limit,
+                max_cpu_limit=max_cpu_limit,
+                min_gpu_limit=min_gpu_limit,
+                max_gpu_limit=max_gpu_limit,
+            )
+        )
 
         @functools.wraps(main)
         def wrapper(*args):
@@ -212,17 +223,17 @@ def chris_plugin(
             else:
                 options, inputdir, outputdir = _call_from_cli(parser)
 
-            if verified_type == 'fs' and inputdir is not None:
-                raise ValueError(f'inputdir={inputdir} given to fs-type plugin')
+            if verified_type == "fs" and inputdir is not None:
+                raise ValueError(f"inputdir={inputdir} given to fs-type plugin")
 
             output_path = Path(outputdir)
             _mkdir(output_path)
 
-            if verified_type == 'fs':
+            if verified_type == "fs":
                 return main(options, output_path)
 
             if inputdir is None:
-                raise ValueError('inputdir is None')
+                raise ValueError("inputdir is None")
 
             input_path = Path(inputdir)
             _check_is_dir(input_path)
@@ -239,7 +250,7 @@ def chris_plugin(
     return wrap(main)
 
 
-_MainArgs = namedtuple('_MainArgs', ['options', 'inputdir', 'outputdir'])
+_MainArgs = namedtuple("_MainArgs", ["options", "inputdir", "outputdir"])
 
 
 def _call_from_python(args: tuple) -> _MainArgs:
@@ -247,13 +258,13 @@ def _call_from_python(args: tuple) -> _MainArgs:
         return _MainArgs(options=args[0], inputdir=None, outputdir=args[1])
     if len(args) == 3:
         return _MainArgs(options=args[0], inputdir=args[1], outputdir=args[2])
-    raise ValueError(f'decorated main was given: {args}')
+    raise ValueError(f"decorated main was given: {args}")
 
 
 def _call_from_cli(parser: argparse.ArgumentParser) -> _MainArgs:
     options = parser.parse_args()
     return _MainArgs(
         options=options,
-        inputdir=(options.inputdir if hasattr(options, 'inputdir') else None),
-        outputdir=options.outputdir
+        inputdir=(options.inputdir if hasattr(options, "inputdir") else None),
+        outputdir=options.outputdir,
     )

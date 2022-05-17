@@ -25,17 +25,23 @@ def is_plugin_main(_f: Callable) -> bool:  # -> TypeGuard[MainFunction]:
     s = inspect.signature(_f)
     params = get_function_params(s)
     if len(params) == 0 or not is_type_or_unspecified(Namespace, params[0]):
-        raise ValueError("A ChRIS plugin's main function must accept "
-                         "its options as its first argument")
+        raise ValueError(
+            "A ChRIS plugin's main function must accept "
+            "its options as its first argument"
+        )
     if len(params) < 2:
-        raise ValueError("A ChRIS plugin's main function must accept "
-                         "an argument for its output directory")
+        raise ValueError(
+            "A ChRIS plugin's main function must accept "
+            "an argument for its output directory"
+        )
     if len(params) > 3:
-        raise ValueError("A ChRIS plugin's main function cannot "
-                         'take more than 3 arguments')
+        raise ValueError(
+            "A ChRIS plugin's main function cannot " "take more than 3 arguments"
+        )
     if not all(map(lambda p: is_type_or_unspecified(Path, p), params[1:])):
-        raise ValueError("A ChRIS plugin's data directory arguments "
-                         "must have type pathlib.Path")
+        raise ValueError(
+            "A ChRIS plugin's data directory arguments " "must have type pathlib.Path"
+        )
     if s.return_annotation is not None and s.return_annotation is not Signature.empty:
         raise ValueError("A ChRIS plugin's main function must be void")
     return True

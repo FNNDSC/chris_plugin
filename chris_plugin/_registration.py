@@ -13,6 +13,7 @@ class PluginDetails:
     """
     Metadata about a *ChRIS* plugin which cannot be inferred from ``setup.py``
     """
+
     parser: argparse.ArgumentParser
     type: ChrisPluginType
     category: str
@@ -37,11 +38,11 @@ class PluginSingletonException(Exception):
 
 def register(details: PluginDetails):
     if _memory:
-        raise PluginSingletonException('singleton already registered')
+        raise PluginSingletonException("singleton already registered")
     _memory.append(details)
 
 
 def get_registered() -> PluginDetails:
     if not _memory:
-        raise PluginSingletonException('No decorated @chris_plugin main function')
+        raise PluginSingletonException("No decorated @chris_plugin main function")
     return _memory[0]

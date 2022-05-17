@@ -51,10 +51,6 @@ from chris_plugin.chris_plugin import chris_plugin
 from chris_plugin.mapper import PathMapper
 import chris_plugin.types as types
 
-__docformat__ = 'numpy'
+__docformat__ = "numpy"
 
-__all__ = [
-    'chris_plugin',
-    'PathMapper',
-    'types'
-]
+__all__ = ["chris_plugin", "PathMapper", "types"]
