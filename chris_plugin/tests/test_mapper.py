@@ -1,9 +1,7 @@
-import sys
 from pathlib import Path
-from typing import Tuple, List
+from typing import Tuple, List, Set
 
 import pytest
-from pytest_mock import MockerFixture
 
 from chris_plugin.mapper import _curry_suffix, PathMapper
 
@@ -36,14 +34,14 @@ def files_to_create(dirs: Tuple[Path, Path]) -> List[str]:
     return files
 
 
-def test_basic(dirs: Tuple[Path, Path], files_to_create: List[str]):
+def test_file_mapper(dirs: Tuple[Path, Path], files_to_create: List[str]):
     inputdir, outputdir = dirs
     input_files = [inputdir / f for f in files_to_create]
 
     visited: set[Path] = set()
     output_files: set[Path] = set()
 
-    for i, o in PathMapper(inputdir, outputdir):
+    for i, o in PathMapper.file_mapper(inputdir, outputdir):
         assert i not in visited, f'{i} visited twice'
         assert i in input_files, f'{i} is not a valid input file'
         assert o.parent.exists()
@@ -61,13 +59,44 @@ def test_no_parent(dirs: Tuple[Path, Path], files_to_create: List[str]):
             assert not o.parent.exists()
 
 
-def test_empty_action(mocker: MockerFixture, tmp_path: Path):
+def test_empty_action(caplog, tmp_path: Path):
     input_dir = tmp_path
     output_dir = tmp_path / 'output'
-    mock_print = mocker.patch('builtins.print')
     with pytest.raises(SystemExit):
         for i, o in PathMapper(input_dir, output_dir, glob='**/*.something'):
             pytest.fail('Test is messed up, input should be empty')
-    mock_print.assert_called_once_with(
-        f'warning: no input found for "{input_dir / "**/*.something"}"', file=sys.stderr
-    )
+    assert f'no input found for "{input_dir / "**/*.something"}"' in caplog.text
+
+
+@pytest.fixture
+def dirs_to_create(dirs: Tuple[Path, Path]) -> List[str]:
+    input_dir, output_dir = dirs
+    paths = [
+        'bread/lettuce/',
+        'pancake/',
+        'muffin'
+    ]
+    for path_name in paths:
+        path = input_dir / path_name
+        if path_name.endswith('/'):
+            path.mkdir(parents=True)
+        else:
+            path.touch()
+    return paths
+
+
+def assert_input_names(mapper: PathMapper, expected: Set[str]):
+    actual = map(lambda p: p.name, mapper.iter_input())
+    assert set(actual) == expected
+
+
+def test_dir_mapper_shallow(dirs: Tuple[Path, Path], dirs_to_create: List[str]):
+    input_dir, output_dir = dirs
+    mapper = PathMapper.dir_mapper_shallow(input_dir, output_dir)
+    assert_input_names(mapper, {'bread', 'pancake'})
+
+
+def test_dir_mapper_deep(dirs: Tuple[Path, Path], dirs_to_create: List[str]):
+    input_dir, output_dir = dirs
+    mapper = PathMapper.dir_mapper_deep(input_dir, output_dir)
+    assert_input_names(mapper, {'lettuce', 'pancake'})

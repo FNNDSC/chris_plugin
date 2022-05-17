@@ -67,7 +67,7 @@ class Replacer:
 )
 def main(options, inputdir: Path, outputdir: Path):
 
-    mapper = PathMapper(inputdir, outputdir, glob=options.inputPathFilter)
+    mapper = PathMapper.file_mapper(inputdir, outputdir, glob=options.inputPathFilter)
     r = Replacer(find=options.find, replace=options.replace, slow=options.slow)
 
     # create a progress bar with the total being the number of input files to process
@@ -79,18 +79,16 @@ def main(options, inputdir: Path, outputdir: Path):
             bar.update()
 
         # create a thread pool with the specified number of workers
-        results = []
         with ThreadPoolExecutor(max_workers=options.threads) as pool:
-            print(f'Using {options.threads} threads')
-            for input_file, output_file in mapper:
-                future = pool.submit(process_and_progress, input_file, output_file)
-                results.append(future)
+            logger.debug(f'Using %d threads', options.threads)
+            # call the function on every input/output path pair
+            results = pool.map(lambda t: process_and_progress(*t), mapper)
 
-    for future in results:
-        e = future.exception()
-        if e is not None:
-            raise e
-    print('done')
+    # if any job failed, an exception will be raised when it's iterated over
+    for _ in results:
+        pass
+
+    logger.debug('done')
 
 
 if __name__ == '__main__':
