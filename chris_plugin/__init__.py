@@ -1,7 +1,9 @@
 """
 # Python *ChRIS* Plugin Support
 
-Welcome to the documentation for `@chris_plugin`.
+[`chris_plugin`](https://pypi.org/project/chris-plugin/)
+is a library for writing
+[*ChRIS*](https://chrisproject.org/) plugins.
 
 ## Getting Started
 
@@ -31,7 +33,7 @@ def main(options, inputdir, outpudri):
 
 ## Helper Functions
 
-This library also provides helper functions for common use cases,
+This library also provides helper functions for common patterns,
 such as `chris_plugin.PathMapper`.
 
 ```python
@@ -40,7 +42,7 @@ from chris_plugin import chris_plugin, PathMapper
 
 @chris_plugin
 def main(_, input_dir, output_dir):
-    for input_file, output_file in PathMapper(input_dir, output_dir):
+    for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):
         print(f'Copying {input_file} to {output_file}')
         shutil.copy(input_file, output_file)
 ```
