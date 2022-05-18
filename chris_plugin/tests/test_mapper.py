@@ -66,7 +66,7 @@ def test_empty_action(caplog, tmp_path: Path):
 @pytest.fixture
 def dirs_to_create(dirs: Tuple[Path, Path]) -> List[str]:
     input_dir, output_dir = dirs
-    paths = ["bread/lettuce/", "pancake/", "muffin"]
+    paths = ["bread/lettuce/", "pancake/", "muffin", "waffle/", "waffle/syrup"]
     for path_name in paths:
         path = input_dir / path_name
         if path_name.endswith("/"):
@@ -84,10 +84,10 @@ def assert_input_names(mapper: PathMapper, expected: Set[str]):
 def test_dir_mapper_shallow(dirs: Tuple[Path, Path], dirs_to_create: List[str]):
     input_dir, output_dir = dirs
     mapper = PathMapper.dir_mapper_shallow(input_dir, output_dir)
-    assert_input_names(mapper, {"bread", "pancake"})
+    assert_input_names(mapper, {"bread", "pancake", "waffle"})
 
 
 def test_dir_mapper_deep(dirs: Tuple[Path, Path], dirs_to_create: List[str]):
     input_dir, output_dir = dirs
     mapper = PathMapper.dir_mapper_deep(input_dir, output_dir)
-    assert_input_names(mapper, {"lettuce", "pancake"})
+    assert_input_names(mapper, {"lettuce", "pancake", "waffle"})
