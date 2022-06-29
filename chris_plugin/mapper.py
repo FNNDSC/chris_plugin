@@ -244,7 +244,8 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         """
         if not p.is_dir():
             return False
-        return next(p.glob("*/"), None) is None
+        dirs = filter(lambda subpath: subpath.is_dir(), p.glob("*/"))
+        return next(dirs, None) is None
 
     def iter_input(self) -> Iterator[Path]:
         """
