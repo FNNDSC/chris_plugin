@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
-from typing import Callable, Iterable, Iterator, Tuple, Optional
-from dataclasses import dataclass
+from typing import Callable, Iterable, Iterator, Tuple, Optional, Sequence, Union
+from dataclasses import dataclass, field
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -87,9 +87,9 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
     input path relative to `input_dir`, and `output_dir`.
     """
 
-    glob: str = "**/*"
+    globs: Sequence[str] = field(default_factory=lambda: ["**/*"])
     """
-    File name pattern matching input files in `input_dir`.
+    File name patterns matching input files in `input_dir`.
     """
 
     parents: bool = True
@@ -108,6 +108,10 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
     """
 
     def __post_init__(self):
+        if isinstance(self.globs, str):
+            raise TypeError(
+                f"globs must not be a plain str. Use list[str] or tuple[str] instead."
+            )
         if not self.input_dir.is_dir():
             raise ValueError(f"Not a directory: {self.input_dir}")
         if not self.output_dir.is_dir() and self.output_dir.exists():
@@ -118,7 +122,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         cls,
         input_dir: Path,
         output_dir: Path,
-        glob: str = "**/*",
+        glob: Union[str, Sequence[str]] = "**/*",
         name_mapper: NameMapper = _verbatim,
         suffix: Optional[str] = None,
         fail_if_empty: bool = True,
@@ -151,9 +155,15 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         file names to end with `.seg.nii`:
 
         ```python
-        mapper = PathMapper.file_mapper(input_dir, output_dir, glob='**/*.nii', suffix='.seg.nii')
+        mapper = PathMapper.file_mapper(input_dir, output_dir, globs='**/*.nii', suffix='.seg.nii')
         for input_file, output_file in mapper:
             segmentation(input_file, output_file)
+        ```
+
+        Using more than one glob:
+
+        ```python
+        PathMapper.file_mapper(input_dir, output_dir, globs=['**/*.nii', '**/*.nii.gz'])
         ```
 
         Parameters
@@ -163,16 +173,23 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
             Syntactical sugar for `name_mapper`. If specified, a `name_mapper` is created
             which replaces the file extension of input files with the given value for `suffix`.
 
+        glob: str | list[str]
+            File name patterns matching input files in `input_dir`.
+            Either one or more values can be given.
+
         See field documentation for other arguments.
         """
         if suffix is not None:
             if name_mapper is not _verbatim:
                 raise ValueError('Only one of ["suffix", "name_mapper"] can be given')
             name_mapper = _curry_suffix(suffix)
+        globs = glob
+        if isinstance(glob, str):
+            globs = [glob]
         return cls(
             input_dir=input_dir,
             output_dir=output_dir,
-            glob=glob,
+            globs=globs,
             name_mapper=name_mapper,
             fail_if_empty=fail_if_empty,
             filter=lambda p: p.is_file() and filter(p),
@@ -199,7 +216,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         See field documentation.
         """
         return cls(
-            glob="*/",  # doesn't seem like trailing slash is helpful here
+            globs=["*/"],  # doesn't seem like trailing slash is helpful here
             input_dir=input_dir,
             output_dir=output_dir,
             name_mapper=name_mapper,
@@ -229,7 +246,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         See field documentation.
         """
         return cls(
-            glob="**/",
+            globs=["**/"],
             input_dir=input_dir,
             output_dir=output_dir,
             name_mapper=name_mapper,
@@ -251,7 +268,8 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         """
         :return: an iterator over input files
         """
-        return filter(self.filter, self.input_dir.glob(self.glob))
+        for glob in self.globs:
+            yield from filter(self.filter, self.input_dir.glob(glob))
 
     def __len__(self):
         return self.count()
@@ -267,7 +285,9 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
 
     def __iter__(self) -> Iterator[Tuple[Path, Path]]:
         if self.fail_if_empty and self.is_empty():
-            _logger.warning(f'no input found for "{self.input_dir / self.glob}"')
+            _logger.warning(
+                f'no input found for "{self.input_dir}/{{{",".join(self.globs)}}}"'
+            )
             sys.exit(1)
         for input_path in self.iter_input():
             output_path = self.output_for(input_path)

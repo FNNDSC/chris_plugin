@@ -29,6 +29,14 @@ def files_to_create(dirs: Tuple[Path, Path]) -> List[str]:
     return files
 
 
+def test_check_globs_type(dirs: Tuple[Path, Path]):
+    inputdir, outputdir = dirs
+    inputdir.mkdir()
+    PathMapper(inputdir, outputdir, globs=["**/*.txt"])  # good
+    with pytest.raises(TypeError):
+        PathMapper(inputdir, outputdir, globs="**/*.txt")  # bad
+
+
 def test_file_mapper(dirs: Tuple[Path, Path], files_to_create: List[str]):
     inputdir, outputdir = dirs
     input_files = [inputdir / f for f in files_to_create]
@@ -47,6 +55,20 @@ def test_file_mapper(dirs: Tuple[Path, Path], files_to_create: List[str]):
     assert set(output_files) == set(outputdir / f for f in files_to_create)
 
 
+def test_file_mapper_one_glob(dirs: Tuple[Path, Path], files_to_create: List[str]):
+    inputdir, outputdir = dirs
+    mapper = PathMapper.file_mapper(inputdir, outputdir, glob="**/*.txt")
+    assert set(p.name for p, _ in mapper) == {"crane.txt", "coco.txt"}
+
+
+def test_file_mapper_multiple_globs(
+    dirs: Tuple[Path, Path], files_to_create: List[str]
+):
+    inputdir, outputdir = dirs
+    mapper = PathMapper.file_mapper(inputdir, outputdir, glob=["**/*.txt", "**/*.rb"])
+    assert set(p.name for p, _ in mapper) == {"crane.txt", "coco.txt", "beryl.rb"}
+
+
 def test_no_parent(dirs: Tuple[Path, Path], files_to_create: List[str]):
     inputdir, outputdir = dirs
     for i, o in PathMapper(inputdir, outputdir, parents=False):
@@ -58,9 +80,13 @@ def test_empty_action(caplog, tmp_path: Path):
     input_dir = tmp_path
     output_dir = tmp_path / "output"
     with pytest.raises(SystemExit):
-        for i, o in PathMapper(input_dir, output_dir, glob="**/*.something"):
+        for i, o in PathMapper(
+            input_dir, output_dir, globs=["**/*.something", "another"]
+        ):
             pytest.fail("Test is messed up, input should be empty")
-    assert f'no input found for "{input_dir / "**/*.something"}"' in caplog.text
+    assert (
+        f'no input found for "{input_dir / "{**/*.something,another}"}"' in caplog.text
+    )
 
 
 @pytest.fixture
