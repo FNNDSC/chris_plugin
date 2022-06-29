@@ -109,9 +109,9 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
 
     def __post_init__(self):
         if not self.input_dir.is_dir():
-            raise ValueError()
+            raise ValueError(f"Not a directory: {self.input_dir}")
         if not self.output_dir.is_dir() and self.output_dir.exists():
-            raise ValueError()
+            raise ValueError(f"Not a directory: {self.output_dir}")
 
     @classmethod
     def file_mapper(
