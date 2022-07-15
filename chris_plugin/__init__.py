@@ -27,7 +27,7 @@ parser = ArgumentParser()
 parser.add_argument('--name', required=True)
 
 @chris_plugin(parser=parser, title='Example')
-def main(options, inputdir, outpudri):
+def main(options, inputdir, outputdir):
     print(f'hello, {parser.name}')
 ```
 
