@@ -1,11 +1,13 @@
 import argparse
-import sys
-from pathlib import Path
+import copy
 import functools
-from typing import Callable, Optional
+import sys
 from collections import namedtuple
-from chris_plugin.main_function import MainFunction, is_plugin_main, is_fs
+from pathlib import Path
+from typing import Callable, Optional
+
 from chris_plugin._registration import register, PluginDetails
+from chris_plugin.main_function import MainFunction, is_plugin_main, is_fs
 from chris_plugin.types import ChrisPluginType
 
 
@@ -183,6 +185,8 @@ def chris_plugin(
         nonlocal parser
         if parser is None:
             parser = argparse.ArgumentParser()
+        else:
+            parser = copy.deepcopy(parser)
 
         # currently required by ChRIS
         # https://github.com/FNNDSC/ChRIS_ultron_backEnd/blob/1cb155fa32571a5414cc9cd1cd4d4814ba5f1596/chris_backend/plugininstances/services/manager.py#L320
