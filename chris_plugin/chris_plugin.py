@@ -152,7 +152,14 @@ def chris_plugin(
     Parameters
     ----------
     parser : argparse.ArgumentParser
-        argument parser
+        A parser defining the arguments of this *ChRIS* plugin.
+        The parser must only define arguments which satisfy the
+        [*ChRIS* plugin specification](https://github.com/FNNDSC/CHRIS_docs/blob/master/specs/ChRIS_Plugins.adoc#arguments).
+        It must not use any positional arguments nor subparsers.
+        Argument groups are not supported either, though it might
+        be in a future version.
+        [Issue #2](https://github.com/FNNDSC/chris_plugin/issues/2)
+
     plugin_type: str
         one of: 'fs', 'ds', 'ts'
     category: str
