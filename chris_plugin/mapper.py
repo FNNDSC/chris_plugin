@@ -42,26 +42,46 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
     A common use case would be *ChRIS* *ds* plugins which operate
     on individual input files.
 
+    `PathMapper` has four "constructors": `PathMapper.file_mapper`,
+    `PathMapper.dir_mapper_shallow`, and `PathMapper_dir_mapper_deep`
+    are for common uses cases whereas calling `PathMapper` directly
+    is for advanced usage. `PathMapper.file_mapper` is the most common
+    one: it yields input and output file pairs. If finer control over
+    the behavior is necessary, then use `PathMapper` with a custom
+    function given as the `filter`.
+
     Examples
     --------
 
-    Examples in this section are advanced tips and tricks. For
-    common use cases, see `PathMapper.file_mapper`.
+    Examples in this section are advanced tips and tricks.
 
     Use [ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor)
     to parallelize subprocesses (akin to the usage of GNU
     [parallel](https://www.gnu.org/software/parallel/)):
 
     ```python
+    from pathlib import Path
     import subprocess as sp
     from concurrent.futures import ThreadPoolExecutor
 
+    # example: submit tasks one-by-one
     with ThreadPoolExecutor(max_workers=4) as pool:
         for input_file, output_path in PathMapper(input_dir, output_dir):
             pool.submit(sp.run, ['external_command', input_file, output_path])
+
+    # example: call a function over all inputs
+    def do_something(input_file: Path, output_file: Path) -> None:
+        ...
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        results = pool.map(lambda t: do_something(*t), PathMapper(input_dir, output_dir))
+
+    # iterate over results to raise any Exceptions which occurred in threads
+    for _ in results:
+        pass
     ```
 
-    Hint: `len(os.sched_getaffinity(0))` gets the number of CPUs available
+    Hint: `` gets the number of CPUs available
     to a containerized process (which can be limited by, for instance,
     `docker run --cpuset-cpus 0-3`)
 
