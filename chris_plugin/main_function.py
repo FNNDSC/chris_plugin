@@ -4,13 +4,14 @@ Helpers for inspecting the main function of a ChRIS plugin.
 
 from pathlib import Path
 from argparse import Namespace
-from typing import Union, Callable, Tuple
+from typing import Union, Callable, Tuple, TypeVar
 import inspect
 from inspect import Signature, Parameter
 
-FsMainFunction = Callable[[Namespace, Path], None]
-DsMainFunction = Callable[[Namespace, Path, Path], None]
-MainFunction = Union[FsMainFunction, DsMainFunction]
+T = TypeVar('T')
+FsMainFunction = Callable[[Namespace, Path], T]
+DsMainFunction = Callable[[Namespace, Path, Path], T]
+MainFunction = Union[FsMainFunction[T], DsMainFunction[T]]
 
 
 def get_function_params(_s: Signature) -> Tuple[type, ...]:
@@ -42,8 +43,6 @@ def is_plugin_main(_f: Callable) -> bool:  # -> TypeGuard[MainFunction]:
         raise ValueError(
             "A ChRIS plugin's data directory arguments " "must have type pathlib.Path"
         )
-    if s.return_annotation is not None and s.return_annotation is not Signature.empty:
-        raise ValueError("A ChRIS plugin's main function must be void")
     return True
 
 

@@ -64,15 +64,6 @@ def test_bad_path_type():
             is_plugin_main(example)
 
 
-def test_bad_return_type():
-    def bad_return_type(a: Namespace, b: Path) -> int:
-        pass
-
-    em = "A ChRIS plugin's main function must be void"
-    with pytest.raises(ValueError, match=em):
-        is_plugin_main(bad_return_type)
-
-
 def test_is_good_main():
     assert is_plugin_main(examples.ok_ds1)
     assert is_plugin_main(examples.ok_ds2)

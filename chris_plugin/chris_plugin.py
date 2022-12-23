@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Callable, Optional
 
 from chris_plugin._registration import register, PluginDetails
-from chris_plugin.main_function import MainFunction, is_plugin_main, is_fs
+from chris_plugin.main_function import MainFunction, is_plugin_main, is_fs, T
 from chris_plugin.types import ChrisPluginType
 
 
@@ -62,6 +62,7 @@ def chris_plugin(
     max_cpu_limit: str = "",
     min_gpu_limit: int = 0,
     max_gpu_limit: int = 0,
+    singleton: bool = True
 ):
     """
     Creates a decorator which identifies a *ChRIS* plugin main function
@@ -151,6 +152,13 @@ def chris_plugin(
 
     Parameters
     ----------
+    main: Callable
+        The main function of this *ChRIS* plugin.
+        It either accepts (`argparse.Namespace`, `pathlib.Path`) for *fs*-type plugins,
+        or (`argparse.Namespace`, `pathlib.Path`, `pathlib.Path`) for *ds*-type plugins.
+        Its return type can be anything, but it's recommended that it returns `None` or
+        perhaps `int` (implementing a C convention where `main` returns the exit code of
+        your program: 0 -> success, 1 or anything else -> failure).
     parser : argparse.ArgumentParser
         A parser defining the arguments of this *ChRIS* plugin.
         The parser must only define arguments which satisfy the
@@ -186,9 +194,13 @@ def chris_plugin(
         0: GPU is disabled. If min_gpu_limit > 1, GPU is enabled.
     max_gpu_limit: int
         maximum number of GPUs the plugin may use
+    singleton: bool
+        Indicates whether to register the given main function to a global mutable
+        variable so that it can be located by the `chris_plugin_info` command.
+        Used for internal testing, set `singleton=False`.
     """
 
-    def wrap(main: MainFunction) -> Callable[[], None]:
+    def wrap(main: MainFunction) -> Callable[[], T]:
         nonlocal parser
         if parser is None:
             parser = argparse.ArgumentParser()
@@ -209,26 +221,27 @@ def chris_plugin(
             parser.add_argument("inputdir", help="directory containing input files")
         parser.add_argument("outputdir", help="directory containing output files")
 
-        register(
-            PluginDetails(
-                parser=parser,
-                type=verified_type,
-                category=category,
-                icon=icon,
-                title=title,
-                min_number_of_workers=min_number_of_workers,
-                max_number_of_workers=max_number_of_workers,
-                min_memory_limit=min_memory_limit,
-                max_memory_limit=max_memory_limit,
-                min_cpu_limit=min_cpu_limit,
-                max_cpu_limit=max_cpu_limit,
-                min_gpu_limit=min_gpu_limit,
-                max_gpu_limit=max_gpu_limit,
+        if singleton:
+            register(
+                PluginDetails(
+                    parser=parser,
+                    type=verified_type,
+                    category=category,
+                    icon=icon,
+                    title=title,
+                    min_number_of_workers=min_number_of_workers,
+                    max_number_of_workers=max_number_of_workers,
+                    min_memory_limit=min_memory_limit,
+                    max_memory_limit=max_memory_limit,
+                    min_cpu_limit=min_cpu_limit,
+                    max_cpu_limit=max_cpu_limit,
+                    min_gpu_limit=min_gpu_limit,
+                    max_gpu_limit=max_gpu_limit,
+                )
             )
-        )
 
         @functools.wraps(main)
-        def wrapper(*args):
+        def wrapper(*args) -> T:
             if args:
                 options, inputdir, outputdir = _call_from_python(args)
             else:
@@ -248,7 +261,7 @@ def chris_plugin(
 
             input_path = Path(inputdir)
             _check_is_dir(input_path)
-            main(options, input_path, output_path)
+            return main(options, input_path, output_path)
 
         return wrapper
 
