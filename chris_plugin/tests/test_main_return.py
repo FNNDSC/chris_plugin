@@ -37,4 +37,4 @@ _path = Path('/tmp')
     (__returns_int_ds(_options, _path, _path), 500),
 ])
 def test_main_return(result, expected):
-    ...
+    assert result == expected
