@@ -3,7 +3,7 @@ import pytest
 from argparse import Namespace
 from pathlib import Path
 from chris_plugin.main_function import is_plugin_main, is_ds, is_fs
-import chris_plugin.tests.examples.main_functions as examples
+import tests.examples.main_functions as examples
 
 
 def test_no_args():

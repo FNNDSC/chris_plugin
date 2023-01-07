@@ -1,4 +1,4 @@
-from chris_plugin.chris_plugin_info import strip_version
+from chris_plugin.tool.chris_plugin_info import strip_version
 
 
 def test_strip_version():

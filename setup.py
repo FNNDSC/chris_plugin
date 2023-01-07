@@ -1,5 +1,5 @@
 from os import path
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 with open(path.join(path.dirname(path.abspath(__file__)), "README.md")) as f:
@@ -8,8 +8,9 @@ with open(path.join(path.dirname(path.abspath(__file__)), "README.md")) as f:
 
 setup(
     name="chris_plugin",
-    version="0.1.2",
-    packages=["chris_plugin"],
+    version="0.2.0",
+    packages=find_packages(where="src"),
+    package_dir={"": "src", "chris_plugin": "src/chris_plugin"},
     url="https://github.com/FNNDSC/chris_plugin",
     project_urls={
         "Documentation": "https://fnndsc.github.io/chris_plugin/",
@@ -32,7 +33,9 @@ setup(
         ]
     },
     entry_points={
-        "console_scripts": ["chris_plugin_info = chris_plugin.chris_plugin_info:main"]
+        "console_scripts": [
+            "chris_plugin_info = chris_plugin.tool.chris_plugin_info:main"
+        ]
     },
     classifiers=[
         "Development Status :: 1 - Planning",
