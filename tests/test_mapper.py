@@ -76,16 +76,17 @@ def test_no_parent(dirs: Tuple[Path, Path], files_to_create: List[str]):
             assert not o.parent.exists()
 
 
-def test_empty_action(caplog, tmp_path: Path):
+def test_empty_action(capsys, tmp_path: Path):
     input_dir = tmp_path
     output_dir = tmp_path / "output"
     with pytest.raises(SystemExit):
-        for i, o in PathMapper(
+        for _i, _o in PathMapper(
             input_dir, output_dir, globs=["**/*.something", "another"]
         ):
             pytest.fail("Test is messed up, input should be empty")
+    stdout = capsys.readouterr().err
     assert (
-        f'no input found for "{input_dir / "{**/*.something,another}"}"' in caplog.text
+        f'no input found for "{input_dir / "{**/*.something,another}"}"' in stdout
     )
 
 

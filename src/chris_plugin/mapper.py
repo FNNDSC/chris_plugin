@@ -2,9 +2,7 @@ import sys
 from pathlib import Path
 from typing import Callable, Iterable, Iterator, Tuple, Optional, Sequence, Union
 from dataclasses import dataclass, field
-import logging
 
-_logger = logging.getLogger(__name__)
 NameMapper = Callable[[Path, Path], Path]
 
 # Private Helpers
@@ -305,9 +303,7 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
 
     def __iter__(self) -> Iterator[Tuple[Path, Path]]:
         if self.fail_if_empty and self.is_empty():
-            _logger.warning(
-                f'no input found for "{self.input_dir}/{{{",".join(self.globs)}}}"'
-            )
+            print(f'no input found for "{self.input_dir}/{{{",".join(self.globs)}}}"', file=sys.stderr)
             sys.exit(1)
         for input_path in self.iter_input():
             output_path = self.output_for(input_path)
