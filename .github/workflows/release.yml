@@ -1,8 +1,9 @@
 name: Publish
 
 on:
-  release:
-    types: [ created ]
+  push:
+    tags:
+      - "v?[0-9]+.[0-9]+.[0-9]+*"
 
 env:
   logo: https://github.com/FNNDSC/cube-design/blob/master/_common-assets/ChRISlogo-color.svg.png?raw=true
@@ -27,22 +28,27 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_API_TOKEN }}
-  docs:
-    name: Build docs for Github Pages
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-      - name: pip
-        run: |
-          pip install -e .
-          pip install pdoc
-      - name: pdoc
-        run:  pdoc --logo '${{ env.logo }}' --footer-text='Version ${{ github.ref_name }}' chris_plugin -o pdoc
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.2.2
+
+      - name: Install pdoc
+        run: pip install pdoc~=13.0.0
+      - name: Generate docs
+        run:  pdoc --logo '${{ env.logo }}' --footer-text='Version ${{ github.ref_name }}' src/chris_plugin -o pdoc
+      - name: Deploy docs (version)
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
         with:
           branch: gh-pages
           folder: pdoc
+          clean: true
+          clean-exclude: 'v*.*.*/'
+          target-folder: "${{ github.ref_name }}"
+      - name: Deploy docs (latest)
+        uses: JamesIves/github-pages-deploy-action@v4.4.1
+        with:
+          branch: gh-pages
+          folder: pdoc
+          clean: false
+      - name: Github Release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          body: "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/${{ github.ref_name }}"
