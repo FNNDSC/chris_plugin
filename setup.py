@@ -8,7 +8,7 @@ with open(path.join(path.dirname(path.abspath(__file__)), "README.md")) as f:
 
 setup(
     name="chris_plugin",
-    version="0.2.0",
+    version="0.2.0a1",
     packages=find_packages(where="src"),
     package_dir={"": "src", "chris_plugin": "src/chris_plugin"},
     url="https://github.com/FNNDSC/chris_plugin",
@@ -29,7 +29,8 @@ setup(
         'none': [],
         'dev': [
             'pytest~=7.2',
-            'pytest-mock~=3.10'
+            'pytest-mock~=3.10',
+            'pytest-cov~=4.0.0'
         ]
     },
     entry_points={
