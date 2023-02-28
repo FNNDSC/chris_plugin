@@ -1,5 +1,6 @@
 # Python _ChRIS_ Plugin Support
 
+[![codecov](https://codecov.io/gh/FNNDSC/chris_plugin/branch/master/graph/badge.svg?token=TG3CEHU2H4)](https://codecov.io/gh/FNNDSC/chris_plugin)
 [![.github/workflows/test.yml](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml/badge.svg)](https://github.com/FNNDSC/chris_plugin/actions/workflows/test.yml)
 [![PyPI](https://img.shields.io/pypi/v/chris_plugin)](https://pypi.org/project/chris_plugin/)
 [![License - MIT](https://img.shields.io/pypi/l/chris_plugin)](https://github.com/FNNDSC/chris_plugin/blob/master/LICENSE)
