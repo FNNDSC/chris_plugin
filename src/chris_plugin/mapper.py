@@ -303,7 +303,10 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
 
     def __iter__(self) -> Iterator[Tuple[Path, Path]]:
         if self.fail_if_empty and self.is_empty():
-            print(f'no input found for "{self.input_dir}/{{{",".join(self.globs)}}}"', file=sys.stderr)
+            print(
+                f'no input found for "{self.input_dir}/{{{",".join(self.globs)}}}"',
+                file=sys.stderr,
+            )
             sys.exit(1)
         for input_path in self.iter_input():
             output_path = self.output_for(input_path)

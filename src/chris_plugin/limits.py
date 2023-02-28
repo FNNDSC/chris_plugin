@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from typing import Callable
 
-__CGROUP_MEMORY_LIMIT_FILE = Path('/sys/fs/cgroup/memory/memory.limit_in_bytes')
+__CGROUP_MEMORY_LIMIT_FILE = Path("/sys/fs/cgroup/memory/memory.limit_in_bytes")
 
 
 def _linux_only(f: Callable) -> Callable:

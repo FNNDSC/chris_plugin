@@ -8,7 +8,7 @@ from typing import Union, Callable, Tuple, TypeVar
 import inspect
 from inspect import Signature, Parameter
 
-T = TypeVar('T')
+T = TypeVar("T")
 FsMainFunction = Callable[[Namespace, Path], T]
 DsMainFunction = Callable[[Namespace, Path, Path], T]
 MainFunction = Union[FsMainFunction[T], DsMainFunction[T]]

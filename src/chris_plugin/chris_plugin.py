@@ -62,7 +62,7 @@ def chris_plugin(
     max_cpu_limit: str = "",
     min_gpu_limit: int = 0,
     max_gpu_limit: int = 0,
-    singleton: bool = True
+    singleton: bool = True,
 ):
     """
     Creates a decorator which identifies a *ChRIS* plugin main function

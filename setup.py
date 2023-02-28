@@ -26,12 +26,8 @@ setup(
     python_requires=">= 3.8",
     install_requires=['importlib-metadata; python_version<"3.10"'],
     extras_require={
-        'none': [],
-        'dev': [
-            'pytest~=7.2',
-            'pytest-mock~=3.10',
-            'pytest-cov~=4.0.0'
-        ]
+        "none": [],
+        "dev": ["pytest~=7.2", "pytest-mock~=3.10", "pytest-cov~=4.0.0"],
     },
     entry_points={
         "console_scripts": [

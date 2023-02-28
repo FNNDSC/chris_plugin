@@ -85,9 +85,8 @@ def test_empty_action(capsys, tmp_path: Path):
         ):
             pytest.fail("Test is messed up, input should be empty")
     stdout = capsys.readouterr().err
-    assert (
-        f'no input found for "{input_dir / "{**/*.something,another}"}"' in stdout
-    )
+    expected = f'no input found for "{input_dir / "{**/*.something,another}"}"'
+    assert expected in stdout
 
 
 @pytest.fixture
