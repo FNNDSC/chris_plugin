@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 
 NameMapper = Callable[[Path, Path], Path]
 
+
 # Private Helpers
 ########
 
@@ -22,6 +23,69 @@ def _curry_suffix(suffix: str) -> NameMapper:
         return (output_dir / input_file).with_suffix(suffix)
 
     return append_suffix
+
+
+def curry_name_mapper(output_template: str) -> Callable[[Path, Path], Path]:
+    """
+    A helper function which creates a function that is a suitable value for
+    the `PathMapper.name_mapper` arguments to `PathMapper` constructor functions.
+
+    Woah! Sorry, I don't really know how better to describe it. Please see the
+    example, or better yet, my tests.
+
+    Examples
+    --------
+
+    A common use case is for a *ChRIS* plugin to have the option to give an output
+    file name template. For example:
+
+    ```shell
+    $ myplugin --output-template 'yummy_{}_processed.txt' inputdir/ outputdir/
+    inputdir/fruits/pear.dat -> outputdir/fruits/yummy_pear_processed.txt
+    inputdir/fruits/apple.dat -> outputdir/fruits/yummy_apple_processed.txt
+    ```
+
+    This can be achieved by:
+
+    ```python
+    from argparse import ArgumentParser
+    import shutil
+    from chris_plugin import chris_plugin, PathMapper, curry_name_mapper
+
+    parser = ArgumentParser()
+    parser.add_argument('-o', '--output-template', type=str,
+                        default='copied_{}.dat',
+                        help='output file name template')
+
+    @chris_plugin(parser)
+    def main(options, inputdir, outputdir):
+        name_mapper = curry_name_mapper(options.output_template)
+        mapper = PathMapper.file_mapper(inputdir, outputdir, name_mapper=name_mapper)
+        for input_file, output_file in mapper:
+            shutil.copy(input_file, output_file)
+    ```
+
+    Parameters
+    ----------
+    output_template: str
+        output file template
+
+    Returns
+    -------
+    name_mapper
+        A function which can be given to `PathMapper` as the parameter for `name_mapper`.
+    """
+
+    def name_mapper(rel_path: Path, output_dir: Path) -> Path:
+        # if output file template ends with {}, then keep file extension
+        if output_template.endswith("{}"):
+            template = output_template[:-2] + rel_path.name
+        else:  # otherwise, drop file extension
+            template = output_template
+        name = template.replace("{}", rel_path.stem).replace("{{}}", "{}")
+        return output_dir / rel_path.with_name(name)
+
+    return name_mapper
 
 
 # Public Classes

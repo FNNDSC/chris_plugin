@@ -3,7 +3,7 @@ from typing import Tuple, List, Set
 
 import pytest
 
-from chris_plugin.mapper import _curry_suffix, PathMapper
+from chris_plugin.mapper import _curry_suffix, PathMapper, curry_name_mapper
 
 
 def test_suffix():
@@ -117,3 +117,17 @@ def test_dir_mapper_deep(dirs: Tuple[Path, Path], dirs_to_create: List[str]):
     input_dir, output_dir = dirs
     mapper = PathMapper.dir_mapper_deep(input_dir, output_dir)
     assert_input_names(mapper, {"lettuce", "pancake", "waffle"})
+
+
+@pytest.mark.parametrize(
+    "template, expected",
+    [
+        ("prefix_{}", "outgoing/rel/prefix_fruity.dat"),
+        ("{}.suffix", "outgoing/rel/fruity.suffix"),
+        ("wehaveyou_{}_surrounded", "outgoing/rel/wehaveyou_fruity_surrounded"),
+    ],
+)
+def test_curry_name_mapper(template: str, expected: str):
+    output_dir = Path("outgoing")
+    name_mapper = curry_name_mapper(template)
+    assert name_mapper(Path("rel/fruity.dat"), output_dir) == Path(expected)
