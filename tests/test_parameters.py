@@ -139,6 +139,14 @@ def test_version_option_is_allowed(parser: ArgumentParser):
     assert serialize(parser) == []
 
 
+def test_add_list_arg(parser: ArgumentParser):
+    parser.add_argument(
+        "-l", "--list", default=[1, 2, 3], type=list, help="accepts a list of things"
+    )
+    with pytest.raises(ValueError, match="Unsupported parameter type list."):
+        serialize(parser)
+
+
 def test_special_serializer(parser: ArgumentParser):
     pass  # TODO
 

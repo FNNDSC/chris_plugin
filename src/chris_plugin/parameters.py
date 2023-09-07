@@ -11,7 +11,9 @@ from chris_plugin._atypes import (
     StoreFalseAction,
     VersionAction,
 )
-from typing import Optional, Any, Sequence, List, Tuple, Union
+from typing import Optional, Any, Sequence, List, Tuple, Union, get_args
+
+_ALLOWED_PARAM_TYPES = get_args(ParameterType)
 
 
 # noinspection PyProtectedMember
@@ -138,6 +140,10 @@ def get_param_type(a: StoreAction) -> ParameterType:
             t = str
     else:
         t = a.type
+    if t.__name__ not in _ALLOWED_PARAM_TYPES:
+        raise ValueError(
+            f"Unsupported parameter type {t.__name__}. Supported types are {_ALLOWED_PARAM_TYPES}"
+        )
     # noinspection PyTypeChecker
     return t.__name__
 
