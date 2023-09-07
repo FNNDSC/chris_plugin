@@ -54,7 +54,7 @@ def serialize_store_action(a: StoreAction) -> ParameterSpec:
     """
     Serialize a typical action which represents a key-value option like ``--key value``
     """
-    check_default_type(a)
+    check_default_is_of_type(a)
     p_type = get_param_type(a)
     return serialize_compatible_action(
         a,
@@ -142,13 +142,13 @@ def get_param_type(a: StoreAction) -> ParameterType:
     return t.__name__
 
 
-def check_default_type(a: StoreAction):
+def check_default_is_of_type(a: StoreAction):
     """
     Cause an error if the default value is not of the specified type.
     """
-    if not a.default:
+    if a.default is None:
         return
-    if not a.type:
+    if a.type is None:
         return
     if not isinstance(a.default, a.type):
         raise TypeError(f"default={a.default} violates type={a.type}: {str(a)}")
