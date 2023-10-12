@@ -22,6 +22,8 @@ If you're creating a **new** program,
 you can start from this template:
 https://github.com/FNNDSC/python-chrisapp-template
 
+Examples can be found in [./examples](./examples).
+
 ## Usage
 
 After developing a plugin, use the command `chris_plugin_info`
@@ -36,4 +38,4 @@ will automatically discover your *ChRIS* plugin.
 
 ## Development Goals
 
-`chris_plugin` strives to have zero-dependencies and compatible with Python 3.8 through 3.10.
+`chris_plugin` strives to have zero-dependencies and compatible with Python 3.8 through 3.12.
