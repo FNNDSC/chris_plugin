@@ -28,7 +28,7 @@ After developing a plugin, use the command `chris_plugin_info`
 to produce a JSON description of your *ChRIS* plugin.
 
 ```shell
-chris_plugin_info [module_name]
+chris_plugin_info --dock-image {registry}/{repo}/{name}:{version} [module_name]
 ```
 
 If `module_name` is not given, then `chris_plugin_info`

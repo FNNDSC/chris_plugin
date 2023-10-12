@@ -11,6 +11,8 @@ import chris_plugin.links as links
 
 from importlib.metadata import Distribution, distribution
 
+from chris_plugin.tool.image import ImageTag, InvalidTag
+
 try:
     # new in Python 3.10
     from importlib.metadata import packages_distributions
@@ -23,6 +25,21 @@ logging.basicConfig()
 
 
 parser = argparse.ArgumentParser(description="Get ChRIS plugin description")
+parser.add_argument("-n", "--name", required=False, type=str, help="Name of the plugin")
+parser.add_argument(
+    "-r",
+    "--public-repo",
+    required=False,
+    type=str,
+    help="URL of web repository where source code of the plugin can be found",
+)
+parser.add_argument(
+    "-d",
+    "--dock-image",
+    required=True,
+    type=str,
+    help="Container image tag of the plugin",
+)
 parser.add_argument(
     "distribution",
     nargs="?",
@@ -174,10 +191,27 @@ def main():
     mods, dist = get_or_guess(args.distribution)
     for module_name in mods:
         importlib.import_module(module_name)
-    details = get_registered()
     setup = dist.metadata
+
+    try:
+        image = ImageTag(args.dock_image, setup["Version"])
+    except InvalidTag as e:
+        print("\n".join(e.args), file=sys.stderr)
+        sys.exit(1)
+
+    details = get_registered()
     command = Path(shutil.which(entrypoint_of(dist)))
+    plugin_name = args.name if args.name is not None else image.name
+    public_repo = (
+        args.public_repo
+        if args.public_repo is not None
+        else f"https://github.com/{image.repo}"
+    )
+
     info = {
+        "name": plugin_name,
+        "dock_image": args.dock_image,
+        "public_repo": public_repo,
         "type": details.type,
         "parameters": serialize(details.parser),
         "icon": details.icon,
