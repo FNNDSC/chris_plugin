@@ -10,6 +10,5 @@ setup(
     py_modules=["simple_copy"],
     install_requires=["chris_plugin"],
     license="MIT",
-    python_requires=">=3.10.2",
     entry_points={"console_scripts": ["simple_copy = simple_copy:main"]},
 )

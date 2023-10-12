@@ -10,6 +10,5 @@ setup(
     py_modules=["replace"],
     install_requires=["chris_plugin", "tqdm"],
     license="MIT",
-    python_requires=">=3.10.2",
     entry_points={"console_scripts": ["replace = replace:main"]},
 )

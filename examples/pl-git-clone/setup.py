@@ -10,6 +10,5 @@ setup(
     py_modules=["git_clone"],
     install_requires=["chris_plugin"],
     license="MIT",
-    python_requires=">=3.10.2",
     entry_points={"console_scripts": ["git_clone_wrapper = git_clone:main"]},
 )
