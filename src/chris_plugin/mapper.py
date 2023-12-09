@@ -143,9 +143,8 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         pass
     ```
 
-    Hint: `` gets the number of CPUs available
-    to a containerized process (which can be limited by, for instance,
-    `docker run --cpuset-cpus 0-3`)
+    Hint: `os.sched_getaffinity(0)` gets the number of visible CPUs
+    (which can be limited by, for instance, `docker run --cpuset-cpus 0-3`)
 
     Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):
 
@@ -156,6 +155,11 @@ class PathMapper(Iterable[Tuple[Path, Path]]):
         for input_file, output_path in bar:
             do_something(input_file, output_path)
     ```
+
+    For some examples on how to use `tqdm`, `PathMapper`, and a thread or process pool, see these examples:
+
+    - https://github.com/FNNDSC/chris_plugin/blob/master/examples/pl-replace/replace.py
+    - https://github.com/FNNDSC/pl-mni2common/blob/47fa7c1e742ff7af0feb83cf5fb632db1f08ece6/mni2common.py#L52-L57
     """
 
     input_dir: Path

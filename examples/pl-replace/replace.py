@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 """
 A short yet complicated *ChRIS* plugin example which uses
-`chris_plugin.PathMapper`, `concurrent.futures.ThreadPoolExecutor`,
-and `tqdm.tqdm`.
+`chris_plugin.PathMapper` and `tqdm.contrib.concurrent.thread_map`
+to process multiple inputs in parallel while showing a progress bar.
 """
 
 from pathlib import Path
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from chris_plugin import chris_plugin, PathMapper
 from dataclasses import dataclass
-from concurrent.futures import ThreadPoolExecutor
 import time
 import random
 import logging
-from tqdm import tqdm
+from tqdm.contrib.concurrent import thread_map
 from tqdm.contrib.logging import logging_redirect_tqdm
 
 # configure logging output to show time and thread name
@@ -56,15 +55,13 @@ class Replacer:
 
         The program's status is printed before processing and upon completion.
         """
-        with logging_redirect_tqdm():
-            logger.debug('Started "%s"', input_file)
-            with input_file.open("r") as i:
-                with output_file.open("w") as o:
-                    for line in i:
-                        o.write(line.replace(self.find, self.replace))
-                        if self.slow:
-                            time.sleep(random.random())
-            logger.debug('Finished "%s"', input_file)
+        logger.debug('Started "%s"', input_file)
+        with input_file.open("r") as input, output_file.open("w") as output:
+            for line in input:
+                output.write(line.replace(self.find, self.replace))
+                if self.slow:
+                    time.sleep(random.random())
+        logger.debug('Finished "%s"', input_file)
 
 
 @chris_plugin(
@@ -74,23 +71,18 @@ class Replacer:
     min_cpu_limit="2000m",
 )
 def main(options, inputdir: Path, outputdir: Path):
-
     mapper = PathMapper.file_mapper(inputdir, outputdir, glob=options.inputPathFilter)
     r = Replacer(find=options.find, replace=options.replace, slow=options.slow)
 
-    # create a progress bar with the total being the number of input files to process
-    with tqdm(desc="Processing", total=mapper.count()) as bar:
-
-        # a wrapper function which calls the processing function and updates the process bar
-        def process_and_progress(i, o):
-            r.process_file(i, o)
-            bar.update()
-
-        # create a thread pool with the specified number of workers
-        with ThreadPoolExecutor(max_workers=options.threads) as pool:
-            logger.debug(f"Using %d threads", options.threads)
-            # call the function on every input/output path pair
-            results = pool.map(lambda t: process_and_progress(*t), mapper)
+    logger.debug(f"Using %d threads", options.threads)
+    with logging_redirect_tqdm():
+        results = thread_map(
+            lambda t: r.process_file(*t),
+            mapper,
+            max_workers=options.threads,
+            total=mapper.count(),
+            maxinterval=0.1,
+        )
 
     # if any job failed, an exception will be raised when it's iterated over
     for _ in results:
