@@ -52,7 +52,8 @@ def main(_, input_dir, output_dir):
 from chris_plugin.chris_plugin import chris_plugin
 from chris_plugin.mapper import PathMapper, curry_name_mapper
 import chris_plugin.types as types
+import chris_plugin.helpers as helpers
 
 __docformat__ = "numpy"
 
-__all__ = ["chris_plugin", "PathMapper", "curry_name_mapper", "types"]
+__all__ = ["chris_plugin", "PathMapper", "curry_name_mapper", "types", "helpers"]
