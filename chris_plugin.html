@@ -101,7 +101,7 @@
     </ul>
 
 
-            <footer>Version v0.3.1</footer>
+            <footer>Version v0.3.2</footer>
 
         <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
             built with <span class="visually-hidden">pdoc</span><img
@@ -679,253 +679,257 @@ Used for internal testing, set <code>singleton=False</code>.</li>
 </span><span id="PathMapper-144"><a href="#PathMapper-144"><span class="linenos">144</span></a><span class="sd">        pass</span>
 </span><span id="PathMapper-145"><a href="#PathMapper-145"><span class="linenos">145</span></a><span class="sd">    ```</span>
 </span><span id="PathMapper-146"><a href="#PathMapper-146"><span class="linenos">146</span></a>
-</span><span id="PathMapper-147"><a href="#PathMapper-147"><span class="linenos">147</span></a><span class="sd">    Hint: `` gets the number of CPUs available</span>
-</span><span id="PathMapper-148"><a href="#PathMapper-148"><span class="linenos">148</span></a><span class="sd">    to a containerized process (which can be limited by, for instance,</span>
-</span><span id="PathMapper-149"><a href="#PathMapper-149"><span class="linenos">149</span></a><span class="sd">    `docker run --cpuset-cpus 0-3`)</span>
-</span><span id="PathMapper-150"><a href="#PathMapper-150"><span class="linenos">150</span></a>
-</span><span id="PathMapper-151"><a href="#PathMapper-151"><span class="linenos">151</span></a><span class="sd">    Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):</span>
-</span><span id="PathMapper-152"><a href="#PathMapper-152"><span class="linenos">152</span></a>
-</span><span id="PathMapper-153"><a href="#PathMapper-153"><span class="linenos">153</span></a><span class="sd">    ```python</span>
-</span><span id="PathMapper-154"><a href="#PathMapper-154"><span class="linenos">154</span></a><span class="sd">    from tqdm import tqdm</span>
-</span><span id="PathMapper-155"><a href="#PathMapper-155"><span class="linenos">155</span></a>
-</span><span id="PathMapper-156"><a href="#PathMapper-156"><span class="linenos">156</span></a><span class="sd">    with tqdm(PathMapper(input_dir, output_dir)) as bar:</span>
-</span><span id="PathMapper-157"><a href="#PathMapper-157"><span class="linenos">157</span></a><span class="sd">        for input_file, output_path in bar:</span>
-</span><span id="PathMapper-158"><a href="#PathMapper-158"><span class="linenos">158</span></a><span class="sd">            do_something(input_file, output_path)</span>
-</span><span id="PathMapper-159"><a href="#PathMapper-159"><span class="linenos">159</span></a><span class="sd">    ```</span>
-</span><span id="PathMapper-160"><a href="#PathMapper-160"><span class="linenos">160</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PathMapper-147"><a href="#PathMapper-147"><span class="linenos">147</span></a><span class="sd">    Hint: `os.sched_getaffinity(0)` gets the number of visible CPUs</span>
+</span><span id="PathMapper-148"><a href="#PathMapper-148"><span class="linenos">148</span></a><span class="sd">    (which can be limited by, for instance, `docker run --cpuset-cpus 0-3`)</span>
+</span><span id="PathMapper-149"><a href="#PathMapper-149"><span class="linenos">149</span></a>
+</span><span id="PathMapper-150"><a href="#PathMapper-150"><span class="linenos">150</span></a><span class="sd">    Add a progress bar with [tqdm](https://github.com/tqdm/tqdm):</span>
+</span><span id="PathMapper-151"><a href="#PathMapper-151"><span class="linenos">151</span></a>
+</span><span id="PathMapper-152"><a href="#PathMapper-152"><span class="linenos">152</span></a><span class="sd">    ```python</span>
+</span><span id="PathMapper-153"><a href="#PathMapper-153"><span class="linenos">153</span></a><span class="sd">    from tqdm import tqdm</span>
+</span><span id="PathMapper-154"><a href="#PathMapper-154"><span class="linenos">154</span></a>
+</span><span id="PathMapper-155"><a href="#PathMapper-155"><span class="linenos">155</span></a><span class="sd">    with tqdm(PathMapper(input_dir, output_dir)) as bar:</span>
+</span><span id="PathMapper-156"><a href="#PathMapper-156"><span class="linenos">156</span></a><span class="sd">        for input_file, output_path in bar:</span>
+</span><span id="PathMapper-157"><a href="#PathMapper-157"><span class="linenos">157</span></a><span class="sd">            do_something(input_file, output_path)</span>
+</span><span id="PathMapper-158"><a href="#PathMapper-158"><span class="linenos">158</span></a><span class="sd">    ```</span>
+</span><span id="PathMapper-159"><a href="#PathMapper-159"><span class="linenos">159</span></a>
+</span><span id="PathMapper-160"><a href="#PathMapper-160"><span class="linenos">160</span></a><span class="sd">    For some examples on how to use `tqdm`, `PathMapper`, and a thread or process pool, see these examples:</span>
 </span><span id="PathMapper-161"><a href="#PathMapper-161"><span class="linenos">161</span></a>
-</span><span id="PathMapper-162"><a href="#PathMapper-162"><span class="linenos">162</span></a>    <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span>
-</span><span id="PathMapper-163"><a href="#PathMapper-163"><span class="linenos">163</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Directory containing input files&quot;&quot;&quot;</span>
-</span><span id="PathMapper-164"><a href="#PathMapper-164"><span class="linenos">164</span></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span>
-</span><span id="PathMapper-165"><a href="#PathMapper-165"><span class="linenos">165</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Directory for output files to be written to&quot;&quot;&quot;</span>
-</span><span id="PathMapper-166"><a href="#PathMapper-166"><span class="linenos">166</span></a>
-</span><span id="PathMapper-167"><a href="#PathMapper-167"><span class="linenos">167</span></a>    <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span>
-</span><span id="PathMapper-168"><a href="#PathMapper-168"><span class="linenos">168</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-169"><a href="#PathMapper-169"><span class="linenos">169</span></a><span class="sd">    Specify a custom function which produces an output file name given the</span>
-</span><span id="PathMapper-170"><a href="#PathMapper-170"><span class="linenos">170</span></a><span class="sd">    input path relative to `input_dir`, and `output_dir`.</span>
-</span><span id="PathMapper-171"><a href="#PathMapper-171"><span class="linenos">171</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="PathMapper-172"><a href="#PathMapper-172"><span class="linenos">172</span></a>
-</span><span id="PathMapper-173"><a href="#PathMapper-173"><span class="linenos">173</span></a>    <span class="n">globs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;**/*&quot;</span><span class="p">])</span>
-</span><span id="PathMapper-174"><a href="#PathMapper-174"><span class="linenos">174</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-175"><a href="#PathMapper-175"><span class="linenos">175</span></a><span class="sd">    File name patterns matching input files in `input_dir`.</span>
-</span><span id="PathMapper-176"><a href="#PathMapper-176"><span class="linenos">176</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="PathMapper-177"><a href="#PathMapper-177"><span class="linenos">177</span></a>
-</span><span id="PathMapper-178"><a href="#PathMapper-178"><span class="linenos">178</span></a>    <span class="n">parents</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="PathMapper-179"><a href="#PathMapper-179"><span class="linenos">179</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-180"><a href="#PathMapper-180"><span class="linenos">180</span></a><span class="sd">    If `True`, create parent directories of output paths as needed.</span>
-</span><span id="PathMapper-181"><a href="#PathMapper-181"><span class="linenos">181</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="PathMapper-182"><a href="#PathMapper-182"><span class="linenos">182</span></a>
-</span><span id="PathMapper-183"><a href="#PathMapper-183"><span class="linenos">183</span></a>    <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="PathMapper-184"><a href="#PathMapper-184"><span class="linenos">184</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-185"><a href="#PathMapper-185"><span class="linenos">185</span></a><span class="sd">    Exit the program if no input files are found.</span>
-</span><span id="PathMapper-186"><a href="#PathMapper-186"><span class="linenos">186</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="PathMapper-187"><a href="#PathMapper-187"><span class="linenos">187</span></a>
-</span><span id="PathMapper-188"><a href="#PathMapper-188"><span class="linenos">188</span></a>    <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span>
-</span><span id="PathMapper-189"><a href="#PathMapper-189"><span class="linenos">189</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-190"><a href="#PathMapper-190"><span class="linenos">190</span></a><span class="sd">    Decides whether a given subpath of input directory should be in the input space.</span>
-</span><span id="PathMapper-191"><a href="#PathMapper-191"><span class="linenos">191</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="PathMapper-192"><a href="#PathMapper-192"><span class="linenos">192</span></a>
-</span><span id="PathMapper-193"><a href="#PathMapper-193"><span class="linenos">193</span></a>    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="PathMapper-194"><a href="#PathMapper-194"><span class="linenos">194</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="PathMapper-195"><a href="#PathMapper-195"><span class="linenos">195</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-</span><span id="PathMapper-196"><a href="#PathMapper-196"><span class="linenos">196</span></a>                <span class="sa">f</span><span class="s2">&quot;globs must not be a plain str. Use list[str] or tuple[str] instead.&quot;</span>
-</span><span id="PathMapper-197"><a href="#PathMapper-197"><span class="linenos">197</span></a>            <span class="p">)</span>
-</span><span id="PathMapper-198"><a href="#PathMapper-198"><span class="linenos">198</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-</span><span id="PathMapper-199"><a href="#PathMapper-199"><span class="linenos">199</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not a directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="PathMapper-200"><a href="#PathMapper-200"><span class="linenos">200</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-</span><span id="PathMapper-201"><a href="#PathMapper-201"><span class="linenos">201</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not a directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="PathMapper-202"><a href="#PathMapper-202"><span class="linenos">202</span></a>
-</span><span id="PathMapper-203"><a href="#PathMapper-203"><span class="linenos">203</span></a>    <span class="nd">@classmethod</span>
-</span><span id="PathMapper-204"><a href="#PathMapper-204"><span class="linenos">204</span></a>    <span class="k">def</span> <span class="nf">file_mapper</span><span class="p">(</span>
-</span><span id="PathMapper-205"><a href="#PathMapper-205"><span class="linenos">205</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="PathMapper-206"><a href="#PathMapper-206"><span class="linenos">206</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper-207"><a href="#PathMapper-207"><span class="linenos">207</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper-208"><a href="#PathMapper-208"><span class="linenos">208</span></a>        <span class="n">glob</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;**/*&quot;</span><span class="p">,</span>
-</span><span id="PathMapper-209"><a href="#PathMapper-209"><span class="linenos">209</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
-</span><span id="PathMapper-210"><a href="#PathMapper-210"><span class="linenos">210</span></a>        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PathMapper-211"><a href="#PathMapper-211"><span class="linenos">211</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="PathMapper-212"><a href="#PathMapper-212"><span class="linenos">212</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
-</span><span id="PathMapper-213"><a href="#PathMapper-213"><span class="linenos">213</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
-</span><span id="PathMapper-214"><a href="#PathMapper-214"><span class="linenos">214</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-215"><a href="#PathMapper-215"><span class="linenos">215</span></a><span class="sd">        Constructor for `PathMapper` for working with files.</span>
-</span><span id="PathMapper-216"><a href="#PathMapper-216"><span class="linenos">216</span></a>
-</span><span id="PathMapper-217"><a href="#PathMapper-217"><span class="linenos">217</span></a><span class="sd">        Examples</span>
-</span><span id="PathMapper-218"><a href="#PathMapper-218"><span class="linenos">218</span></a><span class="sd">        --------</span>
-</span><span id="PathMapper-219"><a href="#PathMapper-219"><span class="linenos">219</span></a>
-</span><span id="PathMapper-220"><a href="#PathMapper-220"><span class="linenos">220</span></a><span class="sd">        Copy all files from `input_dir` to `output_dir`:</span>
-</span><span id="PathMapper-221"><a href="#PathMapper-221"><span class="linenos">221</span></a>
-</span><span id="PathMapper-222"><a href="#PathMapper-222"><span class="linenos">222</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper-223"><a href="#PathMapper-223"><span class="linenos">223</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
-</span><span id="PathMapper-224"><a href="#PathMapper-224"><span class="linenos">224</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
-</span><span id="PathMapper-225"><a href="#PathMapper-225"><span class="linenos">225</span></a><span class="sd">        ```</span>
-</span><span id="PathMapper-226"><a href="#PathMapper-226"><span class="linenos">226</span></a>
-</span><span id="PathMapper-227"><a href="#PathMapper-227"><span class="linenos">227</span></a><span class="sd">        Avoid clobbering (overwriting existing files):</span>
-</span><span id="PathMapper-228"><a href="#PathMapper-228"><span class="linenos">228</span></a>
-</span><span id="PathMapper-229"><a href="#PathMapper-229"><span class="linenos">229</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper-230"><a href="#PathMapper-230"><span class="linenos">230</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
-</span><span id="PathMapper-231"><a href="#PathMapper-231"><span class="linenos">231</span></a><span class="sd">            if output_file.exists():</span>
-</span><span id="PathMapper-232"><a href="#PathMapper-232"><span class="linenos">232</span></a><span class="sd">                print(f&#39;error, file exists: {output_file}&#39;)</span>
-</span><span id="PathMapper-233"><a href="#PathMapper-233"><span class="linenos">233</span></a><span class="sd">                sys.exit(1)</span>
-</span><span id="PathMapper-234"><a href="#PathMapper-234"><span class="linenos">234</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
-</span><span id="PathMapper-235"><a href="#PathMapper-235"><span class="linenos">235</span></a><span class="sd">        ```</span>
-</span><span id="PathMapper-236"><a href="#PathMapper-236"><span class="linenos">236</span></a>
-</span><span id="PathMapper-237"><a href="#PathMapper-237"><span class="linenos">237</span></a><span class="sd">        Call the function `segmentation` on only NIFTI files, and rename output</span>
-</span><span id="PathMapper-238"><a href="#PathMapper-238"><span class="linenos">238</span></a><span class="sd">        file names to end with `.seg.nii`:</span>
-</span><span id="PathMapper-239"><a href="#PathMapper-239"><span class="linenos">239</span></a>
-</span><span id="PathMapper-240"><a href="#PathMapper-240"><span class="linenos">240</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper-241"><a href="#PathMapper-241"><span class="linenos">241</span></a><span class="sd">        mapper = PathMapper.file_mapper(input_dir, output_dir, globs=&#39;**/*.nii&#39;, suffix=&#39;.seg.nii&#39;)</span>
-</span><span id="PathMapper-242"><a href="#PathMapper-242"><span class="linenos">242</span></a><span class="sd">        for input_file, output_file in mapper:</span>
-</span><span id="PathMapper-243"><a href="#PathMapper-243"><span class="linenos">243</span></a><span class="sd">            segmentation(input_file, output_file)</span>
-</span><span id="PathMapper-244"><a href="#PathMapper-244"><span class="linenos">244</span></a><span class="sd">        ```</span>
-</span><span id="PathMapper-245"><a href="#PathMapper-245"><span class="linenos">245</span></a>
-</span><span id="PathMapper-246"><a href="#PathMapper-246"><span class="linenos">246</span></a><span class="sd">        Using more than one glob:</span>
-</span><span id="PathMapper-247"><a href="#PathMapper-247"><span class="linenos">247</span></a>
-</span><span id="PathMapper-248"><a href="#PathMapper-248"><span class="linenos">248</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper-249"><a href="#PathMapper-249"><span class="linenos">249</span></a><span class="sd">        PathMapper.file_mapper(input_dir, output_dir, globs=[&#39;**/*.nii&#39;, &#39;**/*.nii.gz&#39;])</span>
-</span><span id="PathMapper-250"><a href="#PathMapper-250"><span class="linenos">250</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper-162"><a href="#PathMapper-162"><span class="linenos">162</span></a><span class="sd">    - https://github.com/FNNDSC/chris_plugin/blob/master/examples/pl-replace/replace.py</span>
+</span><span id="PathMapper-163"><a href="#PathMapper-163"><span class="linenos">163</span></a><span class="sd">    - https://github.com/FNNDSC/pl-mni2common/blob/47fa7c1e742ff7af0feb83cf5fb632db1f08ece6/mni2common.py#L52-L57</span>
+</span><span id="PathMapper-164"><a href="#PathMapper-164"><span class="linenos">164</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PathMapper-165"><a href="#PathMapper-165"><span class="linenos">165</span></a>
+</span><span id="PathMapper-166"><a href="#PathMapper-166"><span class="linenos">166</span></a>    <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span>
+</span><span id="PathMapper-167"><a href="#PathMapper-167"><span class="linenos">167</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Directory containing input files&quot;&quot;&quot;</span>
+</span><span id="PathMapper-168"><a href="#PathMapper-168"><span class="linenos">168</span></a>    <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span>
+</span><span id="PathMapper-169"><a href="#PathMapper-169"><span class="linenos">169</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Directory for output files to be written to&quot;&quot;&quot;</span>
+</span><span id="PathMapper-170"><a href="#PathMapper-170"><span class="linenos">170</span></a>
+</span><span id="PathMapper-171"><a href="#PathMapper-171"><span class="linenos">171</span></a>    <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span>
+</span><span id="PathMapper-172"><a href="#PathMapper-172"><span class="linenos">172</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-173"><a href="#PathMapper-173"><span class="linenos">173</span></a><span class="sd">    Specify a custom function which produces an output file name given the</span>
+</span><span id="PathMapper-174"><a href="#PathMapper-174"><span class="linenos">174</span></a><span class="sd">    input path relative to `input_dir`, and `output_dir`.</span>
+</span><span id="PathMapper-175"><a href="#PathMapper-175"><span class="linenos">175</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PathMapper-176"><a href="#PathMapper-176"><span class="linenos">176</span></a>
+</span><span id="PathMapper-177"><a href="#PathMapper-177"><span class="linenos">177</span></a>    <span class="n">globs</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;**/*&quot;</span><span class="p">])</span>
+</span><span id="PathMapper-178"><a href="#PathMapper-178"><span class="linenos">178</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-179"><a href="#PathMapper-179"><span class="linenos">179</span></a><span class="sd">    File name patterns matching input files in `input_dir`.</span>
+</span><span id="PathMapper-180"><a href="#PathMapper-180"><span class="linenos">180</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PathMapper-181"><a href="#PathMapper-181"><span class="linenos">181</span></a>
+</span><span id="PathMapper-182"><a href="#PathMapper-182"><span class="linenos">182</span></a>    <span class="n">parents</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="PathMapper-183"><a href="#PathMapper-183"><span class="linenos">183</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-184"><a href="#PathMapper-184"><span class="linenos">184</span></a><span class="sd">    If `True`, create parent directories of output paths as needed.</span>
+</span><span id="PathMapper-185"><a href="#PathMapper-185"><span class="linenos">185</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PathMapper-186"><a href="#PathMapper-186"><span class="linenos">186</span></a>
+</span><span id="PathMapper-187"><a href="#PathMapper-187"><span class="linenos">187</span></a>    <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="PathMapper-188"><a href="#PathMapper-188"><span class="linenos">188</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-189"><a href="#PathMapper-189"><span class="linenos">189</span></a><span class="sd">    Exit the program if no input files are found.</span>
+</span><span id="PathMapper-190"><a href="#PathMapper-190"><span class="linenos">190</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PathMapper-191"><a href="#PathMapper-191"><span class="linenos">191</span></a>
+</span><span id="PathMapper-192"><a href="#PathMapper-192"><span class="linenos">192</span></a>    <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span>
+</span><span id="PathMapper-193"><a href="#PathMapper-193"><span class="linenos">193</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-194"><a href="#PathMapper-194"><span class="linenos">194</span></a><span class="sd">    Decides whether a given subpath of input directory should be in the input space.</span>
+</span><span id="PathMapper-195"><a href="#PathMapper-195"><span class="linenos">195</span></a><span class="sd">    &quot;&quot;&quot;</span>
+</span><span id="PathMapper-196"><a href="#PathMapper-196"><span class="linenos">196</span></a>
+</span><span id="PathMapper-197"><a href="#PathMapper-197"><span class="linenos">197</span></a>    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="PathMapper-198"><a href="#PathMapper-198"><span class="linenos">198</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="PathMapper-199"><a href="#PathMapper-199"><span class="linenos">199</span></a>            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+</span><span id="PathMapper-200"><a href="#PathMapper-200"><span class="linenos">200</span></a>                <span class="sa">f</span><span class="s2">&quot;globs must not be a plain str. Use list[str] or tuple[str] instead.&quot;</span>
+</span><span id="PathMapper-201"><a href="#PathMapper-201"><span class="linenos">201</span></a>            <span class="p">)</span>
+</span><span id="PathMapper-202"><a href="#PathMapper-202"><span class="linenos">202</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+</span><span id="PathMapper-203"><a href="#PathMapper-203"><span class="linenos">203</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not a directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="PathMapper-204"><a href="#PathMapper-204"><span class="linenos">204</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+</span><span id="PathMapper-205"><a href="#PathMapper-205"><span class="linenos">205</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Not a directory: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="PathMapper-206"><a href="#PathMapper-206"><span class="linenos">206</span></a>
+</span><span id="PathMapper-207"><a href="#PathMapper-207"><span class="linenos">207</span></a>    <span class="nd">@classmethod</span>
+</span><span id="PathMapper-208"><a href="#PathMapper-208"><span class="linenos">208</span></a>    <span class="k">def</span> <span class="nf">file_mapper</span><span class="p">(</span>
+</span><span id="PathMapper-209"><a href="#PathMapper-209"><span class="linenos">209</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="PathMapper-210"><a href="#PathMapper-210"><span class="linenos">210</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper-211"><a href="#PathMapper-211"><span class="linenos">211</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper-212"><a href="#PathMapper-212"><span class="linenos">212</span></a>        <span class="n">glob</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;**/*&quot;</span><span class="p">,</span>
+</span><span id="PathMapper-213"><a href="#PathMapper-213"><span class="linenos">213</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
+</span><span id="PathMapper-214"><a href="#PathMapper-214"><span class="linenos">214</span></a>        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PathMapper-215"><a href="#PathMapper-215"><span class="linenos">215</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="PathMapper-216"><a href="#PathMapper-216"><span class="linenos">216</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
+</span><span id="PathMapper-217"><a href="#PathMapper-217"><span class="linenos">217</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
+</span><span id="PathMapper-218"><a href="#PathMapper-218"><span class="linenos">218</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-219"><a href="#PathMapper-219"><span class="linenos">219</span></a><span class="sd">        Constructor for `PathMapper` for working with files.</span>
+</span><span id="PathMapper-220"><a href="#PathMapper-220"><span class="linenos">220</span></a>
+</span><span id="PathMapper-221"><a href="#PathMapper-221"><span class="linenos">221</span></a><span class="sd">        Examples</span>
+</span><span id="PathMapper-222"><a href="#PathMapper-222"><span class="linenos">222</span></a><span class="sd">        --------</span>
+</span><span id="PathMapper-223"><a href="#PathMapper-223"><span class="linenos">223</span></a>
+</span><span id="PathMapper-224"><a href="#PathMapper-224"><span class="linenos">224</span></a><span class="sd">        Copy all files from `input_dir` to `output_dir`:</span>
+</span><span id="PathMapper-225"><a href="#PathMapper-225"><span class="linenos">225</span></a>
+</span><span id="PathMapper-226"><a href="#PathMapper-226"><span class="linenos">226</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper-227"><a href="#PathMapper-227"><span class="linenos">227</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
+</span><span id="PathMapper-228"><a href="#PathMapper-228"><span class="linenos">228</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
+</span><span id="PathMapper-229"><a href="#PathMapper-229"><span class="linenos">229</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper-230"><a href="#PathMapper-230"><span class="linenos">230</span></a>
+</span><span id="PathMapper-231"><a href="#PathMapper-231"><span class="linenos">231</span></a><span class="sd">        Avoid clobbering (overwriting existing files):</span>
+</span><span id="PathMapper-232"><a href="#PathMapper-232"><span class="linenos">232</span></a>
+</span><span id="PathMapper-233"><a href="#PathMapper-233"><span class="linenos">233</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper-234"><a href="#PathMapper-234"><span class="linenos">234</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
+</span><span id="PathMapper-235"><a href="#PathMapper-235"><span class="linenos">235</span></a><span class="sd">            if output_file.exists():</span>
+</span><span id="PathMapper-236"><a href="#PathMapper-236"><span class="linenos">236</span></a><span class="sd">                print(f&#39;error, file exists: {output_file}&#39;)</span>
+</span><span id="PathMapper-237"><a href="#PathMapper-237"><span class="linenos">237</span></a><span class="sd">                sys.exit(1)</span>
+</span><span id="PathMapper-238"><a href="#PathMapper-238"><span class="linenos">238</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
+</span><span id="PathMapper-239"><a href="#PathMapper-239"><span class="linenos">239</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper-240"><a href="#PathMapper-240"><span class="linenos">240</span></a>
+</span><span id="PathMapper-241"><a href="#PathMapper-241"><span class="linenos">241</span></a><span class="sd">        Call the function `segmentation` on only NIFTI files, and rename output</span>
+</span><span id="PathMapper-242"><a href="#PathMapper-242"><span class="linenos">242</span></a><span class="sd">        file names to end with `.seg.nii`:</span>
+</span><span id="PathMapper-243"><a href="#PathMapper-243"><span class="linenos">243</span></a>
+</span><span id="PathMapper-244"><a href="#PathMapper-244"><span class="linenos">244</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper-245"><a href="#PathMapper-245"><span class="linenos">245</span></a><span class="sd">        mapper = PathMapper.file_mapper(input_dir, output_dir, globs=&#39;**/*.nii&#39;, suffix=&#39;.seg.nii&#39;)</span>
+</span><span id="PathMapper-246"><a href="#PathMapper-246"><span class="linenos">246</span></a><span class="sd">        for input_file, output_file in mapper:</span>
+</span><span id="PathMapper-247"><a href="#PathMapper-247"><span class="linenos">247</span></a><span class="sd">            segmentation(input_file, output_file)</span>
+</span><span id="PathMapper-248"><a href="#PathMapper-248"><span class="linenos">248</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper-249"><a href="#PathMapper-249"><span class="linenos">249</span></a>
+</span><span id="PathMapper-250"><a href="#PathMapper-250"><span class="linenos">250</span></a><span class="sd">        Using more than one glob:</span>
 </span><span id="PathMapper-251"><a href="#PathMapper-251"><span class="linenos">251</span></a>
-</span><span id="PathMapper-252"><a href="#PathMapper-252"><span class="linenos">252</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper-253"><a href="#PathMapper-253"><span class="linenos">253</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper-254"><a href="#PathMapper-254"><span class="linenos">254</span></a>
-</span><span id="PathMapper-255"><a href="#PathMapper-255"><span class="linenos">255</span></a><span class="sd">        suffix: str</span>
-</span><span id="PathMapper-256"><a href="#PathMapper-256"><span class="linenos">256</span></a><span class="sd">            Syntactical sugar for `name_mapper`. If specified, a `name_mapper` is created</span>
-</span><span id="PathMapper-257"><a href="#PathMapper-257"><span class="linenos">257</span></a><span class="sd">            which replaces the file extension of input files with the given value for `suffix`.</span>
+</span><span id="PathMapper-252"><a href="#PathMapper-252"><span class="linenos">252</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper-253"><a href="#PathMapper-253"><span class="linenos">253</span></a><span class="sd">        PathMapper.file_mapper(input_dir, output_dir, globs=[&#39;**/*.nii&#39;, &#39;**/*.nii.gz&#39;])</span>
+</span><span id="PathMapper-254"><a href="#PathMapper-254"><span class="linenos">254</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper-255"><a href="#PathMapper-255"><span class="linenos">255</span></a>
+</span><span id="PathMapper-256"><a href="#PathMapper-256"><span class="linenos">256</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper-257"><a href="#PathMapper-257"><span class="linenos">257</span></a><span class="sd">        ----------</span>
 </span><span id="PathMapper-258"><a href="#PathMapper-258"><span class="linenos">258</span></a>
-</span><span id="PathMapper-259"><a href="#PathMapper-259"><span class="linenos">259</span></a><span class="sd">        glob: str | list[str]</span>
-</span><span id="PathMapper-260"><a href="#PathMapper-260"><span class="linenos">260</span></a><span class="sd">            File name patterns matching input files in `input_dir`.</span>
-</span><span id="PathMapper-261"><a href="#PathMapper-261"><span class="linenos">261</span></a><span class="sd">            Either one or more values can be given.</span>
+</span><span id="PathMapper-259"><a href="#PathMapper-259"><span class="linenos">259</span></a><span class="sd">        suffix: str</span>
+</span><span id="PathMapper-260"><a href="#PathMapper-260"><span class="linenos">260</span></a><span class="sd">            Syntactical sugar for `name_mapper`. If specified, a `name_mapper` is created</span>
+</span><span id="PathMapper-261"><a href="#PathMapper-261"><span class="linenos">261</span></a><span class="sd">            which replaces the file extension of input files with the given value for `suffix`.</span>
 </span><span id="PathMapper-262"><a href="#PathMapper-262"><span class="linenos">262</span></a>
-</span><span id="PathMapper-263"><a href="#PathMapper-263"><span class="linenos">263</span></a><span class="sd">        See field documentation for other arguments.</span>
-</span><span id="PathMapper-264"><a href="#PathMapper-264"><span class="linenos">264</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper-265"><a href="#PathMapper-265"><span class="linenos">265</span></a>        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PathMapper-266"><a href="#PathMapper-266"><span class="linenos">266</span></a>            <span class="k">if</span> <span class="n">name_mapper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_verbatim</span><span class="p">:</span>
-</span><span id="PathMapper-267"><a href="#PathMapper-267"><span class="linenos">267</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Only one of [&quot;suffix&quot;, &quot;name_mapper&quot;] can be given&#39;</span><span class="p">)</span>
-</span><span id="PathMapper-268"><a href="#PathMapper-268"><span class="linenos">268</span></a>            <span class="n">name_mapper</span> <span class="o">=</span> <span class="n">_curry_suffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
-</span><span id="PathMapper-269"><a href="#PathMapper-269"><span class="linenos">269</span></a>        <span class="n">globs</span> <span class="o">=</span> <span class="n">glob</span>
-</span><span id="PathMapper-270"><a href="#PathMapper-270"><span class="linenos">270</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="PathMapper-271"><a href="#PathMapper-271"><span class="linenos">271</span></a>            <span class="n">globs</span> <span class="o">=</span> <span class="p">[</span><span class="n">glob</span><span class="p">]</span>
-</span><span id="PathMapper-272"><a href="#PathMapper-272"><span class="linenos">272</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="PathMapper-273"><a href="#PathMapper-273"><span class="linenos">273</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
-</span><span id="PathMapper-274"><a href="#PathMapper-274"><span class="linenos">274</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="PathMapper-275"><a href="#PathMapper-275"><span class="linenos">275</span></a>            <span class="n">globs</span><span class="o">=</span><span class="n">globs</span><span class="p">,</span>
-</span><span id="PathMapper-276"><a href="#PathMapper-276"><span class="linenos">276</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
-</span><span id="PathMapper-277"><a href="#PathMapper-277"><span class="linenos">277</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
-</span><span id="PathMapper-278"><a href="#PathMapper-278"><span class="linenos">278</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
-</span><span id="PathMapper-279"><a href="#PathMapper-279"><span class="linenos">279</span></a>        <span class="p">)</span>
-</span><span id="PathMapper-280"><a href="#PathMapper-280"><span class="linenos">280</span></a>
-</span><span id="PathMapper-281"><a href="#PathMapper-281"><span class="linenos">281</span></a>    <span class="nd">@classmethod</span>
-</span><span id="PathMapper-282"><a href="#PathMapper-282"><span class="linenos">282</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_shallow</span><span class="p">(</span>
-</span><span id="PathMapper-283"><a href="#PathMapper-283"><span class="linenos">283</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="PathMapper-284"><a href="#PathMapper-284"><span class="linenos">284</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper-285"><a href="#PathMapper-285"><span class="linenos">285</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper-286"><a href="#PathMapper-286"><span class="linenos">286</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
-</span><span id="PathMapper-287"><a href="#PathMapper-287"><span class="linenos">287</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="PathMapper-288"><a href="#PathMapper-288"><span class="linenos">288</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
-</span><span id="PathMapper-289"><a href="#PathMapper-289"><span class="linenos">289</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
-</span><span id="PathMapper-290"><a href="#PathMapper-290"><span class="linenos">290</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-291"><a href="#PathMapper-291"><span class="linenos">291</span></a><span class="sd">        Constructor for `PathMapper` for working with immediate subdirectories of `input_dir`.</span>
-</span><span id="PathMapper-292"><a href="#PathMapper-292"><span class="linenos">292</span></a>
-</span><span id="PathMapper-293"><a href="#PathMapper-293"><span class="linenos">293</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
-</span><span id="PathMapper-294"><a href="#PathMapper-294"><span class="linenos">294</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `b/` (but not `b/c/` nor `e.txt`).</span>
-</span><span id="PathMapper-295"><a href="#PathMapper-295"><span class="linenos">295</span></a>
-</span><span id="PathMapper-296"><a href="#PathMapper-296"><span class="linenos">296</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper-297"><a href="#PathMapper-297"><span class="linenos">297</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper-298"><a href="#PathMapper-298"><span class="linenos">298</span></a>
-</span><span id="PathMapper-299"><a href="#PathMapper-299"><span class="linenos">299</span></a><span class="sd">        See field documentation.</span>
-</span><span id="PathMapper-300"><a href="#PathMapper-300"><span class="linenos">300</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper-301"><a href="#PathMapper-301"><span class="linenos">301</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="PathMapper-302"><a href="#PathMapper-302"><span class="linenos">302</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*/&quot;</span><span class="p">],</span>  <span class="c1"># doesn&#39;t seem like trailing slash is helpful here</span>
-</span><span id="PathMapper-303"><a href="#PathMapper-303"><span class="linenos">303</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
-</span><span id="PathMapper-304"><a href="#PathMapper-304"><span class="linenos">304</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="PathMapper-305"><a href="#PathMapper-305"><span class="linenos">305</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
-</span><span id="PathMapper-306"><a href="#PathMapper-306"><span class="linenos">306</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
-</span><span id="PathMapper-307"><a href="#PathMapper-307"><span class="linenos">307</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
-</span><span id="PathMapper-308"><a href="#PathMapper-308"><span class="linenos">308</span></a>        <span class="p">)</span>
-</span><span id="PathMapper-309"><a href="#PathMapper-309"><span class="linenos">309</span></a>
-</span><span id="PathMapper-310"><a href="#PathMapper-310"><span class="linenos">310</span></a>    <span class="nd">@classmethod</span>
-</span><span id="PathMapper-311"><a href="#PathMapper-311"><span class="linenos">311</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_deep</span><span class="p">(</span>
-</span><span id="PathMapper-312"><a href="#PathMapper-312"><span class="linenos">312</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="PathMapper-313"><a href="#PathMapper-313"><span class="linenos">313</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper-314"><a href="#PathMapper-314"><span class="linenos">314</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper-315"><a href="#PathMapper-315"><span class="linenos">315</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
-</span><span id="PathMapper-316"><a href="#PathMapper-316"><span class="linenos">316</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="PathMapper-317"><a href="#PathMapper-317"><span class="linenos">317</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
-</span><span id="PathMapper-318"><a href="#PathMapper-318"><span class="linenos">318</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
-</span><span id="PathMapper-319"><a href="#PathMapper-319"><span class="linenos">319</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-320"><a href="#PathMapper-320"><span class="linenos">320</span></a><span class="sd">        Constructor for `PathMapper` for working with subpaths of `input_dir` which are</span>
-</span><span id="PathMapper-321"><a href="#PathMapper-321"><span class="linenos">321</span></a><span class="sd">        directories that do not further contain subdirectories.</span>
-</span><span id="PathMapper-322"><a href="#PathMapper-322"><span class="linenos">322</span></a>
-</span><span id="PathMapper-323"><a href="#PathMapper-323"><span class="linenos">323</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
-</span><span id="PathMapper-324"><a href="#PathMapper-324"><span class="linenos">324</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `c/` (but not `b/` nor `e.txt`).</span>
-</span><span id="PathMapper-325"><a href="#PathMapper-325"><span class="linenos">325</span></a>
-</span><span id="PathMapper-326"><a href="#PathMapper-326"><span class="linenos">326</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper-327"><a href="#PathMapper-327"><span class="linenos">327</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper-328"><a href="#PathMapper-328"><span class="linenos">328</span></a>
-</span><span id="PathMapper-329"><a href="#PathMapper-329"><span class="linenos">329</span></a><span class="sd">        See field documentation.</span>
-</span><span id="PathMapper-330"><a href="#PathMapper-330"><span class="linenos">330</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper-331"><a href="#PathMapper-331"><span class="linenos">331</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="PathMapper-332"><a href="#PathMapper-332"><span class="linenos">332</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;**/&quot;</span><span class="p">],</span>
-</span><span id="PathMapper-333"><a href="#PathMapper-333"><span class="linenos">333</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
-</span><span id="PathMapper-334"><a href="#PathMapper-334"><span class="linenos">334</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="PathMapper-335"><a href="#PathMapper-335"><span class="linenos">335</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
-</span><span id="PathMapper-336"><a href="#PathMapper-336"><span class="linenos">336</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
-</span><span id="PathMapper-337"><a href="#PathMapper-337"><span class="linenos">337</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_is_deep_dir</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
-</span><span id="PathMapper-338"><a href="#PathMapper-338"><span class="linenos">338</span></a>        <span class="p">)</span>
-</span><span id="PathMapper-339"><a href="#PathMapper-339"><span class="linenos">339</span></a>
-</span><span id="PathMapper-340"><a href="#PathMapper-340"><span class="linenos">340</span></a>    <span class="nd">@staticmethod</span>
-</span><span id="PathMapper-341"><a href="#PathMapper-341"><span class="linenos">341</span></a>    <span class="k">def</span> <span class="nf">_is_deep_dir</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="PathMapper-342"><a href="#PathMapper-342"><span class="linenos">342</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-343"><a href="#PathMapper-343"><span class="linenos">343</span></a><span class="sd">        :return: True if given path is a directory which does not contain subdirectories</span>
-</span><span id="PathMapper-344"><a href="#PathMapper-344"><span class="linenos">344</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper-345"><a href="#PathMapper-345"><span class="linenos">345</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-</span><span id="PathMapper-346"><a href="#PathMapper-346"><span class="linenos">346</span></a>            <span class="k">return</span> <span class="kc">False</span>
-</span><span id="PathMapper-347"><a href="#PathMapper-347"><span class="linenos">347</span></a>        <span class="n">dirs</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">subpath</span><span class="p">:</span> <span class="n">subpath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">(),</span> <span class="n">p</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*/&quot;</span><span class="p">))</span>
-</span><span id="PathMapper-348"><a href="#PathMapper-348"><span class="linenos">348</span></a>        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="PathMapper-349"><a href="#PathMapper-349"><span class="linenos">349</span></a>
-</span><span id="PathMapper-350"><a href="#PathMapper-350"><span class="linenos">350</span></a>    <span class="k">def</span> <span class="nf">iter_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
-</span><span id="PathMapper-351"><a href="#PathMapper-351"><span class="linenos">351</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-352"><a href="#PathMapper-352"><span class="linenos">352</span></a><span class="sd">        :return: an iterator over input files</span>
-</span><span id="PathMapper-353"><a href="#PathMapper-353"><span class="linenos">353</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper-354"><a href="#PathMapper-354"><span class="linenos">354</span></a>        <span class="k">for</span> <span class="n">glob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">:</span>
-</span><span id="PathMapper-355"><a href="#PathMapper-355"><span class="linenos">355</span></a>            <span class="k">yield from</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob</span><span class="p">))</span>
-</span><span id="PathMapper-356"><a href="#PathMapper-356"><span class="linenos">356</span></a>
-</span><span id="PathMapper-357"><a href="#PathMapper-357"><span class="linenos">357</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="PathMapper-358"><a href="#PathMapper-358"><span class="linenos">358</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
-</span><span id="PathMapper-359"><a href="#PathMapper-359"><span class="linenos">359</span></a>
-</span><span id="PathMapper-360"><a href="#PathMapper-360"><span class="linenos">360</span></a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="PathMapper-361"><a href="#PathMapper-361"><span class="linenos">361</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-362"><a href="#PathMapper-362"><span class="linenos">362</span></a><span class="sd">        Count the number of input paths under `input_dir`.</span>
-</span><span id="PathMapper-363"><a href="#PathMapper-363"><span class="linenos">363</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper-364"><a href="#PathMapper-364"><span class="linenos">364</span></a>        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">()))</span>
-</span><span id="PathMapper-365"><a href="#PathMapper-365"><span class="linenos">365</span></a>
-</span><span id="PathMapper-366"><a href="#PathMapper-366"><span class="linenos">366</span></a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="PathMapper-367"><a href="#PathMapper-367"><span class="linenos">367</span></a>        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
-</span><span id="PathMapper-368"><a href="#PathMapper-368"><span class="linenos">368</span></a>
-</span><span id="PathMapper-369"><a href="#PathMapper-369"><span class="linenos">369</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
-</span><span id="PathMapper-370"><a href="#PathMapper-370"><span class="linenos">370</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fail_if_empty</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
-</span><span id="PathMapper-371"><a href="#PathMapper-371"><span class="linenos">371</span></a>            <span class="nb">print</span><span class="p">(</span>
-</span><span id="PathMapper-372"><a href="#PathMapper-372"><span class="linenos">372</span></a>                <span class="sa">f</span><span class="s1">&#39;no input found for &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="si">}</span><span class="s1">/</span><span class="se">{{</span><span class="si">{</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">)</span><span class="si">}</span><span class="se">}}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
-</span><span id="PathMapper-373"><a href="#PathMapper-373"><span class="linenos">373</span></a>                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
-</span><span id="PathMapper-374"><a href="#PathMapper-374"><span class="linenos">374</span></a>            <span class="p">)</span>
-</span><span id="PathMapper-375"><a href="#PathMapper-375"><span class="linenos">375</span></a>            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span id="PathMapper-376"><a href="#PathMapper-376"><span class="linenos">376</span></a>        <span class="k">for</span> <span class="n">input_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">():</span>
-</span><span id="PathMapper-377"><a href="#PathMapper-377"><span class="linenos">377</span></a>            <span class="n">output_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_for</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
-</span><span id="PathMapper-378"><a href="#PathMapper-378"><span class="linenos">378</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
-</span><span id="PathMapper-379"><a href="#PathMapper-379"><span class="linenos">379</span></a>                <span class="n">output_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="PathMapper-380"><a href="#PathMapper-380"><span class="linenos">380</span></a>            <span class="k">yield</span> <span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span>
-</span><span id="PathMapper-381"><a href="#PathMapper-381"><span class="linenos">381</span></a>
-</span><span id="PathMapper-382"><a href="#PathMapper-382"><span class="linenos">382</span></a>    <span class="k">def</span> <span class="nf">output_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-</span><span id="PathMapper-383"><a href="#PathMapper-383"><span class="linenos">383</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper-384"><a href="#PathMapper-384"><span class="linenos">384</span></a><span class="sd">        Produce a path under `output_dir` which corresponds to the given `input_path`.</span>
+</span><span id="PathMapper-263"><a href="#PathMapper-263"><span class="linenos">263</span></a><span class="sd">        glob: str | list[str]</span>
+</span><span id="PathMapper-264"><a href="#PathMapper-264"><span class="linenos">264</span></a><span class="sd">            File name patterns matching input files in `input_dir`.</span>
+</span><span id="PathMapper-265"><a href="#PathMapper-265"><span class="linenos">265</span></a><span class="sd">            Either one or more values can be given.</span>
+</span><span id="PathMapper-266"><a href="#PathMapper-266"><span class="linenos">266</span></a>
+</span><span id="PathMapper-267"><a href="#PathMapper-267"><span class="linenos">267</span></a><span class="sd">        See field documentation for other arguments.</span>
+</span><span id="PathMapper-268"><a href="#PathMapper-268"><span class="linenos">268</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper-269"><a href="#PathMapper-269"><span class="linenos">269</span></a>        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PathMapper-270"><a href="#PathMapper-270"><span class="linenos">270</span></a>            <span class="k">if</span> <span class="n">name_mapper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_verbatim</span><span class="p">:</span>
+</span><span id="PathMapper-271"><a href="#PathMapper-271"><span class="linenos">271</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Only one of [&quot;suffix&quot;, &quot;name_mapper&quot;] can be given&#39;</span><span class="p">)</span>
+</span><span id="PathMapper-272"><a href="#PathMapper-272"><span class="linenos">272</span></a>            <span class="n">name_mapper</span> <span class="o">=</span> <span class="n">_curry_suffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
+</span><span id="PathMapper-273"><a href="#PathMapper-273"><span class="linenos">273</span></a>        <span class="n">globs</span> <span class="o">=</span> <span class="n">glob</span>
+</span><span id="PathMapper-274"><a href="#PathMapper-274"><span class="linenos">274</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="PathMapper-275"><a href="#PathMapper-275"><span class="linenos">275</span></a>            <span class="n">globs</span> <span class="o">=</span> <span class="p">[</span><span class="n">glob</span><span class="p">]</span>
+</span><span id="PathMapper-276"><a href="#PathMapper-276"><span class="linenos">276</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="PathMapper-277"><a href="#PathMapper-277"><span class="linenos">277</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
+</span><span id="PathMapper-278"><a href="#PathMapper-278"><span class="linenos">278</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="PathMapper-279"><a href="#PathMapper-279"><span class="linenos">279</span></a>            <span class="n">globs</span><span class="o">=</span><span class="n">globs</span><span class="p">,</span>
+</span><span id="PathMapper-280"><a href="#PathMapper-280"><span class="linenos">280</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
+</span><span id="PathMapper-281"><a href="#PathMapper-281"><span class="linenos">281</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
+</span><span id="PathMapper-282"><a href="#PathMapper-282"><span class="linenos">282</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+</span><span id="PathMapper-283"><a href="#PathMapper-283"><span class="linenos">283</span></a>        <span class="p">)</span>
+</span><span id="PathMapper-284"><a href="#PathMapper-284"><span class="linenos">284</span></a>
+</span><span id="PathMapper-285"><a href="#PathMapper-285"><span class="linenos">285</span></a>    <span class="nd">@classmethod</span>
+</span><span id="PathMapper-286"><a href="#PathMapper-286"><span class="linenos">286</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_shallow</span><span class="p">(</span>
+</span><span id="PathMapper-287"><a href="#PathMapper-287"><span class="linenos">287</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="PathMapper-288"><a href="#PathMapper-288"><span class="linenos">288</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper-289"><a href="#PathMapper-289"><span class="linenos">289</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper-290"><a href="#PathMapper-290"><span class="linenos">290</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
+</span><span id="PathMapper-291"><a href="#PathMapper-291"><span class="linenos">291</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="PathMapper-292"><a href="#PathMapper-292"><span class="linenos">292</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
+</span><span id="PathMapper-293"><a href="#PathMapper-293"><span class="linenos">293</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
+</span><span id="PathMapper-294"><a href="#PathMapper-294"><span class="linenos">294</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-295"><a href="#PathMapper-295"><span class="linenos">295</span></a><span class="sd">        Constructor for `PathMapper` for working with immediate subdirectories of `input_dir`.</span>
+</span><span id="PathMapper-296"><a href="#PathMapper-296"><span class="linenos">296</span></a>
+</span><span id="PathMapper-297"><a href="#PathMapper-297"><span class="linenos">297</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
+</span><span id="PathMapper-298"><a href="#PathMapper-298"><span class="linenos">298</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `b/` (but not `b/c/` nor `e.txt`).</span>
+</span><span id="PathMapper-299"><a href="#PathMapper-299"><span class="linenos">299</span></a>
+</span><span id="PathMapper-300"><a href="#PathMapper-300"><span class="linenos">300</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper-301"><a href="#PathMapper-301"><span class="linenos">301</span></a><span class="sd">        ----------</span>
+</span><span id="PathMapper-302"><a href="#PathMapper-302"><span class="linenos">302</span></a>
+</span><span id="PathMapper-303"><a href="#PathMapper-303"><span class="linenos">303</span></a><span class="sd">        See field documentation.</span>
+</span><span id="PathMapper-304"><a href="#PathMapper-304"><span class="linenos">304</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper-305"><a href="#PathMapper-305"><span class="linenos">305</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="PathMapper-306"><a href="#PathMapper-306"><span class="linenos">306</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*/&quot;</span><span class="p">],</span>  <span class="c1"># doesn&#39;t seem like trailing slash is helpful here</span>
+</span><span id="PathMapper-307"><a href="#PathMapper-307"><span class="linenos">307</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
+</span><span id="PathMapper-308"><a href="#PathMapper-308"><span class="linenos">308</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="PathMapper-309"><a href="#PathMapper-309"><span class="linenos">309</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
+</span><span id="PathMapper-310"><a href="#PathMapper-310"><span class="linenos">310</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
+</span><span id="PathMapper-311"><a href="#PathMapper-311"><span class="linenos">311</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+</span><span id="PathMapper-312"><a href="#PathMapper-312"><span class="linenos">312</span></a>        <span class="p">)</span>
+</span><span id="PathMapper-313"><a href="#PathMapper-313"><span class="linenos">313</span></a>
+</span><span id="PathMapper-314"><a href="#PathMapper-314"><span class="linenos">314</span></a>    <span class="nd">@classmethod</span>
+</span><span id="PathMapper-315"><a href="#PathMapper-315"><span class="linenos">315</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_deep</span><span class="p">(</span>
+</span><span id="PathMapper-316"><a href="#PathMapper-316"><span class="linenos">316</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="PathMapper-317"><a href="#PathMapper-317"><span class="linenos">317</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper-318"><a href="#PathMapper-318"><span class="linenos">318</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper-319"><a href="#PathMapper-319"><span class="linenos">319</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
+</span><span id="PathMapper-320"><a href="#PathMapper-320"><span class="linenos">320</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="PathMapper-321"><a href="#PathMapper-321"><span class="linenos">321</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
+</span><span id="PathMapper-322"><a href="#PathMapper-322"><span class="linenos">322</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
+</span><span id="PathMapper-323"><a href="#PathMapper-323"><span class="linenos">323</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-324"><a href="#PathMapper-324"><span class="linenos">324</span></a><span class="sd">        Constructor for `PathMapper` for working with subpaths of `input_dir` which are</span>
+</span><span id="PathMapper-325"><a href="#PathMapper-325"><span class="linenos">325</span></a><span class="sd">        directories that do not further contain subdirectories.</span>
+</span><span id="PathMapper-326"><a href="#PathMapper-326"><span class="linenos">326</span></a>
+</span><span id="PathMapper-327"><a href="#PathMapper-327"><span class="linenos">327</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
+</span><span id="PathMapper-328"><a href="#PathMapper-328"><span class="linenos">328</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `c/` (but not `b/` nor `e.txt`).</span>
+</span><span id="PathMapper-329"><a href="#PathMapper-329"><span class="linenos">329</span></a>
+</span><span id="PathMapper-330"><a href="#PathMapper-330"><span class="linenos">330</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper-331"><a href="#PathMapper-331"><span class="linenos">331</span></a><span class="sd">        ----------</span>
+</span><span id="PathMapper-332"><a href="#PathMapper-332"><span class="linenos">332</span></a>
+</span><span id="PathMapper-333"><a href="#PathMapper-333"><span class="linenos">333</span></a><span class="sd">        See field documentation.</span>
+</span><span id="PathMapper-334"><a href="#PathMapper-334"><span class="linenos">334</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper-335"><a href="#PathMapper-335"><span class="linenos">335</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="PathMapper-336"><a href="#PathMapper-336"><span class="linenos">336</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;**/&quot;</span><span class="p">],</span>
+</span><span id="PathMapper-337"><a href="#PathMapper-337"><span class="linenos">337</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
+</span><span id="PathMapper-338"><a href="#PathMapper-338"><span class="linenos">338</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="PathMapper-339"><a href="#PathMapper-339"><span class="linenos">339</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
+</span><span id="PathMapper-340"><a href="#PathMapper-340"><span class="linenos">340</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
+</span><span id="PathMapper-341"><a href="#PathMapper-341"><span class="linenos">341</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_is_deep_dir</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+</span><span id="PathMapper-342"><a href="#PathMapper-342"><span class="linenos">342</span></a>        <span class="p">)</span>
+</span><span id="PathMapper-343"><a href="#PathMapper-343"><span class="linenos">343</span></a>
+</span><span id="PathMapper-344"><a href="#PathMapper-344"><span class="linenos">344</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="PathMapper-345"><a href="#PathMapper-345"><span class="linenos">345</span></a>    <span class="k">def</span> <span class="nf">_is_deep_dir</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="PathMapper-346"><a href="#PathMapper-346"><span class="linenos">346</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-347"><a href="#PathMapper-347"><span class="linenos">347</span></a><span class="sd">        :return: True if given path is a directory which does not contain subdirectories</span>
+</span><span id="PathMapper-348"><a href="#PathMapper-348"><span class="linenos">348</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper-349"><a href="#PathMapper-349"><span class="linenos">349</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+</span><span id="PathMapper-350"><a href="#PathMapper-350"><span class="linenos">350</span></a>            <span class="k">return</span> <span class="kc">False</span>
+</span><span id="PathMapper-351"><a href="#PathMapper-351"><span class="linenos">351</span></a>        <span class="n">dirs</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">subpath</span><span class="p">:</span> <span class="n">subpath</span><span class="o">.</span><span class="n">is_dir</span><span class="p">(),</span> <span class="n">p</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*/&quot;</span><span class="p">))</span>
+</span><span id="PathMapper-352"><a href="#PathMapper-352"><span class="linenos">352</span></a>        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">dirs</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span id="PathMapper-353"><a href="#PathMapper-353"><span class="linenos">353</span></a>
+</span><span id="PathMapper-354"><a href="#PathMapper-354"><span class="linenos">354</span></a>    <span class="k">def</span> <span class="nf">iter_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+</span><span id="PathMapper-355"><a href="#PathMapper-355"><span class="linenos">355</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-356"><a href="#PathMapper-356"><span class="linenos">356</span></a><span class="sd">        :return: an iterator over input files</span>
+</span><span id="PathMapper-357"><a href="#PathMapper-357"><span class="linenos">357</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper-358"><a href="#PathMapper-358"><span class="linenos">358</span></a>        <span class="k">for</span> <span class="n">glob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">:</span>
+</span><span id="PathMapper-359"><a href="#PathMapper-359"><span class="linenos">359</span></a>            <span class="k">yield from</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob</span><span class="p">))</span>
+</span><span id="PathMapper-360"><a href="#PathMapper-360"><span class="linenos">360</span></a>
+</span><span id="PathMapper-361"><a href="#PathMapper-361"><span class="linenos">361</span></a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="PathMapper-362"><a href="#PathMapper-362"><span class="linenos">362</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+</span><span id="PathMapper-363"><a href="#PathMapper-363"><span class="linenos">363</span></a>
+</span><span id="PathMapper-364"><a href="#PathMapper-364"><span class="linenos">364</span></a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="PathMapper-365"><a href="#PathMapper-365"><span class="linenos">365</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-366"><a href="#PathMapper-366"><span class="linenos">366</span></a><span class="sd">        Count the number of input paths under `input_dir`.</span>
+</span><span id="PathMapper-367"><a href="#PathMapper-367"><span class="linenos">367</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper-368"><a href="#PathMapper-368"><span class="linenos">368</span></a>        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">()))</span>
+</span><span id="PathMapper-369"><a href="#PathMapper-369"><span class="linenos">369</span></a>
+</span><span id="PathMapper-370"><a href="#PathMapper-370"><span class="linenos">370</span></a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="PathMapper-371"><a href="#PathMapper-371"><span class="linenos">371</span></a>        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+</span><span id="PathMapper-372"><a href="#PathMapper-372"><span class="linenos">372</span></a>
+</span><span id="PathMapper-373"><a href="#PathMapper-373"><span class="linenos">373</span></a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]]:</span>
+</span><span id="PathMapper-374"><a href="#PathMapper-374"><span class="linenos">374</span></a>        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fail_if_empty</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_empty</span><span class="p">():</span>
+</span><span id="PathMapper-375"><a href="#PathMapper-375"><span class="linenos">375</span></a>            <span class="nb">print</span><span class="p">(</span>
+</span><span id="PathMapper-376"><a href="#PathMapper-376"><span class="linenos">376</span></a>                <span class="sa">f</span><span class="s1">&#39;no input found for &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="si">}</span><span class="s1">/</span><span class="se">{{</span><span class="si">{</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">)</span><span class="si">}</span><span class="se">}}</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+</span><span id="PathMapper-377"><a href="#PathMapper-377"><span class="linenos">377</span></a>                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+</span><span id="PathMapper-378"><a href="#PathMapper-378"><span class="linenos">378</span></a>            <span class="p">)</span>
+</span><span id="PathMapper-379"><a href="#PathMapper-379"><span class="linenos">379</span></a>            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="PathMapper-380"><a href="#PathMapper-380"><span class="linenos">380</span></a>        <span class="k">for</span> <span class="n">input_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">():</span>
+</span><span id="PathMapper-381"><a href="#PathMapper-381"><span class="linenos">381</span></a>            <span class="n">output_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_for</span><span class="p">(</span><span class="n">input_path</span><span class="p">)</span>
+</span><span id="PathMapper-382"><a href="#PathMapper-382"><span class="linenos">382</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
+</span><span id="PathMapper-383"><a href="#PathMapper-383"><span class="linenos">383</span></a>                <span class="n">output_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="PathMapper-384"><a href="#PathMapper-384"><span class="linenos">384</span></a>            <span class="k">yield</span> <span class="n">input_path</span><span class="p">,</span> <span class="n">output_path</span>
 </span><span id="PathMapper-385"><a href="#PathMapper-385"><span class="linenos">385</span></a>
-</span><span id="PathMapper-386"><a href="#PathMapper-386"><span class="linenos">386</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper-387"><a href="#PathMapper-387"><span class="linenos">387</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper-388"><a href="#PathMapper-388"><span class="linenos">388</span></a>
-</span><span id="PathMapper-389"><a href="#PathMapper-389"><span class="linenos">389</span></a><span class="sd">        input_path: Path</span>
-</span><span id="PathMapper-390"><a href="#PathMapper-390"><span class="linenos">390</span></a><span class="sd">            A subpath of `self.input_dir`</span>
-</span><span id="PathMapper-391"><a href="#PathMapper-391"><span class="linenos">391</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper-392"><a href="#PathMapper-392"><span class="linenos">392</span></a>        <span class="n">rel</span> <span class="o">=</span> <span class="n">input_path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="p">)</span>
-</span><span id="PathMapper-393"><a href="#PathMapper-393"><span class="linenos">393</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_mapper</span><span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)</span>
+</span><span id="PathMapper-386"><a href="#PathMapper-386"><span class="linenos">386</span></a>    <span class="k">def</span> <span class="nf">output_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+</span><span id="PathMapper-387"><a href="#PathMapper-387"><span class="linenos">387</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper-388"><a href="#PathMapper-388"><span class="linenos">388</span></a><span class="sd">        Produce a path under `output_dir` which corresponds to the given `input_path`.</span>
+</span><span id="PathMapper-389"><a href="#PathMapper-389"><span class="linenos">389</span></a>
+</span><span id="PathMapper-390"><a href="#PathMapper-390"><span class="linenos">390</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper-391"><a href="#PathMapper-391"><span class="linenos">391</span></a><span class="sd">        ----------</span>
+</span><span id="PathMapper-392"><a href="#PathMapper-392"><span class="linenos">392</span></a>
+</span><span id="PathMapper-393"><a href="#PathMapper-393"><span class="linenos">393</span></a><span class="sd">        input_path: Path</span>
+</span><span id="PathMapper-394"><a href="#PathMapper-394"><span class="linenos">394</span></a><span class="sd">            A subpath of `self.input_dir`</span>
+</span><span id="PathMapper-395"><a href="#PathMapper-395"><span class="linenos">395</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper-396"><a href="#PathMapper-396"><span class="linenos">396</span></a>        <span class="n">rel</span> <span class="o">=</span> <span class="n">input_path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="p">)</span>
+</span><span id="PathMapper-397"><a href="#PathMapper-397"><span class="linenos">397</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_mapper</span><span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -977,9 +981,8 @@ to parallelize subprocesses (akin to the usage of GNU
 </code></pre>
 </div>
 
-<p>Hint: `<code>gets the number of CPUs available
-to a containerized process (which can be limited by, for instance,
-</code>docker run --cpuset-cpus 0-3`)</p>
+<p>Hint: <code>os.sched_getaffinity(0)</code> gets the number of visible CPUs
+(which can be limited by, for instance, <code>docker run --cpuset-cpus 0-3</code>)</p>
 
 <p>Add a progress bar with <a href="https://github.com/tqdm/tqdm">tqdm</a>:</p>
 
@@ -991,6 +994,13 @@ to a containerized process (which can be limited by, for instance,
         <span class="n">do_something</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
 </code></pre>
 </div>
+
+<p>For some examples on how to use <code>tqdm</code>, <code><a href="#PathMapper">PathMapper</a></code>, and a thread or process pool, see these examples:</p>
+
+<ul>
+<li><a href="https://github.com/FNNDSC/chris_plugin/blob/master/examples/pl-replace/replace.py">https://github.com/FNNDSC/chris_plugin/blob/master/examples/pl-replace/replace.py</a></li>
+<li><a href="https://github.com/FNNDSC/pl-mni2common/blob/47fa7c1e742ff7af0feb83cf5fb632db1f08ece6/mni2common.py#L52-L57">https://github.com/FNNDSC/pl-mni2common/blob/47fa7c1e742ff7af0feb83cf5fb632db1f08ece6/mni2common.py#L52-L57</a></li>
+</ul>
 </div>
 
 
@@ -1128,83 +1138,83 @@ input path relative to <code><a href="#PathMapper.input_dir">input_dir</a></code
 
     </div>
     <a class="headerlink" href="#PathMapper.file_mapper"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.file_mapper-203"><a href="#PathMapper.file_mapper-203"><span class="linenos">203</span></a>    <span class="nd">@classmethod</span>
-</span><span id="PathMapper.file_mapper-204"><a href="#PathMapper.file_mapper-204"><span class="linenos">204</span></a>    <span class="k">def</span> <span class="nf">file_mapper</span><span class="p">(</span>
-</span><span id="PathMapper.file_mapper-205"><a href="#PathMapper.file_mapper-205"><span class="linenos">205</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-206"><a href="#PathMapper.file_mapper-206"><span class="linenos">206</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-207"><a href="#PathMapper.file_mapper-207"><span class="linenos">207</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-208"><a href="#PathMapper.file_mapper-208"><span class="linenos">208</span></a>        <span class="n">glob</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;**/*&quot;</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-209"><a href="#PathMapper.file_mapper-209"><span class="linenos">209</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-210"><a href="#PathMapper.file_mapper-210"><span class="linenos">210</span></a>        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-211"><a href="#PathMapper.file_mapper-211"><span class="linenos">211</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-212"><a href="#PathMapper.file_mapper-212"><span class="linenos">212</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-213"><a href="#PathMapper.file_mapper-213"><span class="linenos">213</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
-</span><span id="PathMapper.file_mapper-214"><a href="#PathMapper.file_mapper-214"><span class="linenos">214</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper.file_mapper-215"><a href="#PathMapper.file_mapper-215"><span class="linenos">215</span></a><span class="sd">        Constructor for `PathMapper` for working with files.</span>
-</span><span id="PathMapper.file_mapper-216"><a href="#PathMapper.file_mapper-216"><span class="linenos">216</span></a>
-</span><span id="PathMapper.file_mapper-217"><a href="#PathMapper.file_mapper-217"><span class="linenos">217</span></a><span class="sd">        Examples</span>
-</span><span id="PathMapper.file_mapper-218"><a href="#PathMapper.file_mapper-218"><span class="linenos">218</span></a><span class="sd">        --------</span>
-</span><span id="PathMapper.file_mapper-219"><a href="#PathMapper.file_mapper-219"><span class="linenos">219</span></a>
-</span><span id="PathMapper.file_mapper-220"><a href="#PathMapper.file_mapper-220"><span class="linenos">220</span></a><span class="sd">        Copy all files from `input_dir` to `output_dir`:</span>
-</span><span id="PathMapper.file_mapper-221"><a href="#PathMapper.file_mapper-221"><span class="linenos">221</span></a>
-</span><span id="PathMapper.file_mapper-222"><a href="#PathMapper.file_mapper-222"><span class="linenos">222</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper.file_mapper-223"><a href="#PathMapper.file_mapper-223"><span class="linenos">223</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
-</span><span id="PathMapper.file_mapper-224"><a href="#PathMapper.file_mapper-224"><span class="linenos">224</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
-</span><span id="PathMapper.file_mapper-225"><a href="#PathMapper.file_mapper-225"><span class="linenos">225</span></a><span class="sd">        ```</span>
-</span><span id="PathMapper.file_mapper-226"><a href="#PathMapper.file_mapper-226"><span class="linenos">226</span></a>
-</span><span id="PathMapper.file_mapper-227"><a href="#PathMapper.file_mapper-227"><span class="linenos">227</span></a><span class="sd">        Avoid clobbering (overwriting existing files):</span>
-</span><span id="PathMapper.file_mapper-228"><a href="#PathMapper.file_mapper-228"><span class="linenos">228</span></a>
-</span><span id="PathMapper.file_mapper-229"><a href="#PathMapper.file_mapper-229"><span class="linenos">229</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper.file_mapper-230"><a href="#PathMapper.file_mapper-230"><span class="linenos">230</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
-</span><span id="PathMapper.file_mapper-231"><a href="#PathMapper.file_mapper-231"><span class="linenos">231</span></a><span class="sd">            if output_file.exists():</span>
-</span><span id="PathMapper.file_mapper-232"><a href="#PathMapper.file_mapper-232"><span class="linenos">232</span></a><span class="sd">                print(f&#39;error, file exists: {output_file}&#39;)</span>
-</span><span id="PathMapper.file_mapper-233"><a href="#PathMapper.file_mapper-233"><span class="linenos">233</span></a><span class="sd">                sys.exit(1)</span>
-</span><span id="PathMapper.file_mapper-234"><a href="#PathMapper.file_mapper-234"><span class="linenos">234</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
-</span><span id="PathMapper.file_mapper-235"><a href="#PathMapper.file_mapper-235"><span class="linenos">235</span></a><span class="sd">        ```</span>
-</span><span id="PathMapper.file_mapper-236"><a href="#PathMapper.file_mapper-236"><span class="linenos">236</span></a>
-</span><span id="PathMapper.file_mapper-237"><a href="#PathMapper.file_mapper-237"><span class="linenos">237</span></a><span class="sd">        Call the function `segmentation` on only NIFTI files, and rename output</span>
-</span><span id="PathMapper.file_mapper-238"><a href="#PathMapper.file_mapper-238"><span class="linenos">238</span></a><span class="sd">        file names to end with `.seg.nii`:</span>
-</span><span id="PathMapper.file_mapper-239"><a href="#PathMapper.file_mapper-239"><span class="linenos">239</span></a>
-</span><span id="PathMapper.file_mapper-240"><a href="#PathMapper.file_mapper-240"><span class="linenos">240</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper.file_mapper-241"><a href="#PathMapper.file_mapper-241"><span class="linenos">241</span></a><span class="sd">        mapper = PathMapper.file_mapper(input_dir, output_dir, globs=&#39;**/*.nii&#39;, suffix=&#39;.seg.nii&#39;)</span>
-</span><span id="PathMapper.file_mapper-242"><a href="#PathMapper.file_mapper-242"><span class="linenos">242</span></a><span class="sd">        for input_file, output_file in mapper:</span>
-</span><span id="PathMapper.file_mapper-243"><a href="#PathMapper.file_mapper-243"><span class="linenos">243</span></a><span class="sd">            segmentation(input_file, output_file)</span>
-</span><span id="PathMapper.file_mapper-244"><a href="#PathMapper.file_mapper-244"><span class="linenos">244</span></a><span class="sd">        ```</span>
-</span><span id="PathMapper.file_mapper-245"><a href="#PathMapper.file_mapper-245"><span class="linenos">245</span></a>
-</span><span id="PathMapper.file_mapper-246"><a href="#PathMapper.file_mapper-246"><span class="linenos">246</span></a><span class="sd">        Using more than one glob:</span>
-</span><span id="PathMapper.file_mapper-247"><a href="#PathMapper.file_mapper-247"><span class="linenos">247</span></a>
-</span><span id="PathMapper.file_mapper-248"><a href="#PathMapper.file_mapper-248"><span class="linenos">248</span></a><span class="sd">        ```python</span>
-</span><span id="PathMapper.file_mapper-249"><a href="#PathMapper.file_mapper-249"><span class="linenos">249</span></a><span class="sd">        PathMapper.file_mapper(input_dir, output_dir, globs=[&#39;**/*.nii&#39;, &#39;**/*.nii.gz&#39;])</span>
-</span><span id="PathMapper.file_mapper-250"><a href="#PathMapper.file_mapper-250"><span class="linenos">250</span></a><span class="sd">        ```</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.file_mapper-207"><a href="#PathMapper.file_mapper-207"><span class="linenos">207</span></a>    <span class="nd">@classmethod</span>
+</span><span id="PathMapper.file_mapper-208"><a href="#PathMapper.file_mapper-208"><span class="linenos">208</span></a>    <span class="k">def</span> <span class="nf">file_mapper</span><span class="p">(</span>
+</span><span id="PathMapper.file_mapper-209"><a href="#PathMapper.file_mapper-209"><span class="linenos">209</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-210"><a href="#PathMapper.file_mapper-210"><span class="linenos">210</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-211"><a href="#PathMapper.file_mapper-211"><span class="linenos">211</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-212"><a href="#PathMapper.file_mapper-212"><span class="linenos">212</span></a>        <span class="n">glob</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;**/*&quot;</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-213"><a href="#PathMapper.file_mapper-213"><span class="linenos">213</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-214"><a href="#PathMapper.file_mapper-214"><span class="linenos">214</span></a>        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-215"><a href="#PathMapper.file_mapper-215"><span class="linenos">215</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-216"><a href="#PathMapper.file_mapper-216"><span class="linenos">216</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-217"><a href="#PathMapper.file_mapper-217"><span class="linenos">217</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
+</span><span id="PathMapper.file_mapper-218"><a href="#PathMapper.file_mapper-218"><span class="linenos">218</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper.file_mapper-219"><a href="#PathMapper.file_mapper-219"><span class="linenos">219</span></a><span class="sd">        Constructor for `PathMapper` for working with files.</span>
+</span><span id="PathMapper.file_mapper-220"><a href="#PathMapper.file_mapper-220"><span class="linenos">220</span></a>
+</span><span id="PathMapper.file_mapper-221"><a href="#PathMapper.file_mapper-221"><span class="linenos">221</span></a><span class="sd">        Examples</span>
+</span><span id="PathMapper.file_mapper-222"><a href="#PathMapper.file_mapper-222"><span class="linenos">222</span></a><span class="sd">        --------</span>
+</span><span id="PathMapper.file_mapper-223"><a href="#PathMapper.file_mapper-223"><span class="linenos">223</span></a>
+</span><span id="PathMapper.file_mapper-224"><a href="#PathMapper.file_mapper-224"><span class="linenos">224</span></a><span class="sd">        Copy all files from `input_dir` to `output_dir`:</span>
+</span><span id="PathMapper.file_mapper-225"><a href="#PathMapper.file_mapper-225"><span class="linenos">225</span></a>
+</span><span id="PathMapper.file_mapper-226"><a href="#PathMapper.file_mapper-226"><span class="linenos">226</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper.file_mapper-227"><a href="#PathMapper.file_mapper-227"><span class="linenos">227</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
+</span><span id="PathMapper.file_mapper-228"><a href="#PathMapper.file_mapper-228"><span class="linenos">228</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
+</span><span id="PathMapper.file_mapper-229"><a href="#PathMapper.file_mapper-229"><span class="linenos">229</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper.file_mapper-230"><a href="#PathMapper.file_mapper-230"><span class="linenos">230</span></a>
+</span><span id="PathMapper.file_mapper-231"><a href="#PathMapper.file_mapper-231"><span class="linenos">231</span></a><span class="sd">        Avoid clobbering (overwriting existing files):</span>
+</span><span id="PathMapper.file_mapper-232"><a href="#PathMapper.file_mapper-232"><span class="linenos">232</span></a>
+</span><span id="PathMapper.file_mapper-233"><a href="#PathMapper.file_mapper-233"><span class="linenos">233</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper.file_mapper-234"><a href="#PathMapper.file_mapper-234"><span class="linenos">234</span></a><span class="sd">        for input_file, output_file in PathMapper.file_mapper(input_dir, output_dir):</span>
+</span><span id="PathMapper.file_mapper-235"><a href="#PathMapper.file_mapper-235"><span class="linenos">235</span></a><span class="sd">            if output_file.exists():</span>
+</span><span id="PathMapper.file_mapper-236"><a href="#PathMapper.file_mapper-236"><span class="linenos">236</span></a><span class="sd">                print(f&#39;error, file exists: {output_file}&#39;)</span>
+</span><span id="PathMapper.file_mapper-237"><a href="#PathMapper.file_mapper-237"><span class="linenos">237</span></a><span class="sd">                sys.exit(1)</span>
+</span><span id="PathMapper.file_mapper-238"><a href="#PathMapper.file_mapper-238"><span class="linenos">238</span></a><span class="sd">            shutil.copy(input_file, output_file)</span>
+</span><span id="PathMapper.file_mapper-239"><a href="#PathMapper.file_mapper-239"><span class="linenos">239</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper.file_mapper-240"><a href="#PathMapper.file_mapper-240"><span class="linenos">240</span></a>
+</span><span id="PathMapper.file_mapper-241"><a href="#PathMapper.file_mapper-241"><span class="linenos">241</span></a><span class="sd">        Call the function `segmentation` on only NIFTI files, and rename output</span>
+</span><span id="PathMapper.file_mapper-242"><a href="#PathMapper.file_mapper-242"><span class="linenos">242</span></a><span class="sd">        file names to end with `.seg.nii`:</span>
+</span><span id="PathMapper.file_mapper-243"><a href="#PathMapper.file_mapper-243"><span class="linenos">243</span></a>
+</span><span id="PathMapper.file_mapper-244"><a href="#PathMapper.file_mapper-244"><span class="linenos">244</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper.file_mapper-245"><a href="#PathMapper.file_mapper-245"><span class="linenos">245</span></a><span class="sd">        mapper = PathMapper.file_mapper(input_dir, output_dir, globs=&#39;**/*.nii&#39;, suffix=&#39;.seg.nii&#39;)</span>
+</span><span id="PathMapper.file_mapper-246"><a href="#PathMapper.file_mapper-246"><span class="linenos">246</span></a><span class="sd">        for input_file, output_file in mapper:</span>
+</span><span id="PathMapper.file_mapper-247"><a href="#PathMapper.file_mapper-247"><span class="linenos">247</span></a><span class="sd">            segmentation(input_file, output_file)</span>
+</span><span id="PathMapper.file_mapper-248"><a href="#PathMapper.file_mapper-248"><span class="linenos">248</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper.file_mapper-249"><a href="#PathMapper.file_mapper-249"><span class="linenos">249</span></a>
+</span><span id="PathMapper.file_mapper-250"><a href="#PathMapper.file_mapper-250"><span class="linenos">250</span></a><span class="sd">        Using more than one glob:</span>
 </span><span id="PathMapper.file_mapper-251"><a href="#PathMapper.file_mapper-251"><span class="linenos">251</span></a>
-</span><span id="PathMapper.file_mapper-252"><a href="#PathMapper.file_mapper-252"><span class="linenos">252</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper.file_mapper-253"><a href="#PathMapper.file_mapper-253"><span class="linenos">253</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper.file_mapper-254"><a href="#PathMapper.file_mapper-254"><span class="linenos">254</span></a>
-</span><span id="PathMapper.file_mapper-255"><a href="#PathMapper.file_mapper-255"><span class="linenos">255</span></a><span class="sd">        suffix: str</span>
-</span><span id="PathMapper.file_mapper-256"><a href="#PathMapper.file_mapper-256"><span class="linenos">256</span></a><span class="sd">            Syntactical sugar for `name_mapper`. If specified, a `name_mapper` is created</span>
-</span><span id="PathMapper.file_mapper-257"><a href="#PathMapper.file_mapper-257"><span class="linenos">257</span></a><span class="sd">            which replaces the file extension of input files with the given value for `suffix`.</span>
+</span><span id="PathMapper.file_mapper-252"><a href="#PathMapper.file_mapper-252"><span class="linenos">252</span></a><span class="sd">        ```python</span>
+</span><span id="PathMapper.file_mapper-253"><a href="#PathMapper.file_mapper-253"><span class="linenos">253</span></a><span class="sd">        PathMapper.file_mapper(input_dir, output_dir, globs=[&#39;**/*.nii&#39;, &#39;**/*.nii.gz&#39;])</span>
+</span><span id="PathMapper.file_mapper-254"><a href="#PathMapper.file_mapper-254"><span class="linenos">254</span></a><span class="sd">        ```</span>
+</span><span id="PathMapper.file_mapper-255"><a href="#PathMapper.file_mapper-255"><span class="linenos">255</span></a>
+</span><span id="PathMapper.file_mapper-256"><a href="#PathMapper.file_mapper-256"><span class="linenos">256</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper.file_mapper-257"><a href="#PathMapper.file_mapper-257"><span class="linenos">257</span></a><span class="sd">        ----------</span>
 </span><span id="PathMapper.file_mapper-258"><a href="#PathMapper.file_mapper-258"><span class="linenos">258</span></a>
-</span><span id="PathMapper.file_mapper-259"><a href="#PathMapper.file_mapper-259"><span class="linenos">259</span></a><span class="sd">        glob: str | list[str]</span>
-</span><span id="PathMapper.file_mapper-260"><a href="#PathMapper.file_mapper-260"><span class="linenos">260</span></a><span class="sd">            File name patterns matching input files in `input_dir`.</span>
-</span><span id="PathMapper.file_mapper-261"><a href="#PathMapper.file_mapper-261"><span class="linenos">261</span></a><span class="sd">            Either one or more values can be given.</span>
+</span><span id="PathMapper.file_mapper-259"><a href="#PathMapper.file_mapper-259"><span class="linenos">259</span></a><span class="sd">        suffix: str</span>
+</span><span id="PathMapper.file_mapper-260"><a href="#PathMapper.file_mapper-260"><span class="linenos">260</span></a><span class="sd">            Syntactical sugar for `name_mapper`. If specified, a `name_mapper` is created</span>
+</span><span id="PathMapper.file_mapper-261"><a href="#PathMapper.file_mapper-261"><span class="linenos">261</span></a><span class="sd">            which replaces the file extension of input files with the given value for `suffix`.</span>
 </span><span id="PathMapper.file_mapper-262"><a href="#PathMapper.file_mapper-262"><span class="linenos">262</span></a>
-</span><span id="PathMapper.file_mapper-263"><a href="#PathMapper.file_mapper-263"><span class="linenos">263</span></a><span class="sd">        See field documentation for other arguments.</span>
-</span><span id="PathMapper.file_mapper-264"><a href="#PathMapper.file_mapper-264"><span class="linenos">264</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper.file_mapper-265"><a href="#PathMapper.file_mapper-265"><span class="linenos">265</span></a>        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PathMapper.file_mapper-266"><a href="#PathMapper.file_mapper-266"><span class="linenos">266</span></a>            <span class="k">if</span> <span class="n">name_mapper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_verbatim</span><span class="p">:</span>
-</span><span id="PathMapper.file_mapper-267"><a href="#PathMapper.file_mapper-267"><span class="linenos">267</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Only one of [&quot;suffix&quot;, &quot;name_mapper&quot;] can be given&#39;</span><span class="p">)</span>
-</span><span id="PathMapper.file_mapper-268"><a href="#PathMapper.file_mapper-268"><span class="linenos">268</span></a>            <span class="n">name_mapper</span> <span class="o">=</span> <span class="n">_curry_suffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
-</span><span id="PathMapper.file_mapper-269"><a href="#PathMapper.file_mapper-269"><span class="linenos">269</span></a>        <span class="n">globs</span> <span class="o">=</span> <span class="n">glob</span>
-</span><span id="PathMapper.file_mapper-270"><a href="#PathMapper.file_mapper-270"><span class="linenos">270</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-</span><span id="PathMapper.file_mapper-271"><a href="#PathMapper.file_mapper-271"><span class="linenos">271</span></a>            <span class="n">globs</span> <span class="o">=</span> <span class="p">[</span><span class="n">glob</span><span class="p">]</span>
-</span><span id="PathMapper.file_mapper-272"><a href="#PathMapper.file_mapper-272"><span class="linenos">272</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="PathMapper.file_mapper-273"><a href="#PathMapper.file_mapper-273"><span class="linenos">273</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-274"><a href="#PathMapper.file_mapper-274"><span class="linenos">274</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-275"><a href="#PathMapper.file_mapper-275"><span class="linenos">275</span></a>            <span class="n">globs</span><span class="o">=</span><span class="n">globs</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-276"><a href="#PathMapper.file_mapper-276"><span class="linenos">276</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-277"><a href="#PathMapper.file_mapper-277"><span class="linenos">277</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
-</span><span id="PathMapper.file_mapper-278"><a href="#PathMapper.file_mapper-278"><span class="linenos">278</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
-</span><span id="PathMapper.file_mapper-279"><a href="#PathMapper.file_mapper-279"><span class="linenos">279</span></a>        <span class="p">)</span>
+</span><span id="PathMapper.file_mapper-263"><a href="#PathMapper.file_mapper-263"><span class="linenos">263</span></a><span class="sd">        glob: str | list[str]</span>
+</span><span id="PathMapper.file_mapper-264"><a href="#PathMapper.file_mapper-264"><span class="linenos">264</span></a><span class="sd">            File name patterns matching input files in `input_dir`.</span>
+</span><span id="PathMapper.file_mapper-265"><a href="#PathMapper.file_mapper-265"><span class="linenos">265</span></a><span class="sd">            Either one or more values can be given.</span>
+</span><span id="PathMapper.file_mapper-266"><a href="#PathMapper.file_mapper-266"><span class="linenos">266</span></a>
+</span><span id="PathMapper.file_mapper-267"><a href="#PathMapper.file_mapper-267"><span class="linenos">267</span></a><span class="sd">        See field documentation for other arguments.</span>
+</span><span id="PathMapper.file_mapper-268"><a href="#PathMapper.file_mapper-268"><span class="linenos">268</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper.file_mapper-269"><a href="#PathMapper.file_mapper-269"><span class="linenos">269</span></a>        <span class="k">if</span> <span class="n">suffix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="PathMapper.file_mapper-270"><a href="#PathMapper.file_mapper-270"><span class="linenos">270</span></a>            <span class="k">if</span> <span class="n">name_mapper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_verbatim</span><span class="p">:</span>
+</span><span id="PathMapper.file_mapper-271"><a href="#PathMapper.file_mapper-271"><span class="linenos">271</span></a>                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Only one of [&quot;suffix&quot;, &quot;name_mapper&quot;] can be given&#39;</span><span class="p">)</span>
+</span><span id="PathMapper.file_mapper-272"><a href="#PathMapper.file_mapper-272"><span class="linenos">272</span></a>            <span class="n">name_mapper</span> <span class="o">=</span> <span class="n">_curry_suffix</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
+</span><span id="PathMapper.file_mapper-273"><a href="#PathMapper.file_mapper-273"><span class="linenos">273</span></a>        <span class="n">globs</span> <span class="o">=</span> <span class="n">glob</span>
+</span><span id="PathMapper.file_mapper-274"><a href="#PathMapper.file_mapper-274"><span class="linenos">274</span></a>        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">glob</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="PathMapper.file_mapper-275"><a href="#PathMapper.file_mapper-275"><span class="linenos">275</span></a>            <span class="n">globs</span> <span class="o">=</span> <span class="p">[</span><span class="n">glob</span><span class="p">]</span>
+</span><span id="PathMapper.file_mapper-276"><a href="#PathMapper.file_mapper-276"><span class="linenos">276</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="PathMapper.file_mapper-277"><a href="#PathMapper.file_mapper-277"><span class="linenos">277</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-278"><a href="#PathMapper.file_mapper-278"><span class="linenos">278</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-279"><a href="#PathMapper.file_mapper-279"><span class="linenos">279</span></a>            <span class="n">globs</span><span class="o">=</span><span class="n">globs</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-280"><a href="#PathMapper.file_mapper-280"><span class="linenos">280</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-281"><a href="#PathMapper.file_mapper-281"><span class="linenos">281</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
+</span><span id="PathMapper.file_mapper-282"><a href="#PathMapper.file_mapper-282"><span class="linenos">282</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+</span><span id="PathMapper.file_mapper-283"><a href="#PathMapper.file_mapper-283"><span class="linenos">283</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -1275,34 +1285,34 @@ Either one or more values can be given.</li>
 
     </div>
     <a class="headerlink" href="#PathMapper.dir_mapper_shallow"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.dir_mapper_shallow-281"><a href="#PathMapper.dir_mapper_shallow-281"><span class="linenos">281</span></a>    <span class="nd">@classmethod</span>
-</span><span id="PathMapper.dir_mapper_shallow-282"><a href="#PathMapper.dir_mapper_shallow-282"><span class="linenos">282</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_shallow</span><span class="p">(</span>
-</span><span id="PathMapper.dir_mapper_shallow-283"><a href="#PathMapper.dir_mapper_shallow-283"><span class="linenos">283</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-284"><a href="#PathMapper.dir_mapper_shallow-284"><span class="linenos">284</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-285"><a href="#PathMapper.dir_mapper_shallow-285"><span class="linenos">285</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-286"><a href="#PathMapper.dir_mapper_shallow-286"><span class="linenos">286</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-287"><a href="#PathMapper.dir_mapper_shallow-287"><span class="linenos">287</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-288"><a href="#PathMapper.dir_mapper_shallow-288"><span class="linenos">288</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-289"><a href="#PathMapper.dir_mapper_shallow-289"><span class="linenos">289</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
-</span><span id="PathMapper.dir_mapper_shallow-290"><a href="#PathMapper.dir_mapper_shallow-290"><span class="linenos">290</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper.dir_mapper_shallow-291"><a href="#PathMapper.dir_mapper_shallow-291"><span class="linenos">291</span></a><span class="sd">        Constructor for `PathMapper` for working with immediate subdirectories of `input_dir`.</span>
-</span><span id="PathMapper.dir_mapper_shallow-292"><a href="#PathMapper.dir_mapper_shallow-292"><span class="linenos">292</span></a>
-</span><span id="PathMapper.dir_mapper_shallow-293"><a href="#PathMapper.dir_mapper_shallow-293"><span class="linenos">293</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
-</span><span id="PathMapper.dir_mapper_shallow-294"><a href="#PathMapper.dir_mapper_shallow-294"><span class="linenos">294</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `b/` (but not `b/c/` nor `e.txt`).</span>
-</span><span id="PathMapper.dir_mapper_shallow-295"><a href="#PathMapper.dir_mapper_shallow-295"><span class="linenos">295</span></a>
-</span><span id="PathMapper.dir_mapper_shallow-296"><a href="#PathMapper.dir_mapper_shallow-296"><span class="linenos">296</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper.dir_mapper_shallow-297"><a href="#PathMapper.dir_mapper_shallow-297"><span class="linenos">297</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper.dir_mapper_shallow-298"><a href="#PathMapper.dir_mapper_shallow-298"><span class="linenos">298</span></a>
-</span><span id="PathMapper.dir_mapper_shallow-299"><a href="#PathMapper.dir_mapper_shallow-299"><span class="linenos">299</span></a><span class="sd">        See field documentation.</span>
-</span><span id="PathMapper.dir_mapper_shallow-300"><a href="#PathMapper.dir_mapper_shallow-300"><span class="linenos">300</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper.dir_mapper_shallow-301"><a href="#PathMapper.dir_mapper_shallow-301"><span class="linenos">301</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="PathMapper.dir_mapper_shallow-302"><a href="#PathMapper.dir_mapper_shallow-302"><span class="linenos">302</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*/&quot;</span><span class="p">],</span>  <span class="c1"># doesn&#39;t seem like trailing slash is helpful here</span>
-</span><span id="PathMapper.dir_mapper_shallow-303"><a href="#PathMapper.dir_mapper_shallow-303"><span class="linenos">303</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-304"><a href="#PathMapper.dir_mapper_shallow-304"><span class="linenos">304</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-305"><a href="#PathMapper.dir_mapper_shallow-305"><span class="linenos">305</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-306"><a href="#PathMapper.dir_mapper_shallow-306"><span class="linenos">306</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_shallow-307"><a href="#PathMapper.dir_mapper_shallow-307"><span class="linenos">307</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
-</span><span id="PathMapper.dir_mapper_shallow-308"><a href="#PathMapper.dir_mapper_shallow-308"><span class="linenos">308</span></a>        <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.dir_mapper_shallow-285"><a href="#PathMapper.dir_mapper_shallow-285"><span class="linenos">285</span></a>    <span class="nd">@classmethod</span>
+</span><span id="PathMapper.dir_mapper_shallow-286"><a href="#PathMapper.dir_mapper_shallow-286"><span class="linenos">286</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_shallow</span><span class="p">(</span>
+</span><span id="PathMapper.dir_mapper_shallow-287"><a href="#PathMapper.dir_mapper_shallow-287"><span class="linenos">287</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-288"><a href="#PathMapper.dir_mapper_shallow-288"><span class="linenos">288</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-289"><a href="#PathMapper.dir_mapper_shallow-289"><span class="linenos">289</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-290"><a href="#PathMapper.dir_mapper_shallow-290"><span class="linenos">290</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-291"><a href="#PathMapper.dir_mapper_shallow-291"><span class="linenos">291</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-292"><a href="#PathMapper.dir_mapper_shallow-292"><span class="linenos">292</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-293"><a href="#PathMapper.dir_mapper_shallow-293"><span class="linenos">293</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
+</span><span id="PathMapper.dir_mapper_shallow-294"><a href="#PathMapper.dir_mapper_shallow-294"><span class="linenos">294</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper.dir_mapper_shallow-295"><a href="#PathMapper.dir_mapper_shallow-295"><span class="linenos">295</span></a><span class="sd">        Constructor for `PathMapper` for working with immediate subdirectories of `input_dir`.</span>
+</span><span id="PathMapper.dir_mapper_shallow-296"><a href="#PathMapper.dir_mapper_shallow-296"><span class="linenos">296</span></a>
+</span><span id="PathMapper.dir_mapper_shallow-297"><a href="#PathMapper.dir_mapper_shallow-297"><span class="linenos">297</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
+</span><span id="PathMapper.dir_mapper_shallow-298"><a href="#PathMapper.dir_mapper_shallow-298"><span class="linenos">298</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `b/` (but not `b/c/` nor `e.txt`).</span>
+</span><span id="PathMapper.dir_mapper_shallow-299"><a href="#PathMapper.dir_mapper_shallow-299"><span class="linenos">299</span></a>
+</span><span id="PathMapper.dir_mapper_shallow-300"><a href="#PathMapper.dir_mapper_shallow-300"><span class="linenos">300</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper.dir_mapper_shallow-301"><a href="#PathMapper.dir_mapper_shallow-301"><span class="linenos">301</span></a><span class="sd">        ----------</span>
+</span><span id="PathMapper.dir_mapper_shallow-302"><a href="#PathMapper.dir_mapper_shallow-302"><span class="linenos">302</span></a>
+</span><span id="PathMapper.dir_mapper_shallow-303"><a href="#PathMapper.dir_mapper_shallow-303"><span class="linenos">303</span></a><span class="sd">        See field documentation.</span>
+</span><span id="PathMapper.dir_mapper_shallow-304"><a href="#PathMapper.dir_mapper_shallow-304"><span class="linenos">304</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper.dir_mapper_shallow-305"><a href="#PathMapper.dir_mapper_shallow-305"><span class="linenos">305</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="PathMapper.dir_mapper_shallow-306"><a href="#PathMapper.dir_mapper_shallow-306"><span class="linenos">306</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*/&quot;</span><span class="p">],</span>  <span class="c1"># doesn&#39;t seem like trailing slash is helpful here</span>
+</span><span id="PathMapper.dir_mapper_shallow-307"><a href="#PathMapper.dir_mapper_shallow-307"><span class="linenos">307</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-308"><a href="#PathMapper.dir_mapper_shallow-308"><span class="linenos">308</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-309"><a href="#PathMapper.dir_mapper_shallow-309"><span class="linenos">309</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-310"><a href="#PathMapper.dir_mapper_shallow-310"><span class="linenos">310</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_shallow-311"><a href="#PathMapper.dir_mapper_shallow-311"><span class="linenos">311</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+</span><span id="PathMapper.dir_mapper_shallow-312"><a href="#PathMapper.dir_mapper_shallow-312"><span class="linenos">312</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -1332,35 +1342,35 @@ Either one or more values can be given.</li>
 
     </div>
     <a class="headerlink" href="#PathMapper.dir_mapper_deep"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.dir_mapper_deep-310"><a href="#PathMapper.dir_mapper_deep-310"><span class="linenos">310</span></a>    <span class="nd">@classmethod</span>
-</span><span id="PathMapper.dir_mapper_deep-311"><a href="#PathMapper.dir_mapper_deep-311"><span class="linenos">311</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_deep</span><span class="p">(</span>
-</span><span id="PathMapper.dir_mapper_deep-312"><a href="#PathMapper.dir_mapper_deep-312"><span class="linenos">312</span></a>        <span class="bp">cls</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-313"><a href="#PathMapper.dir_mapper_deep-313"><span class="linenos">313</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-314"><a href="#PathMapper.dir_mapper_deep-314"><span class="linenos">314</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-315"><a href="#PathMapper.dir_mapper_deep-315"><span class="linenos">315</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-316"><a href="#PathMapper.dir_mapper_deep-316"><span class="linenos">316</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-317"><a href="#PathMapper.dir_mapper_deep-317"><span class="linenos">317</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-318"><a href="#PathMapper.dir_mapper_deep-318"><span class="linenos">318</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
-</span><span id="PathMapper.dir_mapper_deep-319"><a href="#PathMapper.dir_mapper_deep-319"><span class="linenos">319</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper.dir_mapper_deep-320"><a href="#PathMapper.dir_mapper_deep-320"><span class="linenos">320</span></a><span class="sd">        Constructor for `PathMapper` for working with subpaths of `input_dir` which are</span>
-</span><span id="PathMapper.dir_mapper_deep-321"><a href="#PathMapper.dir_mapper_deep-321"><span class="linenos">321</span></a><span class="sd">        directories that do not further contain subdirectories.</span>
-</span><span id="PathMapper.dir_mapper_deep-322"><a href="#PathMapper.dir_mapper_deep-322"><span class="linenos">322</span></a>
-</span><span id="PathMapper.dir_mapper_deep-323"><a href="#PathMapper.dir_mapper_deep-323"><span class="linenos">323</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
-</span><span id="PathMapper.dir_mapper_deep-324"><a href="#PathMapper.dir_mapper_deep-324"><span class="linenos">324</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `c/` (but not `b/` nor `e.txt`).</span>
-</span><span id="PathMapper.dir_mapper_deep-325"><a href="#PathMapper.dir_mapper_deep-325"><span class="linenos">325</span></a>
-</span><span id="PathMapper.dir_mapper_deep-326"><a href="#PathMapper.dir_mapper_deep-326"><span class="linenos">326</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper.dir_mapper_deep-327"><a href="#PathMapper.dir_mapper_deep-327"><span class="linenos">327</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper.dir_mapper_deep-328"><a href="#PathMapper.dir_mapper_deep-328"><span class="linenos">328</span></a>
-</span><span id="PathMapper.dir_mapper_deep-329"><a href="#PathMapper.dir_mapper_deep-329"><span class="linenos">329</span></a><span class="sd">        See field documentation.</span>
-</span><span id="PathMapper.dir_mapper_deep-330"><a href="#PathMapper.dir_mapper_deep-330"><span class="linenos">330</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper.dir_mapper_deep-331"><a href="#PathMapper.dir_mapper_deep-331"><span class="linenos">331</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-</span><span id="PathMapper.dir_mapper_deep-332"><a href="#PathMapper.dir_mapper_deep-332"><span class="linenos">332</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;**/&quot;</span><span class="p">],</span>
-</span><span id="PathMapper.dir_mapper_deep-333"><a href="#PathMapper.dir_mapper_deep-333"><span class="linenos">333</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-334"><a href="#PathMapper.dir_mapper_deep-334"><span class="linenos">334</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-335"><a href="#PathMapper.dir_mapper_deep-335"><span class="linenos">335</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-336"><a href="#PathMapper.dir_mapper_deep-336"><span class="linenos">336</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
-</span><span id="PathMapper.dir_mapper_deep-337"><a href="#PathMapper.dir_mapper_deep-337"><span class="linenos">337</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_is_deep_dir</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
-</span><span id="PathMapper.dir_mapper_deep-338"><a href="#PathMapper.dir_mapper_deep-338"><span class="linenos">338</span></a>        <span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.dir_mapper_deep-314"><a href="#PathMapper.dir_mapper_deep-314"><span class="linenos">314</span></a>    <span class="nd">@classmethod</span>
+</span><span id="PathMapper.dir_mapper_deep-315"><a href="#PathMapper.dir_mapper_deep-315"><span class="linenos">315</span></a>    <span class="k">def</span> <span class="nf">dir_mapper_deep</span><span class="p">(</span>
+</span><span id="PathMapper.dir_mapper_deep-316"><a href="#PathMapper.dir_mapper_deep-316"><span class="linenos">316</span></a>        <span class="bp">cls</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-317"><a href="#PathMapper.dir_mapper_deep-317"><span class="linenos">317</span></a>        <span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-318"><a href="#PathMapper.dir_mapper_deep-318"><span class="linenos">318</span></a>        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-319"><a href="#PathMapper.dir_mapper_deep-319"><span class="linenos">319</span></a>        <span class="n">name_mapper</span><span class="p">:</span> <span class="n">NameMapper</span> <span class="o">=</span> <span class="n">_verbatim</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-320"><a href="#PathMapper.dir_mapper_deep-320"><span class="linenos">320</span></a>        <span class="n">fail_if_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-321"><a href="#PathMapper.dir_mapper_deep-321"><span class="linenos">321</span></a>        <span class="nb">filter</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Path</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">_include_all</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-322"><a href="#PathMapper.dir_mapper_deep-322"><span class="linenos">322</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PathMapper&quot;</span><span class="p">:</span>
+</span><span id="PathMapper.dir_mapper_deep-323"><a href="#PathMapper.dir_mapper_deep-323"><span class="linenos">323</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper.dir_mapper_deep-324"><a href="#PathMapper.dir_mapper_deep-324"><span class="linenos">324</span></a><span class="sd">        Constructor for `PathMapper` for working with subpaths of `input_dir` which are</span>
+</span><span id="PathMapper.dir_mapper_deep-325"><a href="#PathMapper.dir_mapper_deep-325"><span class="linenos">325</span></a><span class="sd">        directories that do not further contain subdirectories.</span>
+</span><span id="PathMapper.dir_mapper_deep-326"><a href="#PathMapper.dir_mapper_deep-326"><span class="linenos">326</span></a>
+</span><span id="PathMapper.dir_mapper_deep-327"><a href="#PathMapper.dir_mapper_deep-327"><span class="linenos">327</span></a><span class="sd">        For instance, if the `input_dir` contains the subdirectories `a/`, `b/c/`, and the files</span>
+</span><span id="PathMapper.dir_mapper_deep-328"><a href="#PathMapper.dir_mapper_deep-328"><span class="linenos">328</span></a><span class="sd">        `a/d.txt`, `e.txt`, the `PathMapper` will visit `a/` and `c/` (but not `b/` nor `e.txt`).</span>
+</span><span id="PathMapper.dir_mapper_deep-329"><a href="#PathMapper.dir_mapper_deep-329"><span class="linenos">329</span></a>
+</span><span id="PathMapper.dir_mapper_deep-330"><a href="#PathMapper.dir_mapper_deep-330"><span class="linenos">330</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper.dir_mapper_deep-331"><a href="#PathMapper.dir_mapper_deep-331"><span class="linenos">331</span></a><span class="sd">        ----------</span>
+</span><span id="PathMapper.dir_mapper_deep-332"><a href="#PathMapper.dir_mapper_deep-332"><span class="linenos">332</span></a>
+</span><span id="PathMapper.dir_mapper_deep-333"><a href="#PathMapper.dir_mapper_deep-333"><span class="linenos">333</span></a><span class="sd">        See field documentation.</span>
+</span><span id="PathMapper.dir_mapper_deep-334"><a href="#PathMapper.dir_mapper_deep-334"><span class="linenos">334</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper.dir_mapper_deep-335"><a href="#PathMapper.dir_mapper_deep-335"><span class="linenos">335</span></a>        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+</span><span id="PathMapper.dir_mapper_deep-336"><a href="#PathMapper.dir_mapper_deep-336"><span class="linenos">336</span></a>            <span class="n">globs</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;**/&quot;</span><span class="p">],</span>
+</span><span id="PathMapper.dir_mapper_deep-337"><a href="#PathMapper.dir_mapper_deep-337"><span class="linenos">337</span></a>            <span class="n">input_dir</span><span class="o">=</span><span class="n">input_dir</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-338"><a href="#PathMapper.dir_mapper_deep-338"><span class="linenos">338</span></a>            <span class="n">output_dir</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-339"><a href="#PathMapper.dir_mapper_deep-339"><span class="linenos">339</span></a>            <span class="n">name_mapper</span><span class="o">=</span><span class="n">name_mapper</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-340"><a href="#PathMapper.dir_mapper_deep-340"><span class="linenos">340</span></a>            <span class="n">fail_if_empty</span><span class="o">=</span><span class="n">fail_if_empty</span><span class="p">,</span>
+</span><span id="PathMapper.dir_mapper_deep-341"><a href="#PathMapper.dir_mapper_deep-341"><span class="linenos">341</span></a>            <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_is_deep_dir</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">filter</span><span class="p">(</span><span class="n">p</span><span class="p">),</span>
+</span><span id="PathMapper.dir_mapper_deep-342"><a href="#PathMapper.dir_mapper_deep-342"><span class="linenos">342</span></a>        <span class="p">)</span>
 </span></pre></div>
 
 
@@ -1390,12 +1400,12 @@ directories that do not further contain subdirectories.</p>
 
     </div>
     <a class="headerlink" href="#PathMapper.iter_input"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.iter_input-350"><a href="#PathMapper.iter_input-350"><span class="linenos">350</span></a>    <span class="k">def</span> <span class="nf">iter_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
-</span><span id="PathMapper.iter_input-351"><a href="#PathMapper.iter_input-351"><span class="linenos">351</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper.iter_input-352"><a href="#PathMapper.iter_input-352"><span class="linenos">352</span></a><span class="sd">        :return: an iterator over input files</span>
-</span><span id="PathMapper.iter_input-353"><a href="#PathMapper.iter_input-353"><span class="linenos">353</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper.iter_input-354"><a href="#PathMapper.iter_input-354"><span class="linenos">354</span></a>        <span class="k">for</span> <span class="n">glob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">:</span>
-</span><span id="PathMapper.iter_input-355"><a href="#PathMapper.iter_input-355"><span class="linenos">355</span></a>            <span class="k">yield from</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob</span><span class="p">))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.iter_input-354"><a href="#PathMapper.iter_input-354"><span class="linenos">354</span></a>    <span class="k">def</span> <span class="nf">iter_input</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
+</span><span id="PathMapper.iter_input-355"><a href="#PathMapper.iter_input-355"><span class="linenos">355</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper.iter_input-356"><a href="#PathMapper.iter_input-356"><span class="linenos">356</span></a><span class="sd">        :return: an iterator over input files</span>
+</span><span id="PathMapper.iter_input-357"><a href="#PathMapper.iter_input-357"><span class="linenos">357</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper.iter_input-358"><a href="#PathMapper.iter_input-358"><span class="linenos">358</span></a>        <span class="k">for</span> <span class="n">glob</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">globs</span><span class="p">:</span>
+</span><span id="PathMapper.iter_input-359"><a href="#PathMapper.iter_input-359"><span class="linenos">359</span></a>            <span class="k">yield from</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">glob</span><span class="p">))</span>
 </span></pre></div>
 
 
@@ -1419,11 +1429,11 @@ directories that do not further contain subdirectories.</p>
 
     </div>
     <a class="headerlink" href="#PathMapper.count"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.count-360"><a href="#PathMapper.count-360"><span class="linenos">360</span></a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-</span><span id="PathMapper.count-361"><a href="#PathMapper.count-361"><span class="linenos">361</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper.count-362"><a href="#PathMapper.count-362"><span class="linenos">362</span></a><span class="sd">        Count the number of input paths under `input_dir`.</span>
-</span><span id="PathMapper.count-363"><a href="#PathMapper.count-363"><span class="linenos">363</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper.count-364"><a href="#PathMapper.count-364"><span class="linenos">364</span></a>        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">()))</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.count-364"><a href="#PathMapper.count-364"><span class="linenos">364</span></a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+</span><span id="PathMapper.count-365"><a href="#PathMapper.count-365"><span class="linenos">365</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper.count-366"><a href="#PathMapper.count-366"><span class="linenos">366</span></a><span class="sd">        Count the number of input paths under `input_dir`.</span>
+</span><span id="PathMapper.count-367"><a href="#PathMapper.count-367"><span class="linenos">367</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper.count-368"><a href="#PathMapper.count-368"><span class="linenos">368</span></a>        <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">_</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">()))</span>
 </span></pre></div>
 
 
@@ -1443,8 +1453,8 @@ directories that do not further contain subdirectories.</p>
 
     </div>
     <a class="headerlink" href="#PathMapper.is_empty"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.is_empty-366"><a href="#PathMapper.is_empty-366"><span class="linenos">366</span></a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="PathMapper.is_empty-367"><a href="#PathMapper.is_empty-367"><span class="linenos">367</span></a>        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.is_empty-370"><a href="#PathMapper.is_empty-370"><span class="linenos">370</span></a>    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="PathMapper.is_empty-371"><a href="#PathMapper.is_empty-371"><span class="linenos">371</span></a>        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_input</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 </span></pre></div>
 
 
@@ -1462,18 +1472,18 @@ directories that do not further contain subdirectories.</p>
 
     </div>
     <a class="headerlink" href="#PathMapper.output_for"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.output_for-382"><a href="#PathMapper.output_for-382"><span class="linenos">382</span></a>    <span class="k">def</span> <span class="nf">output_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
-</span><span id="PathMapper.output_for-383"><a href="#PathMapper.output_for-383"><span class="linenos">383</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PathMapper.output_for-384"><a href="#PathMapper.output_for-384"><span class="linenos">384</span></a><span class="sd">        Produce a path under `output_dir` which corresponds to the given `input_path`.</span>
-</span><span id="PathMapper.output_for-385"><a href="#PathMapper.output_for-385"><span class="linenos">385</span></a>
-</span><span id="PathMapper.output_for-386"><a href="#PathMapper.output_for-386"><span class="linenos">386</span></a><span class="sd">        Parameters</span>
-</span><span id="PathMapper.output_for-387"><a href="#PathMapper.output_for-387"><span class="linenos">387</span></a><span class="sd">        ----------</span>
-</span><span id="PathMapper.output_for-388"><a href="#PathMapper.output_for-388"><span class="linenos">388</span></a>
-</span><span id="PathMapper.output_for-389"><a href="#PathMapper.output_for-389"><span class="linenos">389</span></a><span class="sd">        input_path: Path</span>
-</span><span id="PathMapper.output_for-390"><a href="#PathMapper.output_for-390"><span class="linenos">390</span></a><span class="sd">            A subpath of `self.input_dir`</span>
-</span><span id="PathMapper.output_for-391"><a href="#PathMapper.output_for-391"><span class="linenos">391</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PathMapper.output_for-392"><a href="#PathMapper.output_for-392"><span class="linenos">392</span></a>        <span class="n">rel</span> <span class="o">=</span> <span class="n">input_path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="p">)</span>
-</span><span id="PathMapper.output_for-393"><a href="#PathMapper.output_for-393"><span class="linenos">393</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_mapper</span><span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PathMapper.output_for-386"><a href="#PathMapper.output_for-386"><span class="linenos">386</span></a>    <span class="k">def</span> <span class="nf">output_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+</span><span id="PathMapper.output_for-387"><a href="#PathMapper.output_for-387"><span class="linenos">387</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PathMapper.output_for-388"><a href="#PathMapper.output_for-388"><span class="linenos">388</span></a><span class="sd">        Produce a path under `output_dir` which corresponds to the given `input_path`.</span>
+</span><span id="PathMapper.output_for-389"><a href="#PathMapper.output_for-389"><span class="linenos">389</span></a>
+</span><span id="PathMapper.output_for-390"><a href="#PathMapper.output_for-390"><span class="linenos">390</span></a><span class="sd">        Parameters</span>
+</span><span id="PathMapper.output_for-391"><a href="#PathMapper.output_for-391"><span class="linenos">391</span></a><span class="sd">        ----------</span>
+</span><span id="PathMapper.output_for-392"><a href="#PathMapper.output_for-392"><span class="linenos">392</span></a>
+</span><span id="PathMapper.output_for-393"><a href="#PathMapper.output_for-393"><span class="linenos">393</span></a><span class="sd">        input_path: Path</span>
+</span><span id="PathMapper.output_for-394"><a href="#PathMapper.output_for-394"><span class="linenos">394</span></a><span class="sd">            A subpath of `self.input_dir`</span>
+</span><span id="PathMapper.output_for-395"><a href="#PathMapper.output_for-395"><span class="linenos">395</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PathMapper.output_for-396"><a href="#PathMapper.output_for-396"><span class="linenos">396</span></a>        <span class="n">rel</span> <span class="o">=</span> <span class="n">input_path</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="p">)</span>
+</span><span id="PathMapper.output_for-397"><a href="#PathMapper.output_for-397"><span class="linenos">397</span></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_mapper</span><span class="p">(</span><span class="n">rel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span><span class="p">)</span>
 </span></pre></div>
 
 
